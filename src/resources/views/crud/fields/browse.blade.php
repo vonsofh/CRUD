@@ -1,5 +1,5 @@
 @php
-$multiple = Arr::get($field, 'multiple', true);
+$multiple = Arr::get($field, 'multiple', false);
 $sortable = Arr::get($field, 'sortable', false);
 $value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? '';
 
