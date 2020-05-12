@@ -183,7 +183,7 @@ if($sortable){
                     element.on('createInputsForItemsSelectedWithElfinder', element, function(event, files) {
                         files.forEach(function (file) {
                             var newInput = $($template);
-                            newInput.find('input').val(file.path);
+                            newInput.find('input').val(file.path.replace(/\\/g,"/"));
                             $list.append(newInput);
                         });
 
@@ -202,7 +202,7 @@ if($sortable){
 
                     // called after an item has been selected in the elFinder window
                     element.on('createInputsForItemsSelectedWithElfinder', element, function(event, files) {
-                        $input.val(files[0].path);
+                        $input.val(files[0].path.replace(/\\/g,"/"));
                     });
                 }
             }
