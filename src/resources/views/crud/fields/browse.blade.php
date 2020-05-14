@@ -32,9 +32,21 @@ if($sortable){
     @include('crud::fields.inc.translatable_icon')
     <div class="list" data-field-name="{{ $field['name'] }}">
     @if ($multiple)
-        <input type="hidden" data-marker="multipleBrowseInput" name="{{ $field['name'] }}" value="{{ json_encode($value) }}">
+        <input
+            type="hidden"
+            data-marker="multipleBrowseInput"
+            name="{{ $field['name'] }}"
+            value="{{ json_encode($value) }}"
+        >
     @else
-        <input type="text" data-marker="multipleBrowseInput" name="{{ $field['name'] }}" value="{{ $value }}" @include('crud::fields.inc.attributes') readonly>
+        <input
+            type="text"
+            data-marker="multipleBrowseInput"
+            name="{{ $field['name'] }}"
+            value="{{ $value }}"
+            @if(!isset($field['readonly']) || $field['readonly']) readonly @endif
+            @include('crud::fields.inc.attributes')
+        >
     @endif
 </div>
     <div class="btn-group" role="group" aria-label="..." style="margin-top: 3px;">
@@ -54,7 +66,11 @@ if($sortable){
 
     <script type="text/html" data-marker="browse_multiple_template">
         <div class="input-group input-group-sm">
-            <input type="text" @include('crud::fields.inc.attributes') readonly>
+            <input
+                type="text"
+                @if(!isset($field['readonly']) || $field['readonly']) readonly @endif
+                @include('crud::fields.inc.attributes')
+            >
             <div class="input-group-btn">
                 <button type="button" class="browse remove btn btn-sm btn-light">
                     <i class="la la-trash"></i>
@@ -77,7 +93,7 @@ if($sortable){
     @endphp
 
     {{-- FIELD CSS - will be loaded in the after_styles section --}}
-    @push('crud_fields_styles')        
+    @push('crud_fields_styles')
         <link href="{{ asset('packages/jquery-colorbox/example2/colorbox.css') }}" rel="stylesheet" type="text/css" />
         <style>
             #cboxContent, #cboxLoadedContent, .cboxIframe {
@@ -87,17 +103,17 @@ if($sortable){
     @endpush
 
     @push('crud_fields_scripts')
-        
+
         <script src="{{ asset('packages/jquery-ui-dist/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('packages/jquery-colorbox/jquery.colorbox-min.js') }}"></script>
-        <script>
+		<script type="text/javascript">
             // this global variable is used to remember what input to update with the file path
             // because elfinder is actually loaded in an iframe by colorbox
             var elfinderTarget = false;
 
             // function to use the files selected inside elfinder
             function processSelectedMultipleFiles(files, requestingField) {
-                elfinderTarget.trigger('createInputsForItemsSelectedWithElfinder', [files]);                
+                elfinderTarget.trigger('createInputsForItemsSelectedWithElfinder', [files]);
                 elfinderTarget = false;
             }
 
@@ -109,7 +125,7 @@ if($sortable){
                 var $multiple = element.attr('data-multiple');
                 var $sortable = element.attr('sortable');
 
-                // show existing items - display visible inputs for each stored path  
+                // show existing items - display visible inputs for each stored path
                 if ($input.val() != '' && $input.val() != null && $multiple === 'true') {
                     $paths = JSON.parse($input.val());
                     if (Array.isArray($paths) && $paths.length) {
