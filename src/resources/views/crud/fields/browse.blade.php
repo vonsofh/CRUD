@@ -26,6 +26,17 @@ if($sortable){
 }
 @endphp
 
+@section('browsebuttons')
+    <button type="button" class="browse popup btn btn-sm btn-light">
+        <i class="la la-cloud-upload"></i>
+        {{ trans('backpack::crud.browse_uploads') }}
+    </button>
+    <button type="button" class="browse clear btn btn-sm btn-light">
+        <i class="la la-eraser"></i>
+        {{ trans('backpack::crud.clear') }}
+    </button>
+@endsection
+
 @include('crud::fields.inc.wrapper_start')
 
     <div><label>{!! $field['label'] !!}</label></div>
@@ -39,26 +50,29 @@ if($sortable){
             value="{{ json_encode($value) }}"
         >
     @else
-        <input
-            type="text"
-            data-marker="multipleBrowseInput"
-            name="{{ $field['name'] }}"
-            value="{{ $value }}"
-            @if(!isset($field['readonly']) || $field['readonly']) readonly @endif
-            @include('crud::fields.inc.attributes')
-        >
+        <div class="input-group">
+            <input
+                type="text"
+                data-marker="multipleBrowseInput"
+                name="{{ $field['name'] }}"
+                value="{{ $value }}"
+                @if(!isset($field['readonly']) || $field['readonly']) readonly @endif
+                @include('crud::fields.inc.attributes')
+            >
+            {{-- Buttons right of file for singe file input --}}
+            <span class="input-group-append">
+                @yield('browsebuttons')
+            </span>
+        </div>
     @endif
-</div>
-    <div class="btn-group" role="group" aria-label="..." style="margin-top: 3px;">
-        <button type="button" class="browse popup btn btn-sm btn-light">
-            <i class="la la-cloud-upload"></i>
-            {{ trans('backpack::crud.browse_uploads') }}
-        </button>
-        <button type="button" class="browse clear btn btn-sm btn-light">
-            <i class="la la-eraser"></i>
-            {{ trans('backpack::crud.clear') }}
-        </button>
     </div>
+
+    {{-- Buttons below files for multiple files input --}}
+    @if($multiple)
+        <div class="btn-group" role="group" aria-label="..." style="margin-top: 3px;">
+            @yield('browsebuttons')
+        </div>
+    @endif
 
     @if (isset($field['hint']))
         <p class="help-block">{!! $field['hint'] !!}</p>
