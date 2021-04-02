@@ -30,6 +30,7 @@ use Backpack\CRUD\app\Library\CrudPanel\Traits\Validation;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Views;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
@@ -136,11 +137,36 @@ class CrudPanel
     /**
      * Check if the database connection driver is using mongodb.
      *
+     * DEPRECATION NOTICE: This method is no longer used and will be removed in future versions of Backpack
+     *
+     * @deprecated
      * @return bool
      */
     private function driverIsMongoDb()
     {
         return $this->getSchema()->getConnection()->getConfig()['driver'] === 'mongodb';
+    }
+
+    /**
+     * Check if the database connection is any sql driver.
+     *
+     * @return bool
+     */
+    private function driverIsSql()
+    {
+        $driver = $this->getSchema()->getConnection()->getConfig('driver');
+
+        return in_array($driver, $this->getSqlDriverList());
+    }
+
+    /**
+     * Get SQL driver list.
+     *
+     * @return array
+     */
+    public function getSqlDriverList()
+    {
+        return ['mysql', 'sqlsrv', 'sqlite', 'pgsql'];
     }
 
     /**
@@ -172,7 +198,6 @@ class CrudPanel
         }
 
         $this->route = route($complete_route, $parameters);
-        $this->initButtons();
     }
 
     /**
@@ -357,14 +382,33 @@ class CrudPanel
         foreach ($endModels as $model => $entries) {
             $model_instance = new $model();
             $modelKey = $model_instance->getKeyName();
-            if (is_array($entries) && ! isset($entries[$attribute])) {
-                foreach ($entries as $entry) {
-                    $attributes[$entry[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry[$attribute]);
+
+            if (is_array($entries)) {
+                //if attribute does not exist in main array we have more than one entry OR the attribute
+                //is an acessor that is not in $appends property of model.
+                if (! isset($entries[$attribute])) {
+                    //we first check if we don't have the attribute because it's and acessor that is not in appends.
+                    if ($model_instance->hasGetMutator($attribute) && isset($entries[$modelKey])) {
+                        $entry_in_database = $model_instance->find($entries[$modelKey]);
+                        $attributes[$entry_in_database->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry_in_database->{$attribute});
+                    } else {
+                        //we have multiple entries
+                        //for each entry we check if $attribute exists in array or try to check if it's an acessor.
+                        foreach ($entries as $entry) {
+                            if (isset($entry[$attribute])) {
+                                $attributes[$entry[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry[$attribute]);
+                            } else {
+                                if ($model_instance->hasGetMutator($attribute)) {
+                                    $entry_in_database = $model_instance->find($entry[$modelKey]);
+                                    $attributes[$entry_in_database->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry_in_database->{$attribute});
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    //if we have the attribute we just return it, does not matter if it is direct attribute or an acessor added in $appends.
+                    $attributes[$entries[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entries[$attribute]);
                 }
-            } elseif (is_array($entries) && isset($entries[$attribute])) {
-                $attributes[$entries[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entries[$attribute]);
-            } elseif ($entries->{$attribute}) {
-                $attributes[$entries->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entries->{$attribute});
             }
         }
 
@@ -421,29 +465,28 @@ class CrudPanel
         $relationArray = explode('.', $relationString);
         $firstRelationName = Arr::first($relationArray);
         $relation = $model->{$firstRelationName};
-        $currentResults = [];
 
         $results = [];
         if (! is_null($relation)) {
-            if ($relation instanceof Collection && ! $relation->isEmpty()) {
-                $currentResults[get_class($relation->first())] = $relation->toArray();
-            } elseif (is_array($relation) && ! empty($relation)) {
-                $currentResults[get_class($relation->first())] = $relation;
+            if ($relation instanceof Collection) {
+                $currentResults = $relation->all();
+            } elseif (is_array($relation)) {
+                $currentResults = $relation;
+            } elseif ($relation instanceof Model) {
+                $currentResults = [$relation];
             } else {
-                //relation must be App\Models\Article or App\Models\Category
-                if (! $relation instanceof Collection && ! empty($relation)) {
-                    $currentResults[get_class($relation)] = $relation->toArray();
-                }
+                $currentResults = [];
             }
 
             array_shift($relationArray);
 
             if (! empty($relationArray)) {
-                foreach ($currentResults as $model => $currentResult) {
-                    $results[$model] = array_merge($results[$model], $this->getRelatedEntries($currentResult, implode('.', $relationArray)));
+                foreach ($currentResults as $currentResult) {
+                    $results = array_merge_recursive($results, $this->getRelatedEntries($currentResult, implode('.', $relationArray)));
                 }
             } else {
-                $results = $currentResults;
+                $relatedClass = get_class($model->{$firstRelationName}()->getRelated());
+                $results[$relatedClass] = $currentResults;
             }
         }
 

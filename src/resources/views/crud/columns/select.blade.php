@@ -1,6 +1,8 @@
 {{-- single relationships (1-1, 1-n) --}}
 @php
     $column['escaped'] = $column['escaped'] ?? true;
+    $column['prefix'] = $column['prefix'] ?? '';
+    $column['suffix'] = $column['suffix'] ?? '';
     $column['limit'] = $column['limit'] ?? 40;
     $column['attribute'] = $column['attribute'] ?? (new $column['model'])->identifiableAttribute();
 
@@ -12,24 +14,25 @@
 
 <span>
     @if(count($attributes))
-        @php
-            $lastKey = array_key_last($attributes)
-        @endphp
-
+        {{ $column['prefix'] }}
         @foreach($attributes as $key => $text)
             @php
                 $related_key = $key;
             @endphp
 
-            @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
-                @if($column['escaped'])
-                    {{ $text }}
-                @else
-                    {!! $text !!}
-                @endif
-            @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_end')
-                @if($lastKey != $key), @endif
+            <span class="d-inline-flex">
+                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
+                    @if($column['escaped'])
+                        {{ $text }}
+                    @else
+                        {!! $text !!}
+                    @endif
+                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_end')
+
+                @if(!$loop->last), @endif
+            </span>
         @endforeach
+        {{ $column['suffix'] }}
     @else
         -
     @endif

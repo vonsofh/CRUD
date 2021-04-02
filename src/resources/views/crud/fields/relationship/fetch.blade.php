@@ -14,9 +14,14 @@
     $field['multiple'] = $field['multiple'] ?? $crud->guessIfFieldHasMultipleFromRelationType($field['relation_type']);
     $field['data_source'] = $field['data_source'] ?? url($crud->route.'/fetch/'.$routeEntity);
     $field['attribute'] = $field['attribute'] ?? $connected_entity->identifiableAttribute();
-    $field['placeholder'] = $field['placeholder'] ?? $field['multiple'] ? 'Select entities' : 'Select an entity';
-    $field['allows_null'] = $field['allows_null'] ?? $crud->model::isColumnNullable($field['name']);
+    $field['placeholder'] = $field['placeholder'] ?? ($field['multiple'] ? trans('backpack::crud.select_entries') : trans('backpack::crud.select_entry'));
+    $field['include_all_form_fields'] = $field['include_all_form_fields'] ?? true;
+
     // Note: isColumnNullable returns true if column is nullable in database, also true if column does not exist.
+    $field['allows_null'] = $field['allows_null'] ?? $crud->model::isColumnNullable($field['name']);
+
+    // this is the time we wait before send the query to the search endpoint, after the user as stopped typing.
+    $field['delay'] = $field['delay'] ?? 500;
 
     // make sure the $field['value'] takes the proper value
     // and format it to JSON, so that select2 can parse it
@@ -61,7 +66,7 @@
         name="{{ $field['name'].($field['multiple']?'[]':'') }}"
         data-init-function="bpFieldInitFetchElement"
         data-column-nullable="{{ var_export($field['allows_null']) }}"
-        data-dependencies="{{ isset($field['dependencies'])?json_encode(array_wrap($field['dependencies'])): json_encode([]) }}"
+        data-dependencies="{{ isset($field['dependencies'])?json_encode(Arr::wrap($field['dependencies'])): json_encode([]) }}"
         data-model-local-key="{{$crud->model->getKeyName()}}"
         data-placeholder="{{ $field['placeholder'] }}"
         data-minimum-input-length="{{ isset($field['minimum_input_length']) ? $field['minimum_input_length'] : 2 }}"
@@ -69,9 +74,10 @@
         data-data-source="{{ $field['data_source']}}"
         data-field-attribute="{{ $field['attribute'] }}"
         data-connected-entity-key-name="{{ $connected_entity_key_name }}"
-        data-include-all-form-fields="{{ $field['include_all_form_fields'] ?? 'true' }}"
+        data-include-all-form-fields="{{ var_export($field['include_all_form_fields']) }}"
         data-current-value="{{ $field['value'] }}"
         data-app-current-lang="{{ app()->getLocale() }}"
+        data-ajax-delay="{{ $field['delay'] }}"
 
         @include('crud::fields.inc.attributes', ['default_class' =>  'form-control'])
 
@@ -129,7 +135,6 @@
             var $relatedAttribute = element.attr('data-field-attribute');
             var $relatedKeyName = element.attr('data-connected-entity-key-name');
             var $return = {};
-            var $appLang = element.attr('data-app-current-lang');
 
             return new Promise(function (resolve, reject) {
                 $.ajax({
@@ -143,10 +148,10 @@
                 // we want only the first to be default.
                 if (typeof result.data !== "undefined"){
                     $key = result.data[0][$relatedKeyName];
-                    $value = processItemText(result.data[0], $relatedAttribute, $appLang);
+                    $value = processItemText(result.data[0], $relatedAttribute);
                 }else{
                     $key = result[0][$relatedKeyName];
-                    $value = processItemText(result[0], $relatedAttribute, $appLang);
+                    $value = processItemText(result[0], $relatedAttribute);
                 }
 
                 $pair = { [$relatedKeyName] : $key, [$relatedAttribute] : $value}
@@ -184,9 +189,9 @@
         var $includeAllFormFields = element.attr('data-include-all-form-fields') == 'false' ? false : true;
         var $dependencies = JSON.parse(element.attr('data-dependencies'));
         var $allows_null = element.attr('data-column-nullable') == 'true' ? true : false;
-        var $appLang = element.attr('data-app-current-lang');
-        var $selectedOptions = JSON.parse(element.attr('data-selected-options') ?? null);
+        var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse(null);
         var $multiple = element.prop('multiple');
+        var $ajaxDelay = element.attr('data-ajax-delay');
 
         var FetchAjaxFetchSelectedEntry = function (element) {
             return new Promise(function (resolve, reject) {
@@ -221,7 +226,7 @@
             var optionsForSelect = [];
             FetchAjaxFetchSelectedEntry(element).then(result => {
                 result.forEach(function(item) {
-                    $itemText = processItemText(item, $fieldAttribute, $appLang);
+                    $itemText = processItemText(item, $fieldAttribute);
                     $itemValue = item[$connectedEntityKeyName];
                     //add current key to be selected later.
                     optionsForSelect.push($itemValue);
@@ -278,7 +283,7 @@
                     url: $dataSource,
                     type: $method,
                     dataType: 'json',
-                    quietMillis: 250,
+                    delay: $ajaxDelay,
                     data: function (params) {
                         if ($includeAllFormFields) {
                             return {
@@ -300,7 +305,7 @@
                         if(data.data) {
                         var result = {
                             results: $.map(data.data, function (item) {
-                                var $itemText = processItemText(item, $fieldAttribute, $appLang);
+                                var $itemText = processItemText(item, $fieldAttribute);
 
                                 return {
                                     text: $itemText,
@@ -314,7 +319,7 @@
                         }else {
                             var result = {
                                 results: $.map(data, function (item) {
-                                    var $itemText = processItemText(item, $fieldAttribute, $appLang);
+                                    var $itemText = processItemText(item, $fieldAttribute);
 
                                     return {
                                         text: $itemText,
@@ -335,32 +340,50 @@
         if (!$(element).hasClass("select2-hidden-accessible"))
         {
             $(element).select2($select2Settings);
-             // if any dependencies have been declared
+
+            // if any dependencies have been declared
             // when one of those dependencies changes value
             // reset the select2 value
             for (var i=0; i < $dependencies.length; i++) {
-                $dependency = $dependencies[i];
-                $('input[name='+$dependency+'], select[name='+$dependency+'], checkbox[name='+$dependency+'], radio[name='+$dependency+'], textarea[name='+$dependency+']').change(function () {
-                    element.val(null).trigger("change");
-                });
+                var $dependency = $dependencies[i];
+                //if element does not have a custom-selector attribute we use the name attribute
+                if(typeof element.attr('data-custom-selector') == 'undefined') {
+                    form.find(`[name="${$dependency}"], [name="${$dependency}[]"]`).change(function(el) {
+                            $(element.find('option:not([value=""])')).remove();
+                            element.val(null).trigger("change");
+                    });
+                }else{
+                    // we get the row number and custom selector from where element is called
+                    let rowNumber = element.attr('data-row-number');
+                    let selector = element.attr('data-custom-selector');
 
+                    // replace in the custom selector string the corresponding row and dependency name to match
+                    selector = selector
+                        .replaceAll('%DEPENDENCY%', $dependency)
+                        .replaceAll('%ROW%', rowNumber);
+
+                    $(selector).change(function (el) {
+                        $(element.find('option:not([value=""])')).remove();
+                        element.val(null).trigger("change");
+                    });
+                }
             }
         }
     }
 
     if (typeof processItemText !== 'function') {
-    function processItemText(item, $fieldAttribute, $appLang) {
-        if(typeof item[$fieldAttribute] === 'object' && item[$fieldAttribute] !== null)  {
-                        if(item[$fieldAttribute][$appLang] != 'undefined') {
-                            return item[$fieldAttribute][$appLang];
-                        }else{
-                            return item[$fieldAttribute][0];
-                        }
-                    }else{
-                        return item[$fieldAttribute];
-                    }
+        function processItemText(item, $fieldAttribute) {
+            var $appLang = '{{ app()->getLocale() }}';
+            var $appLangFallback = '{{ Lang::getFallback() }}';
+            var $emptyTranslation = '{{ trans("backpack::crud.empty_translations") }}';
+            var $itemField = item[$fieldAttribute];
+
+            // try to retreive the item in app language; then fallback language; then first entry; if nothing found empty translation string
+            return typeof $itemField === 'object' && $itemField !== null
+                ? $itemField[$appLang] ?? $itemField[$appLangFallback] ?? Object.values($itemField)[0] ?? $emptyTranslation
+                : $itemField;
+        }
     }
-}
 </script>
 @endpush
 @endif

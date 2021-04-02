@@ -1,3 +1,11 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: "[Bug] "
+labels: triage
+
+---
+
 # Bug report
 
 ### What I did

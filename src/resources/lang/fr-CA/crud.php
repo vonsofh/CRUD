@@ -66,7 +66,7 @@ return [
     'lengthMenu'     => '_MENU_ enregistrements par page',
     'loadingRecords' => 'Chargement...',
     'processing'     => 'Traitement...',
-    'search'         => 'Recherche : ',
+    'search'         => 'Recherche',
     'zeroRecords'    => 'Aucun enregistrement correspondant trouvé',
     'paginate'       => [
         'first'    => 'Premier',
@@ -112,6 +112,16 @@ return [
     'filters'        => 'Filtres',
     'toggle_filters' => 'Activer les filtres',
     'remove_filters' => 'Retirer les filtres',
+
+    //filters language strings
+    'today' => 'Aujourd\'hui',
+    'yesterday' => 'Hier',
+    'last_7_days' => '7 derniers jours',
+    'last_30_days' => '30 derniers jours',
+    'this_month' => 'Ce mois-ci',
+    'last_month' => 'Le mois dernier',
+    'custom_range' => 'Durée personnalisé',
+    'weekLabel' => 'S',
 
     // Fields
     'browse_uploads'            => 'Parcourir les fichier chargés',

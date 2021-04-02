@@ -92,7 +92,7 @@
         var $allowClear = element.attr('data-column-nullable') == 'true' ? true : false;
         var $dependencies = JSON.parse(element.attr('data-dependencies'));
         var $ajaxDelay = element.attr('data-ajax-delay');
-        var $selectedOptions = JSON.parse(element.attr('data-selected-options') ?? '[]');
+        var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse("[]");
 
         var select2AjaxMultipleFetchSelectedEntries = function (element) {
             return new Promise(function (resolve, reject) {
@@ -176,7 +176,6 @@
 
                 // set the option keys as selected.
                 $(element).val(optionsForSelect);
-                $(element).trigger('change');
             });
         }
 
@@ -184,10 +183,28 @@
         // when one of those dependencies changes value
         // reset the select2 value
         for (var i=0; i < $dependencies.length; i++) {
-            $dependency = $dependencies[i];
-            $('input[name='+$dependency+'], select[name='+$dependency+'], checkbox[name='+$dependency+'], radio[name='+$dependency+'], textarea[name='+$dependency+']').change(function () {
-                element.val(null).trigger("change");
-            });
+            var $dependency = $dependencies[i];
+            //if element does not have a custom-selector attribute we use the name attribute
+            if(typeof element.attr('data-custom-selector') == 'undefined') {
+                form.find(`[name="${$dependency}"], [name="${$dependency}[]"]`).change(function(el) {
+                        $(element.find('option:not([value=""])')).remove();
+                        element.val(null).trigger("change");
+                });
+            }else{
+                // we get the row number and custom selector from where element is called
+                let rowNumber = element.attr('data-row-number');
+                let selector = element.attr('data-custom-selector');
+
+                // replace in the custom selector string the corresponding row and dependency name to match
+                selector = selector
+                    .replaceAll('%DEPENDENCY%', $dependency)
+                    .replaceAll('%ROW%', rowNumber);
+
+                $(selector).change(function (el) {
+                    $(element.find('option:not([value=""])')).remove();
+                    element.val(null).trigger("change");
+                });
+            }
         }
     }
 </script>

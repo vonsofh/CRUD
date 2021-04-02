@@ -1,6 +1,8 @@
 {{-- relationships with pivot table (n-n) --}}
 @php
     $column['escaped'] = $column['escaped'] ?? true;
+    $column['prefix'] = $column['prefix'] ?? '';
+    $column['suffix'] = $column['suffix'] ?? '';
     $column['limit'] = $column['limit'] ?? 40;
     $column['attribute'] = $column['attribute'] ?? (new $column['model'])->identifiableAttribute();
 
@@ -9,32 +11,35 @@
 
     if(!$results->isEmpty()) {
         $related_key = $results->first()->getKeyName();
-        $results_array = $results->pluck($column['attribute'],$related_key)->toArray();
-        $lastKey = array_key_last($results_array);
+        $results_array = $results->pluck($column['attribute'], $related_key)->toArray();
     }
 
     foreach ($results_array as $key => $text) {
-        $text = Str::limit($text, $column['limit'], '[...]');
+        $results_array[$key] = Str::limit($text, $column['limit'], '[...]');
     }
 @endphp
 
 <span>
-    @if (!empty($results_array))
-        @foreach ($results_array as $key => $text)
+    @if(!empty($results_array))
+        {{ $column['prefix'] }}
+        @foreach($results_array as $key => $text)
             @php
                 $related_key = $key;
             @endphp
 
-            @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
-                @if($column['escaped'])
-                    {{ $text }}
-                @else
-                    {!! $text !!}
-                @endif
-            @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_end')
+            <span class="d-inline-flex">
+                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
+                    @if($column['escaped'])
+                        {{ $text }}
+                    @else
+                        {!! $text !!}
+                    @endif
+                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_end')
 
-            @if($lastKey != $key), @endif
+                @if(!$loop->last), @endif
+            </span>
         @endforeach
+        {{ $column['suffix'] }}
     @else
         -
     @endif

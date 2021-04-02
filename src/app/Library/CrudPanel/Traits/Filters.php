@@ -75,6 +75,7 @@ trait Filters
         if (! isset($options['name'])) {
             abort(500, 'All your filters need names.');
         }
+
         if ($this->filters()->contains('name', $options['name'])) {
             abort(500, "Sorry, you can't have two filters with the same name.");
         }
@@ -325,7 +326,7 @@ trait Filters
      * - CRUD::addFilter(['name' => 'price', 'type' => 'range'], false, function($value) {});
      * - CRUD::filter('price')->type('range')->whenActive(function($value) {});
      *
-     * And if the developer uses the CrudField object as Field in his CrudController:
+     * And if the developer uses the CrudField object as Field in their CrudController:
      * - Filter::name('price')->type('range')->whenActive(function($value) {});
      *
      * @param  string $name The name of the column in the db, or model attribute.

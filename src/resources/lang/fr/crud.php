@@ -38,12 +38,16 @@ return [
     'all'                       => 'Tous les ',
     'in_the_database'           => 'dans la base de données',
     'list'                      => 'Liste',
+    'reset'                     => 'Reset',
     'actions'                   => 'Actions',
     'preview'                   => 'Aperçu',
     'delete'                    => 'Supprimer',
     'admin'                     => 'Administration',
     'details_row'               => 'Ligne de détail. Modifiez la à volonté.',
     'details_row_loading_error' => 'Une erreur est survenue en chargeant les détails. Veuillez réessayer.',
+    'clone' => 'Cloner',
+    'clone_success' => '<strong>Elément cloné</strong><br>Un nouvel élément a été ajouté, avec les mêmes informations que celui-ci.',
+    'clone_failure' => '<strong>Clonage échoué</strong><br>Le nouvel élément n\'a pu être créé. Merci de réessayer.',
 
     // Confirmation messages and bubbles
     'delete_confirm'                              => 'Souhaitez-vous réellement supprimer cet élément?',
@@ -79,7 +83,7 @@ return [
     'lengthMenu'     => '_MENU_ enregistrements par page',
     'loadingRecords' => 'Chargement...',
     'processing'     => 'Traitement...',
-    'search'         => 'Recherche : ',
+    'search'         => 'Recherche',
     'zeroRecords'    => 'Aucun enregistrement correspondant trouvé',
     'paginate'       => [
         'first'    => 'Premier',
@@ -126,6 +130,16 @@ return [
     'toggle_filters' => 'Activer les filtres',
     'remove_filters' => 'Retirer les filtres',
 
+    //filters language strings
+    'today' => 'Aujourd\'hui',
+    'yesterday' => 'Hier',
+    'last_7_days' => '7 derniers jours',
+    'last_30_days' => '30 derniers jours',
+    'this_month' => 'Ce mois-ci',
+    'last_month' => 'Le mois dernier',
+    'custom_range' => 'Durée personnalisé',
+    'weekLabel' => 'S',
+
     // Fields
     'browse_uploads'            => 'Parcourir les fichier chargés',
     'select_all'                => 'Tout sélectionner',
@@ -138,6 +152,9 @@ return [
     'internal_link_placeholder' => 'Identifiant de lien interne. Ex: \'admin/page\' (sans guillemets) pour \':url\'',
     'external_link'             => 'Lien externe',
     'choose_file'               => 'Choisissez un fichier',
+    'new_item'                  => 'Nouvel élément',
+    'select_entry'              => 'Selectionner un élément',
+    'select_entries'            => 'Selectionner des éléments',
 
     //Table field
     'table_cant_add'    => 'Impossible d’ajouter un nouveau :entity',
@@ -145,4 +162,8 @@ return [
 
     // File manager
     'file_manager' => 'Gestionnaire de fichiers',
+
+    // InlineCreateOperation
+    'related_entry_created_success' => 'L\'élément associé a été créé et sélectionné.',
+    'related_entry_created_error' => 'Impossible de créer un élément associé.',
 ];

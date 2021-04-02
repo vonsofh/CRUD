@@ -46,6 +46,10 @@
 
 
     $field['data_source'] = $field['data_source'] ?? url($crud->route.'/fetch/'.$routeEntity);
+    $field['include_all_form_fields'] = $field['include_all_form_fields'] ?? true;
+
+    // this is the time we wait before send the query to the search endpoint, after the user as stopped typing.
+    $field['delay'] = $field['delay'] ?? 500;
 
 
 
@@ -70,6 +74,21 @@ if($activeInlineCreate) {
 
         //route to modal
         $field['inline_create']['modal_route'] = route($field['inline_create']['entity']."-inline-create");
+
+        //include main form fields in the request when asking for modal data,
+        //allow the developer to modify the inline create modal
+        //based on some field on the main form
+        $field['inline_create']['include_main_form_fields'] = $field['inline_create']['include_main_form_fields'] ?? false;
+
+        if(!is_bool($field['inline_create']['include_main_form_fields'])) {
+            if(is_array($field['inline_create']['include_main_form_fields'])) {
+                $field['inline_create']['include_main_form_fields'] = json_encode($field['inline_create']['include_main_form_fields']);
+            }else{
+                //it is a string or treat it like
+                $arrayed_field = array($field['inline_create']['include_main_form_fields']);
+                $field['inline_create']['include_main_form_fields'] = json_encode($arrayed_field);
+            }
+        }
     }
 }
 
@@ -91,7 +110,7 @@ if($activeInlineCreate) {
         data-init-function="bpFieldInitFetchOrCreateElement"
         data-is-inline="{{ $inlineCreate ?? 'false' }}"
         data-allows-null="{{var_export($field['allows_null'])}}"
-        data-dependencies="{{ isset($field['dependencies'])?json_encode(array_wrap($field['dependencies'])): json_encode([]) }}"
+        data-dependencies="{{ isset($field['dependencies'])?json_encode(Arr::wrap($field['dependencies'])): json_encode([]) }}"
         data-model-local-key="{{$crud->model->getKeyName()}}"
         data-placeholder="{{ $field['placeholder'] }}"
         data-data-source="{{ $field['data_source'] }}"
@@ -99,11 +118,13 @@ if($activeInlineCreate) {
         data-minimum-input-length="{{ $field['minimum_input_length'] }}"
         data-field-attribute="{{ $field['attribute'] }}"
         data-connected-entity-key-name="{{ $connected_entity_key_name }}"
-        data-include-all-form-fields="{{ $field['include_all_form_fields'] ?? 'true' }}"
+        data-include-all-form-fields="{{ var_export($field['include_all_form_fields']) }}"
         data-current-value="{{ $field['value'] }}"
         data-field-ajax="{{var_export($field['ajax'])}}"
         data-inline-modal-class="{{ $field['inline_create']['modal_class'] }}"
         data-app-current-lang="{{ app()->getLocale() }}"
+        data-include-main-form-fields="{{ is_bool($field['inline_create']['include_main_form_fields']) ? var_export($field['inline_create']['include_main_form_fields']) : $field['inline_create']['include_main_form_fields'] }}"
+        data-ajax-delay="{{ $field['delay'] }}"
 
         @if($activeInlineCreate)
             @include('crud::fields.relationship.field_attributes')
@@ -192,7 +213,6 @@ var fetchDefaultEntry = function (element) {
     var $relatedAttribute = element.attr('data-field-attribute');
     var $relatedKeyName = element.attr('data-connected-entity-key-name');
     var $fetchUrl = element.attr('data-data-source');
-    var $appLang = element.attr('data-app-current-lang');
     var $return = {};
     return new Promise(function (resolve, reject) {
         $.ajax({
@@ -206,10 +226,10 @@ var fetchDefaultEntry = function (element) {
                 // we want only the first to be default.
                 if (typeof result.data !== "undefined"){
                     $key = result.data[0][$relatedKeyName];
-                    $value = processItemText(result.data[0], $relatedAttribute, $appLang);
+                    $value = processItemText(result.data[0], $relatedAttribute);
                 }else{
                     $key = result[0][$relatedKeyName];
-                    $value = processItemText(result[0], $relatedAttribute, $appLang);
+                    $value = processItemText(result[0], $relatedAttribute);
                 }
 
                 $pair = { [$relatedKeyName] : $key, [$relatedAttribute] : $value}
@@ -235,6 +255,10 @@ function setupInlineCreateButtons(element) {
     var $inlineModalRoute = element.attr('data-inline-modal-route');
     var $inlineModalClass = element.attr('data-inline-modal-class');
     var $parentLoadedFields = element.attr('data-parent-loaded-fields');
+    var $includeMainFormFields = element.attr('data-include-main-form-fields') == 'false' ? false : (element.attr('data-include-main-form-fields') == 'true' ? true : element.attr('data-include-main-form-fields'));
+
+    var $form = element.closest('form');
+
     $inlineCreateButtonElement.on('click', function () {
 
         //we change button state so users know something is happening.
@@ -245,13 +269,42 @@ function setupInlineCreateButtons(element) {
 
 
         }
+
+        //prepare main form fields to be submited in case there are some.
+        if(typeof $includeMainFormFields === "boolean" && $includeMainFormFields === true) {
+            var $toPass = $form.serializeArray();
+        }else{
+            if(typeof $includeMainFormFields !== "boolean") {
+            var $fields = JSON.parse($includeMainFormFields);
+            var $serializedForm = $form.serializeArray();
+            var $toPass = [];
+                $fields.forEach(function(value, index) {
+                    $valueFromForm = $serializedForm.filter(field => field.name === value);
+                    $toPass.push($valueFromForm[0]);
+
+                });
+
+                $includeMainFormFields = true;
+            }
+        }
         $.ajax({
             url: $inlineModalRoute,
-            data: {
-                'entity': $fieldEntity,
-                'modal_class' : $inlineModalClass,
-                'parent_loaded_fields' : $parentLoadedFields,
-            },
+            data: (function() {
+                if($includeMainFormFields) {
+                    return {
+                        'entity': $fieldEntity,
+                        'modal_class' : $inlineModalClass,
+                        'parent_loaded_fields' : $parentLoadedFields,
+                        'main_form_fields' : $toPass
+                    };
+                }else{
+                    return {
+                        'entity': $fieldEntity,
+                        'modal_class' : $inlineModalClass,
+                        'parent_loaded_fields' : $parentLoadedFields
+                    };
+                }
+            })(),
             type: 'POST',
             success: function (result) {
                 $('body').append(result);
@@ -279,14 +332,13 @@ function ajaxSearch(element, created) {
     var $relatedAttribute = element.attr('data-field-attribute');
     var $relatedKeyName = element.attr('data-connected-entity-key-name');
     var $searchString = created[$relatedAttribute];
-    var $appLang = element.attr('data-app-current-lang');
 
     //we run the promise with ajax call to search endpoint to check if we got the created entity back
     //in case we do, we add it to the selected options.
     performAjaxSearch(element, $searchString).then(result => {
         var inCreated = $.map(result.data, function (item) {
-            var $itemText = processItemText(item, $relatedAttribute, $appLang);
-            var $createdText = processItemText(created, $relatedAttribute, $appLang);
+            var $itemText = processItemText(item, $relatedAttribute);
+            var $createdText = processItemText(created, $relatedAttribute);
             if($itemText == $createdText) {
                     return {
                         text: $itemText,
@@ -306,8 +358,9 @@ function ajaxSearch(element, created) {
 
 function triggerModal(element) {
     var $fieldName = element.attr('data-field-related-name');
-    var $modal = $('#'+$fieldName+'-inline-create-dialog');
+    var $modal = $('#inline-create-dialog');
     var $modalSaveButton = $modal.find('#saveButton');
+    var $modalCancelButton = $modal.find('#cancelButton');
     var $form = $(document.getElementById($fieldName+"-inline-create-form"));
     var $inlineCreateRoute = element.attr('data-inline-create-route');
     var $ajax = element.attr('data-field-ajax') == 'true' ? true : false;
@@ -316,8 +369,11 @@ function triggerModal(element) {
 
     $modal.modal();
 
-
     initializeFieldsWithJavascript($form);
+
+    $modalCancelButton.on('click', function () {
+        $($modal).modal('hide');
+    });
 
     //when you hit save on modal save button.
     $modalSaveButton.on('click', function () {
@@ -398,7 +454,16 @@ function triggerModal(element) {
 
 
     $modal.on('shown.bs.modal', function (e) {
-
+        $modal.on('keyup',  function (e) {
+        if($modal.is(':visible')) {
+            var key = e.which;
+                if (key == 13) { //This is an ENTER
+                e.preventDefault();
+                $modalSaveButton.click();
+            }
+        }
+        return false;
+    });
     });
 }
 
@@ -408,9 +473,8 @@ function selectOption(element, option) {
     var $relatedAttribute = element.attr('data-field-attribute');
     var $relatedKeyName = element.attr('data-connected-entity-key-name');
     var $multiple = element.prop('multiple');
-    var $appLang = element.attr('data-app-current-lang');
 
-    var $optionText = processItemText(option, $relatedAttribute, $appLang);
+    var $optionText = processItemText(option, $relatedAttribute);
 
     var $option = new Option($optionText, option[$relatedKeyName]);
 
@@ -448,9 +512,9 @@ function bpFieldInitFetchOrCreateElement(element) {
     var $dependencies = JSON.parse(element.attr('data-dependencies'));
     var $modelKey = element.attr('data-model-local-key');
     var $allows_null = (element.attr('data-allows-null') == 'true') ? true : false;
-    var $appLang = element.attr('data-app-current-lang');
-    var $selectedOptions = JSON.parse(element.attr('data-selected-options') ?? null);
+    var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse(null);
     var $multiple = element.prop('multiple');
+    var $ajaxDelay = element.attr('data-ajax-delay');
 
     var FetchOrCreateAjaxFetchSelectedEntry = function (element) {
             return new Promise(function (resolve, reject) {
@@ -485,7 +549,7 @@ function bpFieldInitFetchOrCreateElement(element) {
 
             FetchOrCreateAjaxFetchSelectedEntry(element).then(result => {
                 result.forEach(function(item) {
-                $itemText = processItemText(item, $fieldAttribute, $appLang);
+                $itemText = processItemText(item, $fieldAttribute);
                 $itemValue = item[$connectedEntityKeyName];
                 //add current key to be selected later.
                 optionsForSelect.push($itemValue);
@@ -547,7 +611,7 @@ function bpFieldInitFetchOrCreateElement(element) {
                     url: $dataSource,
                     type: $method,
                     dataType: 'json',
-                    quietMillis: 500,
+                    delay: $ajaxDelay,
                     data: function (params) {
                     if ($includeAllFormFields) {
                     return {
@@ -569,7 +633,7 @@ function bpFieldInitFetchOrCreateElement(element) {
                 if(data.data) {
                 var result = {
                     results: $.map(data.data, function (item) {
-                        var $itemText = processItemText(item, $fieldAttribute, $appLang);
+                        var $itemText = processItemText(item, $fieldAttribute);
 
                         return {
                             text: $itemText,
@@ -583,7 +647,7 @@ function bpFieldInitFetchOrCreateElement(element) {
                 }else {
                     var result = {
                         results: $.map(data, function (item) {
-                            var $itemText = processItemText(item, $fieldAttribute, $appLang);
+                            var $itemText = processItemText(item, $fieldAttribute);
 
                             return {
                                 text: $itemText,
@@ -601,28 +665,51 @@ function bpFieldInitFetchOrCreateElement(element) {
             cache: true
         },
                 });
-            }
 
+        // if any dependencies have been declared
+        // when one of those dependencies changes value
+        // reset the select2 value
         for (var i=0; i < $dependencies.length; i++) {
-        $dependency = $dependencies[i];
-        $('input[name='+$dependency+'], select[name='+$dependency+'], checkbox[name='+$dependency+'], radio[name='+$dependency+'], textarea[name='+$dependency+']').change(function () {
-            element.val(null).trigger("change");
-        });
-    }
-
-        }
-if (typeof processItemText !== 'function') {
-    function processItemText(item, $fieldAttribute, $appLang) {
-        if(typeof item[$fieldAttribute] === 'object' && item[$fieldAttribute] !== null)  {
-                if(item[$fieldAttribute][$appLang] != 'undefined') {
-                    return item[$fieldAttribute][$appLang];
-                }else{
-                    return item[$fieldAttribute][0];
-                }
+            var $dependency = $dependencies[i];
+            //if element does not have a custom-selector attribute we use the name attribute
+            if(typeof element.attr('data-custom-selector') === 'undefined') {
+                form.find(`[name="${$dependency}"], [name="${$dependency}[]"]`).change(function(el) {
+                        $(element.find('option:not([value=""])')).remove();
+                        element.val(null).trigger("change");
+                });
             }else{
-                return item[$fieldAttribute];
+                // we get the row number and custom selector from where element is called
+                let rowNumber = element.attr('data-row-number');
+                let selector = element.attr('data-custom-selector');
+
+                // replace in the custom selector string the corresponding row and dependency name to match
+                    selector = selector
+                        .replaceAll('%DEPENDENCY%', $dependency)
+                        .replaceAll('%ROW%', rowNumber);
+
+                $(selector).change(function (el) {
+                    $(element.find('option:not([value=""])')).remove();
+                    element.val(null).trigger("change");
+                });
             }
+        }
+
+    }
 }
+
+
+if (typeof processItemText !== 'function') {
+    function processItemText(item, $fieldAttribute) {
+        var $appLang = '{{ app()->getLocale() }}';
+        var $appLangFallback = '{{ Lang::getFallback() }}';
+        var $emptyTranslation = '{{ trans("backpack::crud.empty_translations") }}';
+        var $itemField = item[$fieldAttribute];
+
+        // try to retreive the item in app language; then fallback language; then first entry; if nothing found empty translation string
+        return typeof $itemField === 'object' && $itemField !== null
+            ? $itemField[$appLang] ?? $itemField[$appLangFallback] ?? Object.values($itemField)[0] ?? $emptyTranslation
+            : $itemField;
+    }
 }
             </script>
         @endpush

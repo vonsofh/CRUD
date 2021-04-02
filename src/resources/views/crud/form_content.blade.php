@@ -16,18 +16,18 @@
 {{-- Define blade stacks so css and js can be pushed from the fields to these sections. --}}
 
 @section('after_styles')
-    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/crud.css') }}">
-    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/form.css') }}">
-    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/'.$action.'.css') }}">
+    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/crud.css').'?v='.config('backpack.base.cachebusting_string') }}">
+    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/form.css').'?v='.config('backpack.base.cachebusting_string') }}">
+    <link rel="stylesheet" href="{{ asset('packages/backpack/crud/css/'.$action.'.css').'?v='.config('backpack.base.cachebusting_string') }}">
 
     <!-- CRUD FORM CONTENT - crud_fields_styles stack -->
     @stack('crud_fields_styles')
 @endsection
 
 @section('after_scripts')
-    <script src="{{ asset('packages/backpack/crud/js/crud.js') }}"></script>
-    <script src="{{ asset('packages/backpack/crud/js/form.js') }}"></script>
-    <script src="{{ asset('packages/backpack/crud/js/'.$action.'.js') }}"></script>
+    <script src="{{ asset('packages/backpack/crud/js/crud.js').'?v='.config('backpack.base.cachebusting_string') }}"></script>
+    <script src="{{ asset('packages/backpack/crud/js/form.js').'?v='.config('backpack.base.cachebusting_string') }}"></script>
+    <script src="{{ asset('packages/backpack/crud/js/'.$action.'.js').'?v='.config('backpack.base.cachebusting_string') }}"></script>
 
     <!-- CRUD FORM CONTENT - crud_fields_scripts stack -->
     @stack('crud_fields_scripts')
@@ -131,17 +131,17 @@
                         container = field.parents('.form-group');
 
             container.addClass('text-danger');
-            container.children('input, textarea').addClass('is-invalid');
+            container.children('input, textarea, select').addClass('is-invalid');
 
             $.each(messages, function(key, msg){
                 // highlight the input that errored
-                var row = $('<div class="invalid-feedback">' + msg + '</div>');
+                var row = $('<div class="invalid-feedback d-block">' + msg + '</div>');
                 row.appendTo(container);
 
                 // highlight its parent tab
                 @if ($crud->tabsEnabled())
-                var tab_id = $(container).parent().attr('id');
-                $("#form_tabs [aria-controls="+tab_id+"]").addClass('text-red');
+                var tab_id = $(container).closest('[role="tabpanel"]').attr('id');
+                $("#form_tabs [aria-controls="+tab_id+"]").addClass('text-danger');
                 @endif
             });
         });

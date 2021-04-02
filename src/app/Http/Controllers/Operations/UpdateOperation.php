@@ -26,12 +26,6 @@ trait UpdateOperation
             'uses'      => $controller.'@update',
             'operation' => 'update',
         ]);
-
-        Route::get($segment.'/{id}/translate/{lang}', [
-            'as'        => $routeName.'.translateItem',
-            'uses'      => $controller.'@translateItem',
-            'operation' => 'update',
-        ]);
     }
 
     /**
@@ -65,7 +59,7 @@ trait UpdateOperation
      *
      * @param int $id
      *
-     * @return Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
@@ -88,7 +82,7 @@ trait UpdateOperation
     /**
      * Update the specified resource in the database.
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function update()
     {

@@ -12,8 +12,7 @@ trait AutoSet
      */
     public function setFromDb()
     {
-        if (! $this->driverIsMongoDb()) {
-            $this->setDoctrineTypesMapping();
+        if ($this->driverIsSql()) {
             $this->getDbColumnTypes();
         }
 
@@ -53,6 +52,8 @@ trait AutoSet
      */
     public function getDbColumnTypes()
     {
+        $this->setDoctrineTypesMapping();
+
         $dbColumnTypes = [];
 
         foreach ($this->getDbTableColumns() as $key => $column) {
@@ -165,7 +166,7 @@ trait AutoSet
     public function setDoctrineTypesMapping()
     {
         $types = ['enum' => 'string'];
-        $platform = $this->getSchema()->getConnection()->getDoctrineConnection()->getDatabasePlatform();
+        $platform = $this->getSchema()->getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
         foreach ($types as $type_key => $type_value) {
             if (! $platform->hasDoctrineTypeMappingFor($type_key)) {
                 $platform->registerDoctrineTypeMapping($type_key, $type_value);
@@ -220,7 +221,7 @@ trait AutoSet
     {
         $fillable = $this->model->getFillable();
 
-        if ($this->driverIsMongoDb()) {
+        if (! $this->driverIsSql()) {
             $columns = $fillable;
         } else {
             // Automatically-set columns should be both in the database, and in the $fillable variable on the Eloquent Model
