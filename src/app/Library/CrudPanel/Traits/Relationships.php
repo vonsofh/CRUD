@@ -9,7 +9,7 @@ trait Relationships
     /**
      * From the field entity we get the relation instance.
      *
-     * @param array $entity
+     * @param  array  $entity
      * @return object
      */
     public function getRelationInstance($field)
@@ -47,7 +47,7 @@ trait Relationships
     /**
      * Grabs an relation instance and returns the class name of the related model.
      *
-     * @param array $field
+     * @param  array  $field
      * @return string
      */
     public function inferFieldModelFromRelationship($field)
@@ -60,7 +60,7 @@ trait Relationships
     /**
      * Return the relation type from a given field: BelongsTo, HasOne ... etc.
      *
-     * @param array $field
+     * @param  array  $field
      * @return string
      */
     public function inferRelationTypeFromRelationship($field)
@@ -74,7 +74,7 @@ trait Relationships
      * Parse the field name back to the related entity after the form is submited.
      * Its called in getAllFieldNames().
      *
-     * @param array $fields
+     * @param  array  $fields
      * @return array
      */
     public function parseRelationFieldNamesFromHtml($fields)
@@ -99,7 +99,7 @@ trait Relationships
     /**
      * Based on relation type returns the default field type.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return bool
      */
     public function inferFieldTypeFromFieldRelation($field)
@@ -121,7 +121,7 @@ trait Relationships
     /**
      * Based on relation type returns if relation allows multiple entities.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return bool
      */
     public function guessIfFieldHasMultipleFromRelationType($relation_type)
@@ -144,7 +144,7 @@ trait Relationships
     /**
      * Based on relation type returns if relation has a pivot table.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return bool
      */
     public function guessIfFieldHasPivotFromRelationType($relation_type)

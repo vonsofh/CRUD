@@ -229,7 +229,7 @@ trait Read
     /**
      * Specify array of available page lengths on the list view.
      *
-     * @param array|int $menu
+     * @param  array|int  $menu
      *
      * https://backpackforlaravel.com/docs/4.1/crud-cheat-sheet#page-length
      */
@@ -263,7 +263,7 @@ trait Read
      * Builds the menu from the given array. It works out with two different types of arrays:
      *  [1, 2, 3] AND [1 => 'one', 2 => 'two', 3 => 'three'].
      *
-     * @param array $menu
+     * @param  array  $menu
      * @return array
      */
     private function buildPageLengthMenuFromArray($menu)
@@ -309,7 +309,7 @@ trait Read
     /**
      * Checks if the provided PageLength segment is valid.
      *
-     * @param array|int $value
+     * @param  array|int  $value
      * @return void
      */
     private function abortIfInvalidPageLength($value)

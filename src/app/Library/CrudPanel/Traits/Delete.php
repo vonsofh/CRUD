@@ -13,7 +13,7 @@ trait Delete
     /**
      * Delete a row from the database.
      *
-     * @param int $id The id of the item to be deleted.
+     * @param  int  $id  The id of the item to be deleted.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException if the model was not found.
      *

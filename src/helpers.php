@@ -176,8 +176,8 @@ if (! function_exists('mb_ucfirst')) {
      * Capitalize the first letter of a string,
      * even if that string is multi-byte (non-latin alphabet).
      *
-     * @param string   $string   String to have its first letter capitalized.
-     * @param encoding $encoding Character encoding
+     * @param  string  $string  String to have its first letter capitalized.
+     * @param  encoding  $encoding  Character encoding
      *
      * @return string String with first letter capitalized.
      */

@@ -12,7 +12,7 @@ trait HeadingsAndTitles
     /**
      * Get the title string for the current controller method (action).
      *
-     * @param bool $action create / edit / reorder / etc
+     * @param  bool  $action  create / edit / reorder / etc
      *
      * @return string
      */
@@ -30,8 +30,8 @@ trait HeadingsAndTitles
     /**
      * Change the title of a page for a certain controller method (action).
      *
-     * @param string $string string to use as title
-     * @param string $action create / edit / reorder / etc
+     * @param  string  $string  string to use as title
+     * @param  string  $action  create / edit / reorder / etc
      */
     public function setTitle($string, $action = false)
     {
@@ -50,7 +50,7 @@ trait HeadingsAndTitles
     /**
      * Get the heading string for the current controller method (action).
      *
-     * @param bool $action create / edit / reorder / etc
+     * @param  bool  $action  create / edit / reorder / etc
      *
      * @return string
      */
@@ -68,8 +68,8 @@ trait HeadingsAndTitles
     /**
      * Change the heading of a page for a certain controller method (action).
      *
-     * @param string $string string to use as heading
-     * @param string $action create / edit / reorder / etc
+     * @param  string  $string  string to use as heading
+     * @param  string  $action  create / edit / reorder / etc
      */
     public function setHeading($string, $action = false)
     {
@@ -88,7 +88,7 @@ trait HeadingsAndTitles
     /**
      * Get the subheading for a certain controller method (action).
      *
-     * @param bool $action create / edit / reorder / etc
+     * @param  bool  $action  create / edit / reorder / etc
      *
      * @return string
      */
@@ -106,8 +106,8 @@ trait HeadingsAndTitles
     /**
      * Change the subheading of a page for a certain controller method (action).
      *
-     * @param string $string string to use as subheading
-     * @param string $action create / edit / reorder / etc
+     * @param  string  $string  string to use as subheading
+     * @param  string  $action  create / edit / reorder / etc
      */
     public function setSubheading($string, $action = false)
     {

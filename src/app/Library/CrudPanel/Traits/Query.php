@@ -22,7 +22,7 @@ trait Query
      *     $query->activePosts();
      * });
      *
-     * @param callable $function
+     * @param  callable  $function
      *
      * @return mixed
      */
@@ -34,7 +34,7 @@ trait Query
     /**
      * Use eager loading to reduce the number of queries on the table view.
      *
-     * @param array|string $entities
+     * @param  array|string  $entities
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -46,8 +46,8 @@ trait Query
     /**
      * Order the results of the query in a certain way.
      *
-     * @param string $field
-     * @param string $order
+     * @param  string  $field
+     * @param  string  $order
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -63,8 +63,8 @@ trait Query
     /**
      * Order results of the query in a custom way.
      *
-     * @param array  $column           Column array with all attributes
-     * @param string $column_direction ASC or DESC
+     * @param  array  $column  Column array with all attributes
+     * @param  string  $column_direction  ASC or DESC
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -88,7 +88,7 @@ trait Query
     /**
      * Group the results of the query in a certain way.
      *
-     * @param string $field
+     * @param  string  $field
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -100,7 +100,7 @@ trait Query
     /**
      * Limit the number of results in the query.
      *
-     * @param int $number
+     * @param  int  $number
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -112,7 +112,7 @@ trait Query
     /**
      * Take a certain number of results from the query.
      *
-     * @param int $number
+     * @param  int  $number
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -124,7 +124,7 @@ trait Query
     /**
      * Start the result set from a certain number.
      *
-     * @param int $number
+     * @param  int  $number
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */

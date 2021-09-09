@@ -27,7 +27,7 @@ class ResetPasswordController extends Controller
     /**
      * Get the path the user should be redirected to after password reset.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
      * @return string
      */
@@ -64,8 +64,8 @@ class ResetPasswordController extends Controller
      *
      * If no token is present, display the link request form.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string|null              $token
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|null  $token
      *
      * @return \Illuminate\Http\Response
      */

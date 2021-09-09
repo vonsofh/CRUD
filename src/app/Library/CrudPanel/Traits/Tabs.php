@@ -72,7 +72,7 @@ trait Tabs
     }
 
     /**
-     * @param string $label
+     * @param  string  $label
      *
      * @return bool
      */

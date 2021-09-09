@@ -23,7 +23,7 @@ trait HasTranslations
     /**
      * Use the forced locale if present.
      *
-     * @param string $key
+     * @param  string  $key
      *
      * @return mixed
      */
@@ -67,7 +67,7 @@ trait HasTranslations
     /**
      * Create translated items as json.
      *
-     * @param array $attributes
+     * @param  array  $attributes
      *
      * @return static
      */
@@ -95,8 +95,8 @@ trait HasTranslations
     /**
      * Update translated items as json.
      *
-     * @param array $attributes
-     * @param array $options
+     * @param  array  $attributes
+     * @param  array  $options
      *
      * @return bool
      */
@@ -177,8 +177,8 @@ trait HasTranslations
     /**
      * Magic method to get the db entries already translated in the wanted locale.
      *
-     * @param string $method
-     * @param array  $parameters
+     * @param  string  $method
+     * @param  array  $parameters
      *
      * @return
      */

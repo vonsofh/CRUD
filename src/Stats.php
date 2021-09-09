@@ -82,9 +82,9 @@ trait Stats
      * It spins up a separate process for this, and doesn't listen for a reponse,
      * so it has minimal to no impact on pageload.
      *
-     * @param string $method  HTTP Method to use for the request.
-     * @param string $url     URL to point the request at.
-     * @param array  $payload The data you want sent to the URL.
+     * @param  string  $method  HTTP Method to use for the request.
+     * @param  string  $url  URL to point the request at.
+     * @param  array  $payload  The data you want sent to the URL.
      *
      * @return void
      */
@@ -107,9 +107,9 @@ trait Stats
      * geographic location this is usually slower than CURL. However,
      * unlike CURL, it works on most machines, so it's reliable.
      *
-     * @param string $method  HTTP Method to use for the request.
-     * @param string $url     URL to point the request at.
-     * @param array  $payload The data you want sent to the URL.
+     * @param  string  $method  HTTP Method to use for the request.
+     * @param  string  $url  URL to point the request at.
+     * @param  array  $payload  The data you want sent to the URL.
      *
      * @return void
      */
