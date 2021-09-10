@@ -25,6 +25,7 @@
         data-connected-entity-key-name="{{ $connected_entity_key_name }}"
         data-include-all-form-fields="{{ isset($field['include_all_form_fields']) ? ($field['include_all_form_fields'] ? 'true' : 'false') : 'false' }}"
         data-ajax-delay="{{ $field['delay'] }}"
+        data-language="{{ str_replace('_', '-', app()->getLocale()) }}"
         @include('crud::fields.inc.attributes', ['default_class' =>  'form-control'])
         >
 
@@ -86,7 +87,7 @@
     <!-- include select2 js-->
     <script src="{{ asset('packages/select2/dist/js/select2.full.min.js') }}"></script>
     @if (app()->getLocale() !== 'en')
-    <script src="{{ asset('packages/select2/dist/js/i18n/' . app()->getLocale() . '.js') }}"></script>
+    <script src="{{ asset('packages/select2/dist/js/i18n/' . str_replace('_', '-', app()->getLocale()) . '.js') }}"></script>
     @endif
     @endpush
 
@@ -190,7 +191,7 @@
             $selectedOptions != [])
         {
             var optionsForSelect = [];
-            select2AjaxFetchSelectedEntry(element).then(result => {
+            select2AjaxFetchSelectedEntry(element).then(function(result) {
                 result.forEach(function(item) {
                     $itemText = item[$fieldAttribute];
                     $itemValue = item[$connectedEntityKeyName];
@@ -203,7 +204,6 @@
 
                 // set the option keys as selected.
                 $(element).val(optionsForSelect);
-                $(element).trigger('change');
             });
         }
 
@@ -211,16 +211,29 @@
         // when one of those dependencies changes value
         // reset the select2 value
         for (var i=0; i < $dependencies.length; i++) {
-            $dependency = $dependencies[i];
-            $('input[name='+$dependency+'], select[name='+$dependency+'], checkbox[name='+$dependency+'], radio[name='+$dependency+'], textarea[name='+$dependency+']').change(function () {
+            var $dependency = $dependencies[i];
+            //if element does not have a custom-selector attribute we use the name attribute
+            if(typeof element.attr('data-custom-selector') == 'undefined') {
+                form.find('[name="'+$dependency+'"], [name="'+$dependency+'[]"]').change(function(el) {
+                        $(element.find('option:not([value=""])')).remove();
+                        element.val(null).trigger("change");
+                });
+            }else{
+                // we get the row number and custom selector from where element is called
+                let rowNumber = element.attr('data-row-number');
+                let selector = element.attr('data-custom-selector');
 
-                //apart from setting selection to null, we clear the options until the next fetch from server happen.
-                $(element.find('option:not([value=""])')).remove();
+                // replace in the custom selector string the corresponding row and dependency name to match
+                selector = selector
+                    .replaceAll('%DEPENDENCY%', $dependency)
+                    .replaceAll('%ROW%', rowNumber);
 
-                element.val(null).trigger("change");
-            });
+                $(selector).change(function (el) {
+                    $(element.find('option:not([value=""])')).remove();
+                    element.val(null).trigger("change");
+                });
+            }
         }
-
     }
 </script>
 @endpush
