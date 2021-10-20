@@ -23,9 +23,11 @@ trait Update
     {
         $data = $this->decodeJsonCastedAttributes($data);
         $data = $this->compactFakeFields($data);
+        
         $item = $this->model->findOrFail($id);
 
         $data = $this->changeBelongsToNamesFromRelationshipToForeignKey($data);
+        $data = $this->handleRepeatableFieldsToJsonColumn($data);
 
         $this->createRelations($item, $data);
 

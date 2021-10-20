@@ -119,20 +119,7 @@
 
   @push('crud_fields_scripts')
       <script>
-        /**
-         * Takes all inputs and makes them an object.
-         */
-        function repeatableInputToObj(container_name) {
-            var arr = [];
 
-            var container = $('[data-repeatable-holder='+container_name+']');
-
-            container.find('.well').each(function () {
-                arr.push(repeatableElementToObj($(this)));
-            });
-
-            return arr;
-        }
 
         /**
          * Takes all inputs in a repeatable element and makes them an object.
@@ -164,18 +151,11 @@
             var min_rows = Number(container_holder.attr('data-min-rows'));
             var max_rows = Number(container_holder.attr('data-max-rows')) || Infinity;
 
-            // make sure the inputs no longer have a "name" attribute,
-            // so that the form will not send the inputs as request variables;
-            // use a "data-repeatable-input-name" attribute to store the same information;
+            // use a "data-repeatable-input-name" attribute to store the same original field name;
             container.find('input, select, textarea')
                     .each(function(){
-                        if ($(this).data('name')) {
-                            var name_attr = $(this).data('name');
-                            $(this).removeAttr("data-name");
-                        } else if ($(this).attr('name')) {
-                            var name_attr = $(this).attr('name');
-                            $(this).removeAttr("name");
-                        }
+                       // updateRepeatableIndexNames($(this), 0);
+                       var name_attr = getCleanNameArgFromInput($(this));
                         $(this).attr('data-repeatable-input-name', name_attr)
                     });
 
@@ -202,17 +182,6 @@
                     container_rows++;
                     add_entry_button.trigger('click');
                 }
-            }
-
-            if (element.closest('.modal-content').length) {
-                element.closest('.modal-content').find('.save-block').click(function(){
-                    element.val(JSON.stringify(repeatableInputToObj(field_name)));
-                })
-            } else if (element.closest('form').length) {
-                element.closest('form').submit(function(){
-                    element.val(JSON.stringify(repeatableInputToObj(field_name)));
-                    return true;
-                })
             }
         }
 
@@ -242,6 +211,8 @@
 
                 //we reassure row numbers on delete
                 setupElementRowsNumbers(container_holder);
+
+                updateRepeatableContainerNamesIndexes(container_holder);
             });
 
             new_field_group.find('.move-element-up, .move-element-down').click(function(){
@@ -318,6 +289,8 @@
             // increment the container current number of rows by +1
             updateRepeatableRowCount(container_holder, 1);
 
+            updateRepeatableContainerNamesIndexes(container_holder);
+
             initializeFieldsWithJavascript(container_holder);
 
             if (Number.isInteger(position)) {
@@ -370,6 +343,32 @@
 
             // show or hide new item button
             container.parent().parent().find('.add-repeatable-element-button').toggleClass('d-none', current_rows >= max_rows);
+        }
+
+        function updateRepeatableIndexName(element, index, field_name) {
+                let name_attr = getCleanNameArgFromInput(element); 
+                element.attr('name', field_name+'['+index+']['+name_attr+']');
+        }
+
+        function getCleanNameArgFromInput(element) {
+            if (element.data('repeatable-input-name')) {
+                return element.data('repeatable-input-name');
+            }
+            if (element.data('name')) {
+                return element.data('name');       
+            } else if (element.attr('name')) {
+               return element.attr('name');
+            }
+        }
+
+        function updateRepeatableContainerNamesIndexes(container) {
+            container.children().each(function(i, el) {
+                // updates the indexes in the array of repeatable inputs
+                $(el).find('input, select, textarea').each(function(i, el) {
+                    let el_index = $(el).attr('data-row-number')-1;
+                    updateRepeatableIndexName($(el), el_index, container.attr('data-repeatable-holder'));
+                });
+            });
         }
     </script>
   @endpush

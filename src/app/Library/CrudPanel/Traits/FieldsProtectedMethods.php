@@ -270,4 +270,44 @@ trait FieldsProtectedMethods
 
         return $field['name'];
     }
+
+    /**
+     * Handle repeatable fields conversion to json and mutates the needed attributes
+     *
+     * @param  array  $data  the form data
+     * @return array  $data the form data with parsed repeatable inputs to be stored
+     */
+    protected function handleRepeatableFieldsToJsonColumn($data) {
+
+        $repeatable_fields = array_filter($this->fields(), function($field) {
+            return $field['type'] === 'repeatable';
+        });
+
+        if(empty($repeatable_fields)) {
+            return $data;
+        }
+
+        $repeatable_data_fields = collect($data)->filter(function($value, $key) use ($repeatable_fields) {
+            return in_array($key, array_column($repeatable_fields, 'name'));
+        })->toArray();
+
+        // cicle all the repeatable fields
+        foreach($repeatable_fields as $repeatable_name => $repeatable_field) {
+            $model = $crud_field['model'] ?? $this->model;
+            // check if any of the repeatable fields have a mutator
+            foreach($repeatable_field['fields'] as $key => $repeatable_subfield) {
+                if($model->hasSetMutator($repeatable_subfield['name']) && isset($repeatable_subfield['run_mutator']) && $repeatable_subfield['run_mutator'] !== false) {
+                    $mutator_name = is_bool($repeatable_subfield['run_mutator']) ? $repeatable_subfield['name'] : $repeatable_subfield['run_mutator'];
+                    // if it does, we iterate the entries in repeatable data to run the attribute through the mutator before storing it
+                    foreach($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
+                        $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $model->setAttribute($mutator_name, $data[$repeatable_name][$field_key][$repeatable_subfield['name']]);
+                    }
+                }
+            }
+
+            // set the properly json encoded string to be stored in database
+            $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name]);
+        }
+        return $data;
+    }
 }
