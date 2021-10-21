@@ -20,6 +20,11 @@
       value="{{ $field['value'] }}"
       @include('crud::fields.inc.attributes')
   >
+  <input
+      type="hidden"
+      name="{{ $field['name'] }}_deleted_elements"
+      @include('crud::fields.inc.attributes')
+  >
 
   {{-- HINT --}}
   @if (isset($field['hint']))
@@ -173,7 +178,7 @@
                 var repeatable_fields_values = JSON.parse(element.val());
 
                 for (var i = 0; i < repeatable_fields_values.length; ++i) {
-                    newRepeatableElement(container, field_group_clone, repeatable_fields_values[i]);
+                    newRepeatableElement(container, field_group_clone, repeatable_fields_values[i], false, true);
                 }
             } else {
                 var container_rows = 0;
@@ -188,7 +193,7 @@
         /**
          * Adds a new field group to the repeatable input.
          */
-        function newRepeatableElement(container, field_group, values, position) {
+        function newRepeatableElement(container, field_group, values, position, preloaded = false) {
 
             var field_name = container.data('repeatable-identifier');
             var new_field_group = field_group.clone();
@@ -197,11 +202,29 @@
             var container_holder = $('[data-repeatable-holder='+field_name+']');
 
             new_field_group.find('.delete-element').click(function(){
+                if(preloaded) {
+                        let current_deleted = $('[name='+field_name+'_deleted_elements').val() !== '' ? $('[name='+field_name+'_deleted_elements').val() : '[]'; 
+                        //console.log(JSON.parse($('[name='+field_name+'_deleted_elements').val()));
+                         current_deleted = JSON.parse(current_deleted);
+                        if(current_deleted) {
+                            console.log(current_deleted);
+                            current_deleted.push(values);
+                        }else{
+                            current_deleted = values;
+                        }
+                        //console.log();
+                        $('[name='+field_name+'_deleted_elements').val(JSON.stringify(current_deleted)); 
+                    }
                 new_field_group.find('input, select, textarea').each(function(i, el) {
                     // we trigger this event so fields can intercept when they are beeing deleted from the page
                     // implemented because of ckeditor instances that stayed around when deleted from page
                     // introducing unwanted js errors and high memory usage.
                     $(el).trigger('backpack_field.deleted');
+                    //console.log(preloaded)
+                    // if this field was preloaded from database data, we will save his values to send along with form for developer handling
+                    
+
+                    
                 });
 
                 // decrement the container current number of rows by -1
@@ -278,7 +301,7 @@
             if (!Number.isInteger(position) || $children.length - 1 < position) {
                 container_holder.append(new_field_group);
             } else {
-                container_holder.children().eq(position).before(new_field_group);
+                $children.eq(position).before(new_field_group);
             }
 
             // after appending to the container we reassure row numbers
@@ -363,10 +386,13 @@
 
         function updateRepeatableContainerNamesIndexes(container) {
             container.children().each(function(i, el) {
+                console.log(el);
                 // updates the indexes in the array of repeatable inputs
                 $(el).find('input, select, textarea').each(function(i, el) {
-                    let el_index = $(el).attr('data-row-number')-1;
-                    updateRepeatableIndexName($(el), el_index, container.attr('data-repeatable-holder'));
+                    if($(el).attr('data-repeatable-input-name') && typeof $(el).attr('data-row-number') !== 'undefined') {
+                        let el_index = $(el).attr('data-row-number')-1;
+                        updateRepeatableIndexName($(el), el_index, container.attr('data-repeatable-holder'));
+                    }
                 });
             });
         }

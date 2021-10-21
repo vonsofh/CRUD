@@ -278,7 +278,7 @@ trait FieldsProtectedMethods
      * @return array  $data the form data with parsed repeatable inputs to be stored
      */
     protected function handleRepeatableFieldsToJsonColumn($data) {
-
+        
         $repeatable_fields = array_filter($this->fields(), function($field) {
             return $field['type'] === 'repeatable';
         });
@@ -287,26 +287,49 @@ trait FieldsProtectedMethods
             return $data;
         }
 
-        $repeatable_data_fields = collect($data)->filter(function($value, $key) use ($repeatable_fields) {
-            return in_array($key, array_column($repeatable_fields, 'name'));
+        $repeatable_data_fields = collect($data)->filter(function($value, $key) use ($repeatable_fields, &$data) {
+            if  (in_array($key, array_column($repeatable_fields, 'name'))) {
+                if(!is_string($value)) {
+                    return true;
+                }else{
+                    unset($data[$key]);
+                    return false;
+                }
+            }
         })->toArray();
 
         // cicle all the repeatable fields
         foreach($repeatable_fields as $repeatable_name => $repeatable_field) {
             $model = $crud_field['model'] ?? $this->model;
+            $deleted_elements = json_decode(request()->input($repeatable_name.'_deleted_elements') ?? null, true);
+            
+            if(isset($repeatable_field['onDelete']) && is_callable($repeatable_field['onDelete']) && !empty($deleted_elements)) {
+                $repeatable_field['onDelete']($deleted_elements);
+            }
+
+            if(isset($repeatable_field['onCreate']) && is_callable($repeatable_field['onCreate'])) {
+                $entry = json_decode(app('crud')->getCurrentEntry() ? app('crud')->getCurrentEntry()->{$repeatable_name} : null, true);
+                $repeatable_field['onCreate']($entry);
+            }
+
+            //dd($repeatable_data_fields);
+            $current_values = json_decode(app('crud')->getCurrentEntry() ? app('crud')->getCurrentEntry()->{$repeatable_name} : null, true);
+            //dd($current_repeatable_value);
             // check if any of the repeatable fields have a mutator
             foreach($repeatable_field['fields'] as $key => $repeatable_subfield) {
-                if($model->hasSetMutator($repeatable_subfield['name']) && isset($repeatable_subfield['run_mutator']) && $repeatable_subfield['run_mutator'] !== false) {
-                    $mutator_name = is_bool($repeatable_subfield['run_mutator']) ? $repeatable_subfield['name'] : $repeatable_subfield['run_mutator'];
-                    // if it does, we iterate the entries in repeatable data to run the attribute through the mutator before storing it
-                    foreach($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
-                        $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $model->setAttribute($mutator_name, $data[$repeatable_name][$field_key][$repeatable_subfield['name']]);
+                if(isset($repeatable_data_fields[$repeatable_name])) {
+                    if(isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
+                                            
+                        // if it does, we iterate the entries in repeatable data to run the attribute through the mutator before storing it
+                        foreach($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
+                            $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($current_values, [$field_key => $data[$repeatable_name][$field_key][$repeatable_subfield['name']]]);
+                        }
                     }
                 }
             }
 
             // set the properly json encoded string to be stored in database
-            $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name]);
+            $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name] ?? []);
         }
         return $data;
     }
