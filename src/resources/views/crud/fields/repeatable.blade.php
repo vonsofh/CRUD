@@ -23,12 +23,14 @@
   <input
       type="hidden"
       name="{{ $field['name'] }}_deleted_elements"
+      value="{{old($field['name'].'_deleted_elements')}}"
       @include('crud::fields.inc.attributes')
   >
 
   <input
       type="hidden"
       name="{{ $field['name'] }}_changed_elements"
+      value="{{old($field['name'].'_changed_elements')}}"
       @include('crud::fields.inc.attributes')
   >
 
@@ -419,16 +421,18 @@
             let current_changed = JSON.parse($('[name='+field_name+'_changed_elements').val() !== '' ? $('[name='+field_name+'_changed_elements').val() : '[]');
             let calculated_row = row+move_direction;
             let changed_element = current_changed.find(element => element.row == row);
+            let concurrent_change = current_changed.find(element => element.row == calculated_row )
+            let temp_elements = current_changed.filter(element => element.row != row && element.row != calculated_row)
             
-            if(changed_element) {
-                let temp_elements = current_changed.filter(element => element.row != row)
-                let concurrent_change = temp_elements.filter(element => element.row != calculated_row)
+            if(changed_element) {              
                 temp_elements.push({row : calculated_row, data : changed_element['data']});
-                if(concurrent_change) {
-                    temp_elements.push({row : row, data : concurrent_change['data']});
-                }
-                $('[name='+field_name+'_changed_elements').val(JSON.stringify(temp_elements)); 
-            }
+             }
+
+             if(concurrent_change) {              
+                temp_elements.push({row : row, data : concurrent_change['data']});
+             }
+ 
+            $('[name='+field_name+'_changed_elements').val(JSON.stringify(temp_elements)); 
         }
     </script>
   @endpush
