@@ -300,31 +300,21 @@ trait FieldsProtectedMethods
 
         // cicle all the repeatable fields
         foreach($repeatable_fields as $repeatable_name => $repeatable_field) {
-            $model = $crud_field['model'] ?? $this->model;
             $deleted_elements = json_decode(request()->input($repeatable_name.'_deleted_elements') ?? null, true);
+            $changed_elements = json_decode(request()->input($repeatable_name.'_changed_elements') ?? null, true);
             
             if(isset($repeatable_field['onDelete']) && is_callable($repeatable_field['onDelete']) && !empty($deleted_elements)) {
-                $repeatable_field['onDelete']($deleted_elements);
+                $repeatable_field['onDelete']($deleted_elements, $changed_elements);
             }
 
-            if(isset($repeatable_field['onCreate']) && is_callable($repeatable_field['onCreate'])) {
-                $entry = json_decode(app('crud')->getCurrentEntry() ? app('crud')->getCurrentEntry()->{$repeatable_name} : null, true);
-                $repeatable_field['onCreate']($entry);
-            }
-
-            //dd($repeatable_data_fields);
-            $current_values = json_decode(app('crud')->getCurrentEntry() ? app('crud')->getCurrentEntry()->{$repeatable_name} : null, true);
-            //dd($current_repeatable_value);
-            // check if any of the repeatable fields have a mutator
+            // check if any of the repeatable fields have a onCreate mutator and run it!
             foreach($repeatable_field['fields'] as $key => $repeatable_subfield) {
                 if(isset($repeatable_data_fields[$repeatable_name])) {
                     if(isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
-                                            
-                        // if it does, we iterate the entries in repeatable data to run the attribute through the mutator before storing it
                         foreach($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
-                            $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($current_values, [$field_key => $data[$repeatable_name][$field_key][$repeatable_subfield['name']]]);
+                            $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
                         }
-                    }
+                    }                        
                 }
             }
 

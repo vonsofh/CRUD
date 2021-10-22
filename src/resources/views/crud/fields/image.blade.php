@@ -204,6 +204,17 @@
                     if(crop){
 
                         $remove.click(function() {
+                            if(element.parent('[data-repeatable-identifier]') && $mainImage.attr('src') !== "" && !$mainImage.attr('src').startsWith('data:image')) {
+                                const event = new CustomEvent('backpack_field.repeatable_change', { 
+                                            detail: { 
+                                                row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
+                                                data:  {
+                                                    previous_image: $mainImage.attr('src'),
+                                                },
+                                            }
+                                        });
+                                window.dispatchEvent(event);
+                            }
                             $mainImage.cropper("destroy");
                             $mainImage.attr('src','');
                             $hiddenImage.val('');
@@ -218,6 +229,17 @@
                     } else {
 
                         $remove.click(function() {
+                            if(element.parent('[data-repeatable-identifier]') && $mainImage.attr('src') !== "" && !$mainImage.attr('src').startsWith('data:image')) {
+                                const event = new CustomEvent('backpack_field.repeatable_change', { 
+                                            detail: { 
+                                                row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
+                                                data:  {
+                                                    previous_image: $mainImage.attr('src'),
+                                                },
+                                            }
+                                        });
+                                window.dispatchEvent(event);
+                            }
                             $mainImage.attr('src','');
                             $hiddenImage.val('');
                             $remove.hide();
@@ -243,7 +265,17 @@
 
                             fileReader.readAsDataURL(file);
                             fileReader.onload = function () {
-
+                                if(element.parent('[data-repeatable-identifier]') && $mainImage.attr('src') !== "" && !$mainImage.attr('src').startsWith('data:image')) {
+                                    const event = new CustomEvent('backpack_field.repeatable_change', { 
+                                                detail: { 
+                                                    row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
+                                                    data:  {
+                                                        previous_image: $mainImage.attr('src'),
+                                                    },
+                                                }
+                                            });
+                                    window.dispatchEvent(event);
+                                }
                                 $uploadImage.val("");
                                 $previews.show();
                                 if(crop){
@@ -269,7 +301,9 @@
                                     $hiddenImage.val(this.result);
                                     $remove.show();
                                 }
+                                
                             };
+                            
                         } else {
                             new Noty({
                                 type: "error",

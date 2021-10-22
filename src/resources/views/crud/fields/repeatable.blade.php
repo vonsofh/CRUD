@@ -26,6 +26,12 @@
       @include('crud::fields.inc.attributes')
   >
 
+  <input
+      type="hidden"
+      name="{{ $field['name'] }}_changed_elements"
+      @include('crud::fields.inc.attributes')
+  >
+
   {{-- HINT --}}
   @if (isset($field['hint']))
       <p class="help-block text-muted text-sm">{!! $field['hint'] !!}</p>
@@ -145,8 +151,25 @@
          * The method that initializes the javascript on this field type.
          */
         function bpFieldInitRepeatableElement(element) {
-
             var field_name = element.attr('name');
+
+            window.addEventListener('backpack_field.repeatable_change', function(e) {
+                if(typeof e.detail === 'undefined') {
+                    console.log("event repeatable_change should be called with format: { details: row: 1, data: { custom_key: custom_value_to_save } }");
+                    return false;
+                }
+
+                if(typeof e.detail.row === 'undefined' || typeof e.detail.data === 'undefined') {
+                    console.log("event repeatable_change should be called with format: { details: row: 1, data: { custom_key: custom_value_to_save } }");
+                    return false;
+                }
+
+                let current_changed = JSON.parse($('[name='+field_name+'_changed_elements').val() !== '' ? $('[name='+field_name+'_changed_elements').val() : '[]'); 
+
+                current_changed.push(e.detail);
+
+                $('[name='+field_name+'_changed_elements').val(JSON.stringify(current_changed)); 
+            });
 
             // element will be a jQuery wrapped DOM node
             var container = $('[data-repeatable-identifier='+field_name+']');
@@ -201,26 +224,19 @@
             // this is the container that holds the group of fields inside the main form.
             var container_holder = $('[data-repeatable-holder='+field_name+']');
 
-            new_field_group.find('.delete-element').click(function(){
+            new_field_group.find('.delete-element').click(function() {
+                // if this fields were loaded initially with some data from database, we save them in case they are deleted from repeatable.
                 if(preloaded) {
-                        let current_deleted = $('[name='+field_name+'_deleted_elements').val() !== '' ? $('[name='+field_name+'_deleted_elements').val() : '[]'; 
-                        //console.log(JSON.parse($('[name='+field_name+'_deleted_elements').val()));
-                         current_deleted = JSON.parse(current_deleted);
-                        if(current_deleted) {
-                            console.log(current_deleted);
-                            current_deleted.push(values);
-                        }else{
-                            current_deleted = values;
-                        }
-                        //console.log();
-                        $('[name='+field_name+'_deleted_elements').val(JSON.stringify(current_deleted)); 
-                    }
+                    let current_deleted = JSON.parse($('[name='+field_name+'_deleted_elements').val() !== '' ? $('[name='+field_name+'_deleted_elements').val() : '[]'); 
+                    current_deleted.push(values);
+                    $('[name='+field_name+'_deleted_elements').val(JSON.stringify(current_deleted)); 
+                }
+
                 new_field_group.find('input, select, textarea').each(function(i, el) {
                     // we trigger this event so fields can intercept when they are beeing deleted from the page
                     // implemented because of ckeditor instances that stayed around when deleted from page
                     // introducing unwanted js errors and high memory usage.
                     $(el).trigger('backpack_field.deleted');
-                    //console.log(preloaded)
                     // if this field was preloaded from database data, we will save his values to send along with form for developer handling
                     
 
@@ -239,15 +255,17 @@
             });
 
             new_field_group.find('.move-element-up, .move-element-down').click(function(){
-                var $repeatableElement = $(this).closest('.repeatable-element');
+                let $repeatableElement = $(this).closest('.repeatable-element');
 
                 // get existing values
-                var values = repeatableElementToObj($repeatableElement);
-                var index = $repeatableElement.index();
-                index += $(this).is('.move-element-up') ? -1 : 1;
+                let values = repeatableElementToObj($repeatableElement);
+                let index = $repeatableElement.index();
+                let move_direction = $(this).is('.move-element-up') ? -1 : 1;
+                let calculated_index = index+move_direction;
 
-                if (index < 0) return;
+                if (calculated_index < 0) return;
 
+                updateRepeatableChangedRows(move_direction, index, field_name);
                 // trigger delete for existing element
                 new_field_group.find('input, select, textarea').each(function(i, el) {
                     // we trigger this event so fields can intercept when they are beeing deleted from the page
@@ -263,7 +281,7 @@
                 $repeatableElement.remove();
 
                 // create new element with existing values in desired position
-                newRepeatableElement(container, field_group, values, index);
+                newRepeatableElement(container, field_group, values, calculated_index);
             });
 
             if (values != null) {
@@ -386,7 +404,6 @@
 
         function updateRepeatableContainerNamesIndexes(container) {
             container.children().each(function(i, el) {
-                console.log(el);
                 // updates the indexes in the array of repeatable inputs
                 $(el).find('input, select, textarea').each(function(i, el) {
                     if($(el).attr('data-repeatable-input-name') && typeof $(el).attr('data-row-number') !== 'undefined') {
@@ -395,6 +412,23 @@
                     }
                 });
             });
+        }
+
+        function updateRepeatableChangedRows(move_direction, index, field_name) {
+            let row = index+1;
+            let current_changed = JSON.parse($('[name='+field_name+'_changed_elements').val() !== '' ? $('[name='+field_name+'_changed_elements').val() : '[]');
+            let calculated_row = row+move_direction;
+            let changed_element = current_changed.find(element => element.row == row);
+            
+            if(changed_element) {
+                let temp_elements = current_changed.filter(element => element.row != row)
+                let concurrent_change = temp_elements.filter(element => element.row != calculated_row)
+                temp_elements.push({row : calculated_row, data : changed_element['data']});
+                if(concurrent_change) {
+                    temp_elements.push({row : row, data : concurrent_change['data']});
+                }
+                $('[name='+field_name+'_changed_elements').val(JSON.stringify(temp_elements)); 
+            }
         }
     </script>
   @endpush
