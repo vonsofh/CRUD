@@ -157,12 +157,12 @@
 
             window.addEventListener('backpack_field.repeatable_change', function(e) {
                 if(typeof e.detail === 'undefined') {
-                    console.log("event repeatable_change should be called with format: { details: row: 1, data: { custom_key: custom_value_to_save } }");
+                    console.log("event repeatable_change should be called with format: { detail: row: 1, data: { custom_key: custom_value_to_save } }");
                     return false;
                 }
 
                 if(typeof e.detail.row === 'undefined' || typeof e.detail.data === 'undefined') {
-                    console.log("event repeatable_change should be called with format: { details: row: 1, data: { custom_key: custom_value_to_save } }");
+                    console.log("event repeatable_change should be called with format: { detail: row: 1, data: { custom_key: custom_value_to_save } }");
                     return false;
                 }
 
