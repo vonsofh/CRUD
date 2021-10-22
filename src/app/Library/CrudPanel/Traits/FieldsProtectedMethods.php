@@ -272,55 +272,57 @@ trait FieldsProtectedMethods
     }
 
     /**
-     * Handle repeatable fields conversion to json and mutates the needed attributes
+     * Handle repeatable fields conversion to json and mutates the needed attributes.
      *
      * @param  array  $data  the form data
-     * @return array  $data the form data with parsed repeatable inputs to be stored
+     * @return array $data the form data with parsed repeatable inputs to be stored
      */
-    protected function handleRepeatableFieldsToJsonColumn($data) {
-        
-        $repeatable_fields = array_filter($this->fields(), function($field) {
+    protected function handleRepeatableFieldsToJsonColumn($data)
+    {
+        $repeatable_fields = array_filter($this->fields(), function ($field) {
             return $field['type'] === 'repeatable';
         });
 
-        if(empty($repeatable_fields)) {
+        if (empty($repeatable_fields)) {
             return $data;
         }
 
-        $repeatable_data_fields = collect($data)->filter(function($value, $key) use ($repeatable_fields, &$data) {
-            if  (in_array($key, array_column($repeatable_fields, 'name'))) {
-                if(!is_string($value)) {
+        $repeatable_data_fields = collect($data)->filter(function ($value, $key) use ($repeatable_fields, &$data) {
+            if (in_array($key, array_column($repeatable_fields, 'name'))) {
+                if (! is_string($value)) {
                     return true;
-                }else{
+                } else {
                     unset($data[$key]);
+
                     return false;
                 }
             }
         })->toArray();
 
         // cicle all the repeatable fields
-        foreach($repeatable_fields as $repeatable_name => $repeatable_field) {
+        foreach ($repeatable_fields as $repeatable_name => $repeatable_field) {
             $deleted_elements = json_decode(request()->input($repeatable_name.'_deleted_elements') ?? null, true);
             $changed_elements = json_decode(request()->input($repeatable_name.'_changed_elements') ?? null, true);
-            
-            if(isset($repeatable_field['onDelete']) && is_callable($repeatable_field['onDelete']) && !empty($deleted_elements)) {
+
+            if (isset($repeatable_field['onDelete']) && is_callable($repeatable_field['onDelete']) && ! empty($deleted_elements)) {
                 $repeatable_field['onDelete']($deleted_elements, $changed_elements);
             }
 
             // check if any of the repeatable fields have a onCreate mutator and run it!
-            foreach($repeatable_field['fields'] as $key => $repeatable_subfield) {
-                if(isset($repeatable_data_fields[$repeatable_name])) {
-                    if(isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
-                        foreach($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
+            foreach ($repeatable_field['fields'] as $key => $repeatable_subfield) {
+                if (isset($repeatable_data_fields[$repeatable_name])) {
+                    if (isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
+                        foreach ($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
                             $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
                         }
-                    }                        
+                    }
                 }
             }
 
             // set the properly json encoded string to be stored in database
             $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name] ?? []);
         }
+
         return $data;
     }
 }

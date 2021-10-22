@@ -26,7 +26,7 @@ trait Create
         $data = $this->compactFakeFields($data);
         $data = $this->changeBelongsToNamesFromRelationshipToForeignKey($data);
         $data = $this->handleRepeatableFieldsToJsonColumn($data);
-        
+
         // omit the n-n relationships when updating the eloquent item
         $nn_relationships = Arr::pluck($this->getRelationFieldsWithPivot(), 'name');
 
