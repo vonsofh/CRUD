@@ -2,6 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\CrudPanel\Traits;
 
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -303,26 +304,38 @@ trait FieldsProtectedMethods
         foreach ($repeatable_fields as $repeatable_name => $repeatable_field) {
             $deleted_elements = json_decode(request()->input($repeatable_name.'_deleted_elements') ?? null, true);
             $changed_elements = json_decode(request()->input($repeatable_name.'_changed_elements') ?? null, true);
+            $previous_values = app('crud')->getCurrentEntry()->{$repeatable_name};
+            $previous_values = is_string($previous_values) ? json_decode($previous_values, true) : $previous_values;
 
             if (isset($repeatable_field['onDelete']) && is_callable($repeatable_field['onDelete']) && ! empty($deleted_elements)) {
                 $repeatable_field['onDelete']($deleted_elements, $changed_elements);
             }
-
             // check if any of the repeatable fields have a onCreate mutator and run it!
-            foreach ($repeatable_field['fields'] as $key => $repeatable_subfield) {
-                if (isset($repeatable_data_fields[$repeatable_name])) {
+            if (isset($repeatable_data_fields[$repeatable_name])) {
+                foreach ($repeatable_field['fields'] as $key => $repeatable_subfield) {
+                    
                     if (isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
                         foreach ($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
-                            $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
+                            try {
+                                $exists = $field_value[$repeatable_subfield['name']];
+                            }catch(Exception $e) {
+                                $exists = false;
+                            }
+                            if($exists !== false) {
+                                $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_key+1, $field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
+                            }else{
+                                $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = isset($previous_values[$field_key][$repeatable_subfield['name']]) ? $previous_values[$field_key][$repeatable_subfield['name']] : null;
+                            }
                         }
                     }
                 }
+                // set the properly json encoded string to be stored in database
+                $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name] ?? []);
             }
-
-            // set the properly json encoded string to be stored in database
-            $data[$repeatable_name] = json_encode($repeatable_data_fields[$repeatable_name] ?? []);
         }
 
         return $data;
     }
+
+
 }

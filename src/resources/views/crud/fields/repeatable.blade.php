@@ -2,8 +2,8 @@
 
 @php
   $field['value'] = old($field['name']) ? old($field['name']) : (isset($field['value']) ? $field['value'] : (isset($field['default']) ? $field['default'] : '' ));
-  // make sure the value is a JSON string (not array, if it's cast in the model)
-  $field['value'] = is_array($field['value']) ? json_encode($field['value']) : $field['value'];
+
+  $field['value'] = is_string($field['value']) ? json_decode($field['value'], true) : $field['value'];
 
   $field['init_rows'] = $field['init_rows'] ?? $field['min_rows'] ?? 1;
   $field['max_rows'] = $field['max_rows'] ?? 0;
@@ -11,44 +11,73 @@
 @endphp
 
 @include('crud::fields.inc.wrapper_start')
-  <label>{!! $field['label'] !!}</label>
-  @include('crud::fields.inc.translatable_icon')
-  <input
-      type="hidden"
-      name="{{ $field['name'] }}"
-      data-init-function="bpFieldInitRepeatableElement"
-      value="{{ $field['value'] }}"
-      @include('crud::fields.inc.attributes')
-  >
-  <input
-      type="hidden"
-      name="{{ $field['name'] }}_deleted_elements"
-      value="{{old($field['name'].'_deleted_elements')}}"
-      @include('crud::fields.inc.attributes')
-  >
+    <label>{!! $field['label'] !!}</label>
+    @include('crud::fields.inc.translatable_icon')
+    @if(!empty($field['value']))
+    <input
+        type="hidden"
+        name="{{ $field['name'] }}"
+        data-init-function="bpFieldInitRepeatableElement"
+        @include('crud::fields.inc.attributes')
+    >
+    <input
+        type="hidden"
+        name="{{ $field['name'] }}_deleted_elements"
+        value="{{old($field['name'].'_deleted_elements')}}"
+        @include('crud::fields.inc.attributes')
+    >
 
-  <input
-      type="hidden"
-      name="{{ $field['name'] }}_changed_elements"
-      value="{{old($field['name'].'_changed_elements')}}"
-      @include('crud::fields.inc.attributes')
-  >
-
-  {{-- HINT --}}
-  @if (isset($field['hint']))
-      <p class="help-block text-muted text-sm">{!! $field['hint'] !!}</p>
-  @endif
-
-
-
-<div class="container-repeatable-elements">
-    <div
-        data-repeatable-holder="{{ $field['name'] }}"
-        data-init-rows="{{ $field['init_rows'] }}"
-        data-max-rows="{{ $field['max_rows'] }}"
-        data-min-rows="{{ $field['min_rows'] }}"
-    ></div>
-
+    <input
+        type="hidden"
+        name="{{ $field['name'] }}_changed_elements"
+        value="{{old($field['name'].'_changed_elements')}}"
+        @include('crud::fields.inc.attributes')
+    >
+    <div class="container-repeatable-elements">
+        <div
+            data-repeatable-holder="{{ $field['name'] }}"
+            data-init-rows="{{ $field['init_rows'] }}"
+            data-max-rows="{{ $field['max_rows'] }}"
+            data-min-rows="{{ $field['min_rows'] }}"
+        >
+    @foreach ($field['value'] as $key => $row)
+  
+        <div class="col-md-12 well repeatable-element row m-1 p-2" data-repeatable-identifier="{{ $field['name'] }}">
+            @if (isset($field['fields']) && is_array($field['fields']) && count($field['fields']))
+              <div class="controls">
+                  <button type="button" class="close delete-element"><span aria-hidden="true">×</span></button>
+                  <button type="button" class="close move-element-up">
+                      <svg viewBox="0 0 64 80"><path d="M46.8,36.7c-4.3-4.3-8.7-8.7-13-13c-1-1-2.6-1-3.5,0c-4.3,4.3-8.7,8.7-13,13c-2.3,2.3,1.3,5.8,3.5,3.5c4.3-4.3,8.7-8.7,13-13c-1.2,0-2.4,0-3.5,0c4.3,4.3,8.7,8.7,13,13C45.5,42.5,49,39,46.8,36.7L46.8,36.7z"/></svg>
+                  </button>
+                  <button type="button" class="close move-element-down">
+                      <svg viewBox="0 0 64 80"><path d="M17.2,30.3c4.3,4.3,8.7,8.7,13,13c1,1,2.6,1,3.5,0c4.3-4.3,8.7-8.7,13-13c2.3-2.3-1.3-5.8-3.5-3.5c-4.3,4.3-8.7,8.7-13,13c1.2,0,2.4,0,3.5,0c-4.3-4.3-8.7-8.7-13-13C18.5,24.5,15,28,17.2,30.3L17.2,30.3z"/></svg>
+                  </button>
+              </div>
+              @foreach($field['fields'] as $subfield)
+                @php
+                    $subfield = $crud->makeSureFieldHasNecessaryAttributes($subfield);
+                    $fieldViewNamespace = $subfield['view_namespace'] ?? 'crud::fields';
+                    $fieldViewPath = $fieldViewNamespace.'.'.$subfield['type'];
+                    $subfield['value'] = $row[$subfield['name']] ?? null;
+                    $subfield['name'] = $field['name'].'['.$key.']['.$subfield['name'].']';
+                    
+                @endphp
+      
+                @include($fieldViewPath, ['field' => $subfield])
+              @endforeach
+      
+            @endif
+          </div>
+    @endforeach
+</div>
+</div>
+    @endif
+    {{-- HINT --}}
+    @if (isset($field['hint']))
+        <p class="help-block text-muted text-sm">{!! $field['hint'] !!}</p>
+    @endif
+    <button type="button" class="btn btn-outline-primary btn-sm ml-1 add-repeatable-element-button">+ {{ $field['new_item_label'] ?? trans('backpack::crud.new_item') }}</button>
+    
     @push('before_scripts')
     <div class="col-md-12 well repeatable-element row m-1 p-2" data-repeatable-identifier="{{ $field['name'] }}">
       @if (isset($field['fields']) && is_array($field['fields']) && count($field['fields']))
@@ -74,12 +103,6 @@
       @endif
     </div>
     @endpush
-
-  </div>
-
-
-  <button type="button" class="btn btn-outline-primary btn-sm ml-1 add-repeatable-element-button">+ {{ $field['new_item_label'] ?? trans('backpack::crud.new_item') }}</button>
-
 @include('crud::fields.inc.wrapper_end')
 
 @if ($crud->fieldTypeNotLoaded($field))
@@ -174,7 +197,7 @@
             });
 
             // element will be a jQuery wrapped DOM node
-            var container = $('[data-repeatable-identifier='+field_name+']');
+            var container = $('[data-repeatable-identifier='+field_name+']').first();
             var container_holder = $('[data-repeatable-holder='+field_name+']');
 
             var init_rows = Number(container_holder.attr('data-init-rows'));
@@ -192,27 +215,23 @@
             // make a copy of the group of inputs in their default state
             // this way we have a clean element we can clone when the user
             // wants to add a new group of inputs
-            var field_group_clone = container.clone();
-            container.remove();
+            // element will be a jQuery wrapped DOM node
+            var clone_container = $('[data-repeatable-identifier='+field_name+']').last();
+            var field_group_clone = clone_container.clone();
+            clone_container.remove();
 
             element.parent().find('.add-repeatable-element-button').click(function(){
                 newRepeatableElement(container, field_group_clone);
             });
 
-            if (element.val()) {
-                var repeatable_fields_values = JSON.parse(element.val());
-
-                for (var i = 0; i < repeatable_fields_values.length; ++i) {
-                    newRepeatableElement(container, field_group_clone, repeatable_fields_values[i], false, true);
-                }
-            } else {
-                var container_rows = 0;
-                var add_entry_button = element.parent().find('.add-repeatable-element-button');
-                for(let i = 0; i < Math.min(init_rows, max_rows || init_rows); i++) {
-                    container_rows++;
-                    add_entry_button.trigger('click');
-                }
+            var container_rows = $('.repeatable-element').length;
+            var add_entry_button = element.parent().find('.add-repeatable-element-button');
+            for(let i = container_rows; i < Math.min(init_rows, max_rows || init_rows); i++) {
+                container_rows++;
+                add_entry_button.trigger('click');
             }
+
+            setupElementRowsNumbers(container_holder);
         }
 
         /**
@@ -239,10 +258,6 @@
                     // implemented because of ckeditor instances that stayed around when deleted from page
                     // introducing unwanted js errors and high memory usage.
                     $(el).trigger('backpack_field.deleted');
-                    // if this field was preloaded from database data, we will save his values to send along with form for developer handling
-                    
-
-                    
                 });
 
                 // decrement the container current number of rows by -1
@@ -303,7 +318,12 @@
                             value = prefix + value;
                         }
 
-                        $(this).val(value);
+                        if($(this).attr('type') !== 'file') {
+                            $(this).val(value);
+                        }else{
+                            console.log(value);
+                            $(this).attr('data-field-value', value);
+                        }
 
                         // if it's a Select input with no options, also attach the values as a data attribute;
                         // this is done because the above val() call will do nothing if the options aren't there

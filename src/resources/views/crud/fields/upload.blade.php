@@ -27,7 +27,7 @@
     	<div class="clearfix"></div>
     </div>
     @endif
-
+ 
 	{{-- Show the file picker on CREATE form. --}}
     <div class="backstrap-file {{ isset($field['value']) && $field['value']!=null?'d-none':'' }}">
         <input
@@ -149,17 +149,31 @@
                 var inputLabel = element.find(".backstrap-file-label");
 
                 fileClearButton.click(function(e) {
-                    e.preventDefault();
+                     e.preventDefault();
+                     console.log();
+                     if(element.parent('[data-repeatable-identifier]')) {
+                        const event = new CustomEvent('backpack_field.repeatable_change', { 
+                            detail: { 
+                                row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
+                                data:  {
+                                    previous_file: element.find('.existing-file > a').html().trim(),
+                                },
+                            }
+                        });
+                        window.dispatchEvent(event);
+                    }
+
                     $(this).parent().addClass('d-none');
 
                     fileInput.parent().removeClass('d-none');
+                    
                     fileInput.attr("value", "").replaceWith(fileInput.clone(true));
 
                     // redo the selector, so we can use the same fileInput variable going forward
                     fileInput = element.find(".file_input");
 
                     // add a hidden input with the same name, so that the setXAttribute method is triggered
-                    $("<input type='hidden' name='"+fieldName+"' value=''>").insertAfter(fileInput);
+                    $("<input type='hidden' name='"+fieldName+"' value=''>").insertAfter(fileInput); 
                 });
 
                 fileInput.change(function() {
@@ -169,7 +183,6 @@
                     // remove the hidden input, so that the setXAttribute method is no longer triggered
                     $(this).next("input[type=hidden]").remove();
                 });
-
             }
         </script>
     @endpush

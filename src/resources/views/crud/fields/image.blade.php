@@ -206,13 +206,13 @@
                         $remove.click(function() {
                             if(element.parent('[data-repeatable-identifier]') && $mainImage.attr('src') !== "" && !$mainImage.attr('src').startsWith('data:image')) {
                                 const event = new CustomEvent('backpack_field.repeatable_change', { 
-                                            detail: { 
-                                                row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
-                                                data:  {
-                                                    previous_image: $mainImage.attr('src'),
-                                                },
-                                            }
-                                        });
+                                    detail: { 
+                                        row: element.parent('[data-repeatable-identifier]').attr('data-row-number'), 
+                                        data:  {
+                                            previous_image: $mainImage.attr('src'),
+                                        },
+                                    }
+                                });
                                 window.dispatchEvent(event);
                             }
                             $mainImage.cropper("destroy");
