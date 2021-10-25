@@ -313,17 +313,16 @@ trait FieldsProtectedMethods
             // check if any of the repeatable fields have a onCreate mutator and run it!
             if (isset($repeatable_data_fields[$repeatable_name])) {
                 foreach ($repeatable_field['fields'] as $key => $repeatable_subfield) {
-                    
                     if (isset($repeatable_subfield['onCreate']) && is_callable($repeatable_subfield['onCreate'])) {
                         foreach ($repeatable_data_fields[$repeatable_name] as $field_key => $field_value) {
                             try {
                                 $exists = $field_value[$repeatable_subfield['name']];
-                            }catch(Exception $e) {
+                            } catch (Exception $e) {
                                 $exists = false;
                             }
-                            if($exists !== false) {
-                                $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_key+1, $field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
-                            }else{
+                            if ($exists !== false) {
+                                $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = $repeatable_subfield['onCreate']($field_key + 1, $field_value[$repeatable_subfield['name']], $changed_elements, $deleted_elements);
+                            } else {
                                 $repeatable_data_fields[$repeatable_name][$field_key][$repeatable_subfield['name']] = isset($previous_values[$field_key][$repeatable_subfield['name']]) ? $previous_values[$field_key][$repeatable_subfield['name']] : null;
                             }
                         }
@@ -336,6 +335,4 @@ trait FieldsProtectedMethods
 
         return $data;
     }
-
-
 }

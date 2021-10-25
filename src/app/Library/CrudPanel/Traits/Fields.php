@@ -304,13 +304,14 @@ trait Fields
     {
         $fields = $this->getFields();
         $upload_fields = Arr::where($fields, function ($value, $key) {
-            if(isset($value['fields'])) {
-                foreach($value['fields'] as $sub_field) {
-                    if(isset($sub_field['upload']) && $sub_field['upload']) {
+            if (isset($value['fields'])) {
+                foreach ($value['fields'] as $sub_field) {
+                    if (isset($sub_field['upload']) && $sub_field['upload']) {
                         return true;
                     }
                 }
             }
+
             return isset($value['upload']) && $value['upload'] == true;
         });
 
