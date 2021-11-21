@@ -2,6 +2,7 @@
     $field['prefix'] = $field['prefix'] ?? '';
     $field['disk'] = $field['disk'] ?? null;
     $value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? '';
+    $value_url = '';
 
     if (! function_exists('getDiskUrl')) {
         function getDiskUrl($disk, $path) {
@@ -47,12 +48,12 @@
     // if value isn't a base 64 image, generate URL
     if($value && !preg_match('/^data\:image\//', $value)) {
         // make sure to append prefix once to value
-        $value = Str::start($value, $field['prefix']);
+        $value_url = Str::start($value, $field['prefix']);
 
         // generate URL
-        $value = $field['disk']
+        $value_url = $field['disk']
             ? getDiskUrl($field['disk'], $value)
-            : url($value);
+            : url($value_url);
     }
 
     $max_image_size_in_bytes = $field['max_file_size'] ?? (int)maximumServerUploadSizeInBytes();
@@ -89,7 +90,7 @@
     <div class="btn-group">
         <div class="btn btn-light btn-sm btn-file">
             {{ trans('backpack::crud.choose_file') }} <input type="file" accept="image/*" data-handle="uploadImage"  @include('crud::fields.inc.attributes')>
-            <input type="hidden" data-handle="hiddenImage" name="{{ $field['name'] }}" data-value-prefix="{{ $field['prefix'] }}" value="{{ $value }}">
+            <input type="hidden" data-handle="hiddenImage" name="{{ $field['name'] }}" data-value-prefix="{{ $field['prefix'] }}" data-value-url="{{$value_url}}" value="{{ $value }}">
         </div>
         @if(isset($field['crop']) && $field['crop'])
         <button class="btn btn-light btn-sm" data-handle="rotateLeft" type="button" style="display: none;"><i class="la la-rotate-left"></i></button>
@@ -196,8 +197,8 @@
                         $previews.hide();
                         $remove.hide();
                     }
-                    // Make the main image show the image in the hidden input
-                    $mainImage.attr('src', $hiddenImage.val());
+                    // Make the main image show the image in the hidden input url (image loaded from database) or show the preview data
+                    $mainImage.attr('src', $hiddenImage.data('value-url').length > 0 ? $hiddenImage.data('value-url') : $hiddenImage.val());
 
 
                     // Only initialize cropper plugin if crop is set to true
