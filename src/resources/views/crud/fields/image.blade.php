@@ -52,7 +52,7 @@
 
         // generate URL
         $value_url = $field['disk']
-            ? getDiskUrl($field['disk'], $value)
+            ? getDiskUrl($field['disk'], $value_url)
             : url($value_url);
     }
 
