@@ -16,6 +16,7 @@
         name="{{ $field['name'] }}[]"
         style="width: 100%"
         data-init-function="bpFieldInitSelect2FromAjaxMultipleElement"
+        data-field-is-inline="{{var_export($inlineCreate ?? false)}}"
         data-dependencies="{{ isset($field['dependencies'])?json_encode(Arr::wrap($field['dependencies'])): json_encode([]) }}"
         data-placeholder="{{ $field['placeholder'] }}"
         data-minimum-input-length="{{ $field['minimum_input_length'] }}"
@@ -25,6 +26,7 @@
         data-connected-entity-key-name="{{ $connected_entity_key_name }}"
         data-include-all-form-fields="{{ isset($field['include_all_form_fields']) ? ($field['include_all_form_fields'] ? 'true' : 'false') : 'false' }}"
         data-ajax-delay="{{ $field['delay'] }}"
+        data-language="{{ str_replace('_', '-', app()->getLocale()) }}"
         @include('crud::fields.inc.attributes', ['default_class' =>  'form-control'])
         multiple>
 
@@ -69,7 +71,7 @@
     <!-- include select2 js-->
     <script src="{{ asset('packages/select2/dist/js/select2.full.min.js') }}"></script>
     @if (app()->getLocale() !== 'en')
-    <script src="{{ asset('packages/select2/dist/js/i18n/' . app()->getLocale() . '.js') }}"></script>
+    <script src="{{ asset('packages/select2/dist/js/i18n/' . str_replace('_', '-', app()->getLocale()) . '.js') }}"></script>
     @endif
     @endpush
 
@@ -93,6 +95,7 @@
         var $dependencies = JSON.parse(element.attr('data-dependencies'));
         var $ajaxDelay = element.attr('data-ajax-delay');
         var $selectedOptions = typeof element.attr('data-selected-options') === 'string' ? JSON.parse(element.attr('data-selected-options')) : JSON.parse("[]");
+        var $isFieldInline = element.data('field-is-inline');
 
         var select2AjaxMultipleFetchSelectedEntries = function (element) {
             return new Promise(function (resolve, reject) {
@@ -120,6 +123,7 @@
                 multiple: true,
                 placeholder: $placeholder,
                 minimumInputLength: $minimumInputLength,
+                dropdownParent: $isFieldInline ? $('#inline-create-dialog .modal-content') : document.body,
                 ajax: {
                     url: $dataSource,
                     type: $method,
@@ -163,7 +167,7 @@
         // we have stored from the field and append those options in the select.
         if (typeof $selectedOptions !== typeof undefined && $selectedOptions !== false && $selectedOptions != '') {
             var optionsForSelect = [];
-            select2AjaxMultipleFetchSelectedEntries(element).then(result => {
+            select2AjaxMultipleFetchSelectedEntries(element).then(function(result) {
                 result.forEach(function(item) {
                     $itemText = item[$fieldAttribute];
                     $itemValue = item[$connectedEntityKeyName];
@@ -186,7 +190,7 @@
             var $dependency = $dependencies[i];
             //if element does not have a custom-selector attribute we use the name attribute
             if(typeof element.attr('data-custom-selector') == 'undefined') {
-                form.find(`[name="${$dependency}"], [name="${$dependency}[]"]`).change(function(el) {
+                form.find('[name="'+$dependency+'"], [name="'+$dependency+'[]"]').change(function(el) {
                         $(element.find('option:not([value=""])')).remove();
                         element.val(null).trigger("change");
                 });

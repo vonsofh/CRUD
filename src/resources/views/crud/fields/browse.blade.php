@@ -1,7 +1,7 @@
 @php
 $multiple = Arr::get($field, 'multiple', false);
 $sortable = Arr::get($field, 'sortable', false);
-$value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? '';
+$value = old(square_brackets_to_dots($field['name'])) ?? $field['value'] ?? $field['default'] ?? ($multiple ? '[]' : '');
 
 if (!$multiple && is_array($value)) {
     $value = Arr::first($value);
@@ -84,12 +84,12 @@ if($sortable){
                 type="text"
                 @if(!isset($field['readonly']) || $field['readonly']) readonly @endif
                 @include('crud::fields.inc.attributes')
-            >
+            />
             <div class="input-group-btn">
                 <button type="button" class="browse remove btn btn-sm btn-light">
                     <i class="la la-trash"></i>
                 </button>
-                @if($sortable)
+                @if($sortable && $multiple)
                     <button type="button" class="browse move btn btn-sm btn-light"><span class="la la-sort"></span></button>
                 @endif
             </div>
