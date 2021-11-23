@@ -25,8 +25,8 @@ if($sortable){
     $field['wrapper']['sortable'] = "true";
 }
 
-// make the field work either with casted attributes or plain json strings
-$value = is_string($value) ? json_decode($value) : $value;
+// make the field work either with casted attributes or plain json strings when field is multiple
+$value = is_string($value) && $multiple ? json_decode($value) : $value;
 
 @endphp
 
