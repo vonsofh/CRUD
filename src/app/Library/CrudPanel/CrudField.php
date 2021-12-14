@@ -165,8 +165,8 @@ class CrudField
     /**
      * Set an event to a certain closure. Will overwrite if existing.
      *
-     * @param  string   $event   Name of Eloquent Model event
-     * @param  \Closure $closure The function aka callback aka closure to run.
+     * @param  string  $event  Name of Eloquent Model event
+     * @param  \Closure  $closure  The function aka callback aka closure to run.
      * @return CrudField
      */
     public function on(string $event, \Closure $closure)
@@ -180,8 +180,8 @@ class CrudField
      * Register a saving event that uploads the file(s) uploaded using
      * the upload or upload_multiple fields.
      *
-     * @param  string $path Path where to save the file.
-     * @param  string $disk Disk to use.
+     * @param  string  $path  Path where to save the file.
+     * @param  string  $disk  Disk to use.
      * @return CrudField
      */
     public function whenSavingUploadTo(string $path, string $disk = 'public')
