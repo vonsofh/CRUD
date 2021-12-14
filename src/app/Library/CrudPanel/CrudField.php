@@ -176,6 +176,43 @@ class CrudField
         return $this->save();
     }
 
+    /**
+     * Register a saving event that uploads the file(s) uploaded using
+     * the upload or upload_multiple fields.
+     *
+     * @param  string $path Path where to save the file.
+     * @param  string $disk Disk to use.
+     * @return CrudField
+     */
+    public function whenSavingUploadTo(string $path, string $disk = 'public')
+    {
+        $field = $this->attributes;
+
+        $this->attributes['events']['saving'] = (function ($entry) use ($field, $disk, $path) {
+            $value = request()->file($field['name']);
+
+            if (is_null($value)) {
+                return;
+            }
+
+            switch ($field['type']) {
+                case 'upload_multiple':
+                    // strip away empty elements (created by Laravel because upload is multiple)
+                    $entry->{$field['name']} = \Arr::where($entry->{$field['name']}, function ($item, $key) {
+                        return $item;
+                    });
+                    $entry->uploadMultipleFilesToDisk($value, $field['name'], $disk, $path);
+                    break;
+
+                default:
+                    $entry->uploadFileToDisk($value, $field['name'], $disk, $path);
+                    break;
+            }
+        });
+
+        return $this->save();
+    }
+
     // ---------------
     // PRIVATE METHODS
     // ---------------
