@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Prologue\Alerts\Facades\Alert;
 
-
 trait InlineCreateOperation
 {
     /**
@@ -18,7 +17,7 @@ trait InlineCreateOperation
      */
     protected function setupInlineCreateRoutes($segment, $routeName, $controller)
     {
-        $inlineRouteName =  Str::kebab(str_replace('_', '-', $routeName));
+        $inlineRouteName = Str::kebab(str_replace('_', '-', $routeName));
         Route::post($segment.'/inline-create/modal', [
             'as'        => $inlineRouteName.'-inline-create',
             'uses'      => $controller.'@getInlineCreateModal',
