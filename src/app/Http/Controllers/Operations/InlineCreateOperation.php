@@ -23,7 +23,7 @@ trait InlineCreateOperation
             'uses'      => $controller.'@getInlineCreateModal',
             'operation' => 'InlineCreate',
         ]);
-        Route::post($segment.'/inline-create', [
+        Route::post($segment.'/inline/create', [
             'as'        => $inlineRouteName.'-inline-create-save',
             'uses'      => $controller.'@storeInlineCreate',
             'operation' => 'InlineCreate',
