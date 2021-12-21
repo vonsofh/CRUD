@@ -3,7 +3,9 @@
 namespace Backpack\CRUD\app\Http\Controllers\Operations;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Prologue\Alerts\Facades\Alert;
+
 
 trait InlineCreateOperation
 {
@@ -16,13 +18,14 @@ trait InlineCreateOperation
      */
     protected function setupInlineCreateRoutes($segment, $routeName, $controller)
     {
-        Route::post($segment.'/inline/create/modal', [
-            'as'        => $segment.'-inline-create',
+        $inlineRouteName =  Str::kebab(str_replace('_', '-', $routeName));
+        Route::post($segment.'/inline-create/modal', [
+            'as'        => $inlineRouteName.'-inline-create',
             'uses'      => $controller.'@getInlineCreateModal',
             'operation' => 'InlineCreate',
         ]);
-        Route::post($segment.'/inline/create', [
-            'as'        => $segment.'-inline-create-save',
+        Route::post($segment.'/inline-create', [
+            'as'        => $inlineRouteName.'-inline-create-save',
             'uses'      => $controller.'@storeInlineCreate',
             'operation' => 'InlineCreate',
         ]);
