@@ -20,8 +20,7 @@ trait Create
     /**
      * Insert a row in the database.
      *
-     * @param array $data All input values to be inserted.
-     *
+     * @param  array  $data  All input values to be inserted.
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function create($data)
@@ -96,8 +95,8 @@ trait Create
     /**
      * Create the relations for the current model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $item The current CRUD model.
-     * @param array                               $data The form data.
+     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
+     * @param  array  $data  The form data.
      */
     public function createRelations($item, $data)
     {
@@ -113,8 +112,8 @@ trait Create
     /**
      * Sync the declared many-to-many associations through the pivot field.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model The current CRUD model.
-     * @param array                               $data  The form data.
+     * @param  \Illuminate\Database\Eloquent\Model  $model  The current CRUD model.
+     * @param  array  $data  The form data.
      */
     public function syncPivot($model, $data)
     {
@@ -178,9 +177,8 @@ trait Create
      * Handles 1-1 and 1-n relations. In case 1-1 it handles subsequent relations in connected models
      * For example, a Monster > HasOne Address > BelongsTo a Country.
      *
-     * @param \Illuminate\Database\Eloquent\Model $item          The current CRUD model.
-     * @param array                               $formattedData The form data.
-     *
+     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
+     * @param  array  $formattedData  The form data.
      * @return bool|null
      */
     private function createRelationsForItem($item, $formattedData)
@@ -249,9 +247,9 @@ trait Create
      * Associate the nested HasOne -> BelongsTo relations by adding the "connecting key"
      * to the array of values that is going to be saved with HasOne relation.
      *
-     * @param array $belongsToRelations
-     * @param array $modelValues
-     * @param Model $relationInstance
+     * @param  array  $belongsToRelations
+     * @param  array  $modelValues
+     * @param  Model  $relationInstance
      * @return array
      */
     private function associateHasOneBelongsTo($belongsToRelations, $modelValues, $modelInstance)
@@ -279,8 +277,7 @@ trait Create
      * Those will be nested accordingly in this relation array, so address relation will have a nested relation with country.
      *
      *
-     * @param array $data The form data.
-     *
+     * @param  array  $data  The form data.
      * @return array The formatted relation data.
      */
     private function getRelationDataFromFormData($data)

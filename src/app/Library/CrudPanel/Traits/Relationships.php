@@ -11,7 +11,7 @@ trait Relationships
     /**
      * From the field entity we get the relation instance.
      *
-     * @param array $entity
+     * @param  array  $entity
      * @return object
      */
     public function getRelationInstance($field)
@@ -36,8 +36,7 @@ trait Relationships
      * Get the fields for relationships, according to the relation type. It looks only for direct
      * relations - it will NOT look through relationships of relationships.
      *
-     * @param string|array $relation_types Eloquent relation class or array of Eloquent relation classes. Eg: BelongsTo
-     *
+     * @param  string|array  $relation_types  Eloquent relation class or array of Eloquent relation classes. Eg: BelongsTo
      * @return array The fields with corresponding relation types.
      */
     public function getFieldsWithRelationType($relation_types): array
@@ -58,7 +57,7 @@ trait Relationships
     /**
      * Grabs an relation instance and returns the class name of the related model.
      *
-     * @param array $field
+     * @param  array  $field
      * @return string
      */
     public function inferFieldModelFromRelationship($field)
@@ -71,7 +70,7 @@ trait Relationships
     /**
      * Return the relation type from a given field: BelongsTo, HasOne ... etc.
      *
-     * @param array $field
+     * @param  array  $field
      * @return string
      */
     public function inferRelationTypeFromRelationship($field)
@@ -85,7 +84,7 @@ trait Relationships
      * Parse the field name back to the related entity after the form is submited.
      * Its called in getAllFieldNames().
      *
-     * @param array $fields
+     * @param  array  $fields
      * @return array
      */
     public function parseRelationFieldNamesFromHtml($fields)
@@ -125,7 +124,7 @@ trait Relationships
     /**
      * Based on relation type returns the default field type.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return string
      */
     public function inferFieldTypeFromFieldRelation($field)
@@ -146,7 +145,7 @@ trait Relationships
     /**
      * Based on relation type returns if relation allows multiple entities.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return bool
      */
     public function guessIfFieldHasMultipleFromRelationType($relation_type)
@@ -168,7 +167,7 @@ trait Relationships
     /**
      * Based on relation type returns if relation has a pivot table.
      *
-     * @param string $relation_type
+     * @param  string  $relation_type
      * @return bool
      */
     public function guessIfFieldHasPivotFromRelationType($relation_type)
@@ -187,7 +186,7 @@ trait Relationships
     /**
      * Check if field name contains a dot, if so, meaning it's a nested relation.
      *
-     * @param array $field
+     * @param  array  $field
      * @return bool
      */
     protected function isNestedRelation($field): bool
@@ -199,7 +198,7 @@ trait Relationships
      * Return the relation without any model attributes there.
      * Eg. user.entity_id would return user, as entity_id is not a relation in user.
      *
-     * @param array $relation_field
+     * @param  array  $relation_field
      * @return string
      */
     public function getOnlyRelationEntity($relation_field)
