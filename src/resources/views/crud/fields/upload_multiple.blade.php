@@ -35,12 +35,12 @@
     @endif
     @endif
 	{{-- Show the file picker on CREATE form. --}}
-	<input name="{{ $field['name'] }}[]" type="hidden" value="">
+	
 	<div class="backstrap-file mt-2">
 		<input
 	        type="file"
 	        name="{{ $field['name'] }}[]"
-	        @include('crud::fields.inc.attributes', ['default_class' =>  isset($field['value']) && $field['value']!=null?'file_input backstrap-file-input':'file_input backstrap-file-input'])
+	        @include('crud::fields.inc.attributes', ['default_class' => 'file_input backstrap-file-input'])
 	        multiple
 	    >
         <label class="backstrap-file-label" for="customFile"></label>
@@ -72,6 +72,7 @@
 		        	parent.remove();
 		        	// if the file container is empty, remove it
 		        	if ($.trim(container.html())=='') {
+						$('<input type="hidden" name="'+fieldName+'[]" value="">').insertBefore(fileInput);
 		        		container.remove();
 		        	}
 		        	$("<input type='hidden' name='clear_"+fieldName+"[]' value='"+$(this).data('filename')+"'>").insertAfter(fileInput);
