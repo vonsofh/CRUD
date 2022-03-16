@@ -73,33 +73,10 @@ trait HasTranslations
     {
         $locale = $attributes['locale'] ?? \App::getLocale();
         $attributes = Arr::except($attributes, ['locale']);
-        $non_translatable = [];
 
         $model = new static();
 
-        // do the actual saving
-        foreach ($attributes as $attribute => $value) {
-            // the attribute is not translatable, store it without aditional process
-            if (! $model->isTranslatableAttribute($attribute)) {
-                $non_translatable[$attribute] = $value;
-                continue;
-            }
-
-            // in case case it's an array, we will check if the keys of the array match the possible translation locales,
-            // if they do, we will set the attribute translations directly from the array.
-            if (is_array($value)) {
-                $possibleTranslations = array_keys($value);
-                $translatableLocales = array_keys($model->getAvailableLocales());
-
-                //if the array keys match the translatable locales (all keys must match some locale, ['en' => something, 'pt' => qualquer])
-                if ($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
-                    $model->setTranslations($attribute, $value);
-                    continue;
-                }
-            }
-
-            $model->setTranslation($attribute, $locale, $value);
-        }
+        [$model, $non_translatable] = self::splitNonTranslatableFromTranslatableAttributes($model, $attributes, $locale);        
 
         $model->fill($non_translatable)->save();
 
@@ -121,18 +98,10 @@ trait HasTranslations
 
         $locale = $attributes['_locale'] ?? \App::getLocale();
         $attributes = Arr::except($attributes, ['_locale']);
-        $non_translatable = [];
+        
+        [$model, $non_translatable] = self::splitNonTranslatableFromTranslatableAttributes($this, $attributes, $locale);
 
-        // do the actual saving
-        foreach ($attributes as $attribute => $value) {
-            if ($this->isTranslatableAttribute($attribute)) { // the attribute is translatable
-                $this->setTranslation($attribute, $locale, $value);
-            } else { // the attribute is NOT translatable
-                $non_translatable[$attribute] = $value;
-            }
-        }
-
-        return $this->fill($non_translatable)->save($options);
+        return $model->fill($non_translatable)->save($options);
     }
 
     /*
@@ -228,5 +197,38 @@ trait HasTranslations
                 return parent::__call($method, $parameters);
                 break;
         }
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $attributes
+     * @param string $locale
+     */
+    private static function splitNonTranslatableFromTranslatableAttributes($model, array $attributes, string $locale) {
+        $non_translatable = [];
+        foreach ($attributes as $attribute => $value) {
+            // the attribute is not translatable, store it without aditional process
+            if (! $model->isTranslatableAttribute($attribute)) { 
+                $non_translatable[$attribute] = $value;
+                continue;
+            }
+
+            // in case case it's an array, we will check if the keys of the array match the possible translation locales,
+            // if they do, we will set the attribute translations directly from the array.
+            if(is_array($value)) {
+                $possibleTranslations = array_keys($value);
+                $translatableLocales = array_keys($model->getAvailableLocales());
+                
+                //if the array keys match the translatable locales (all keys must match some locale, ['en' => something, 'pt' => qualquer])
+                if($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
+                    $model->setTranslations($attribute, $value);
+                    continue;
+                }    
+            } 
+
+            $model->setTranslation($attribute, $locale, $value);
+        }
+
+        return [$model, $non_translatable];
     }
 }
