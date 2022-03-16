@@ -80,23 +80,23 @@ trait HasTranslations
         // do the actual saving
         foreach ($attributes as $attribute => $value) {
             // the attribute is not translatable, store it without aditional process
-            if (! $model->isTranslatableAttribute($attribute)) { 
+            if (! $model->isTranslatableAttribute($attribute)) {
                 $non_translatable[$attribute] = $value;
                 continue;
             }
 
             // in case case it's an array, we will check if the keys of the array match the possible translation locales,
             // if they do, we will set the attribute translations directly from the array.
-            if(is_array($value)) {
+            if (is_array($value)) {
                 $possibleTranslations = array_keys($value);
                 $translatableLocales = array_keys($model->getAvailableLocales());
-                
+
                 //if the array keys match the translatable locales (all keys must match some locale, ['en' => something, 'pt' => qualquer])
-                if($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
+                if ($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
                     $model->setTranslations($attribute, $value);
                     continue;
-                }    
-            } 
+                }
+            }
 
             $model->setTranslation($attribute, $locale, $value);
         }

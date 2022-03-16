@@ -3,8 +3,8 @@
 namespace Backpack\CRUD\Tests\Unit\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\SpatieTranslatable\HasTranslations;
+use Illuminate\Database\Eloquent\Model;
 
 class TranslatableModel extends Model
 {
@@ -19,10 +19,12 @@ class TranslatableModel extends Model
 
     public $timestamps = false;
 
-
-    public function setTranslatableFieldWithMutatorAttribute($value) {
-            $this->attributes['translatable_field_with_mutator'] = ! is_array($value) ? 
-                                                                        strtoupper($value) : 
-                                                                        array_map(function($item) { return strtoupper($item); },(array)$value); 
+    public function setTranslatableFieldWithMutatorAttribute($value)
+    {
+        $this->attributes['translatable_field_with_mutator'] = ! is_array($value) ?
+                                                                        strtoupper($value) :
+                                                                        array_map(function ($item) {
+                                                                            return strtoupper($item);
+                                                                        }, (array) $value);
     }
 }

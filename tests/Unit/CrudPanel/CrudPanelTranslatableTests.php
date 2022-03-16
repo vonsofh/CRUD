@@ -8,21 +8,21 @@ class CrudPanelTrannslatableTest extends BaseDBCrudPanelTest
 {
     private $translatableFields = [
         [
-            'name' => 'translatable_field'
+            'name' => 'translatable_field',
         ],
         [
             'name' => 'fake_1',
             'fake' => true,
-            'store_in' => 'translatable_fake'
+            'store_in' => 'translatable_fake',
         ],
         [
             'name' => 'fake_2',
             'fake' => true,
-            'store_in' => 'translatable_fake'
+            'store_in' => 'translatable_fake',
         ],
         [
-            'name' => 'translatable_field_with_mutator'
-        ]
+            'name' => 'translatable_field_with_mutator',
+        ],
     ];
 
     private $input_en = [
@@ -80,7 +80,7 @@ class CrudPanelTrannslatableTest extends BaseDBCrudPanelTest
         $this->assertEquals('FIELD MUTATOR FR', $model->translatable_field_with_mutator);
 
         $model->setLocale('en');
-        $this->assertEquals('field en', $model->translatable_field);       
+        $this->assertEquals('field en', $model->translatable_field);
     }
 
     public function testPassArrayIntoTranslatableWithoutExplicitTranslation()
@@ -95,6 +95,6 @@ class CrudPanelTrannslatableTest extends BaseDBCrudPanelTest
 
         $this->assertEquals(['some_key' => 'some_value'], json_decode($model->translatable_field, true));
         $this->assertEquals(['some_key' => 'some_value'], json_decode($model->translatable_fake, true));
-        $this->assertEquals(['some_key' => 'SOME_VALUE'], json_decode($model->translatable_field_with_mutator, true));       
+        $this->assertEquals(['some_key' => 'SOME_VALUE'], json_decode($model->translatable_field_with_mutator, true));
     }
 }
