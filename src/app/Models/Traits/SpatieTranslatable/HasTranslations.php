@@ -244,13 +244,10 @@ trait HasTranslations
 
         foreach ($attributes as $attribute => $value) {
             // the attribute is translatable continue
-            if ($model->isTranslatableAttribute($attribute)) {
-                continue;
-            }
-
-            $non_translatable[$attribute] = $value;
+            if (! $model->isTranslatableAttribute($attribute)) {
+                $non_translatable[$attribute] = $value;
+            } 
         }
-
         return $non_translatable;
     }
 }
