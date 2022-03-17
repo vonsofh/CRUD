@@ -79,7 +79,7 @@ trait HasTranslations
         $non_translatable = self::getNonTranslableAttributes($model, $attributes);
 
         $model = self::fillModelWithTranslations($model, array_diff_key($attributes, $non_translatable), $locale);
-        
+
         $model->fill($non_translatable)->save();
 
         return $model;
@@ -102,7 +102,7 @@ trait HasTranslations
         $attributes = Arr::except($attributes, ['_locale']);
 
         $model = $this;
-        
+
         $non_translatable = self::getNonTranslableAttributes($model, $attributes);
 
         $model = self::fillModelWithTranslations($model, array_diff_key($attributes, $non_translatable), $locale);
@@ -206,26 +206,26 @@ trait HasTranslations
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param array $attributes
-     * @param string $locale
-     * 
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $attributes
+     * @param  string  $locale
      * @return \Illuminate\Database\Eloquent\Model
      */
-    private static function fillModelWithTranslations($model, array $attributes, string $locale) {
+    private static function fillModelWithTranslations($model, array $attributes, string $locale)
+    {
         foreach ($attributes as $attribute => $value) {
             // in case case it's an array, we will check if the keys of the array match the possible translation locales,
             // if they do, we will set the attribute translations directly from the array.
-            if(is_array($value)) {
+            if (is_array($value)) {
                 $possibleTranslations = array_keys($value);
                 $translatableLocales = array_keys($model->getAvailableLocales());
-                
+
                 //if the array keys match the translatable locales (all keys must match some locale, ['en' => something, 'pt' => qualquer])
-                if($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
+                if ($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
                     $model->setTranslations($attribute, $value);
                     continue;
-                }    
-            } 
+                }
+            }
 
             $model->setTranslation($attribute, $locale, $value);
         }
@@ -234,22 +234,23 @@ trait HasTranslations
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param array $attributes
-     * 
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $attributes
      * @return array
      */
-    private static function getNonTranslableAttributes($model, $attributes) {
+    private static function getNonTranslableAttributes($model, $attributes)
+    {
         $non_translatable = [];
 
         foreach ($attributes as $attribute => $value) {
             // the attribute is translatable continue
-            if ( $model->isTranslatableAttribute($attribute)) {     
+            if ($model->isTranslatableAttribute($attribute)) {
                 continue;
             }
 
             $non_translatable[$attribute] = $value;
         }
+
         return $non_translatable;
     }
 }
