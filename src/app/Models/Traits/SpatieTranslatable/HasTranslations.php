@@ -246,8 +246,9 @@ trait HasTranslations
             // the attribute is translatable continue
             if (! $model->isTranslatableAttribute($attribute)) {
                 $non_translatable[$attribute] = $value;
-            } 
+            }
         }
+
         return $non_translatable;
     }
 }
