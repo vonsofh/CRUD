@@ -213,7 +213,6 @@ trait HasTranslations
      * @return \Illuminate\Database\Eloquent\Model
      */
     private static function fillModelWithTranslations($model, array $attributes, string $locale) {
-        dump($attributes, $model);
         foreach ($attributes as $attribute => $value) {
             // in case case it's an array, we will check if the keys of the array match the possible translation locales,
             // if they do, we will set the attribute translations directly from the array.
