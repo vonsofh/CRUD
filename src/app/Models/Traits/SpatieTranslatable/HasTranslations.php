@@ -71,13 +71,15 @@ trait HasTranslations
      */
     public static function create(array $attributes = [])
     {
-        $locale = $attributes['locale'] ?? \App::getLocale();
-        $attributes = Arr::except($attributes, ['locale']);
+        $locale = $attributes['_locale'] ?? \App::getLocale();
+        $attributes = Arr::except($attributes, ['_locale']);
 
         $model = new static();
 
-        [$model, $non_translatable] = self::splitNonTranslatableFromTranslatableAttributes($model, $attributes, $locale);
+        $non_translatable = self::getNonTranslableAttributes($model, $attributes);
 
+        $model = self::fillModelWithTranslations($model, array_diff_key($attributes, $non_translatable), $locale);
+        
         $model->fill($non_translatable)->save();
 
         return $model;
@@ -99,7 +101,11 @@ trait HasTranslations
         $locale = $attributes['_locale'] ?? \App::getLocale();
         $attributes = Arr::except($attributes, ['_locale']);
 
-        [$model, $non_translatable] = self::splitNonTranslatableFromTranslatableAttributes($this, $attributes, $locale);
+        $model = $this;
+        
+        $non_translatable = self::getNonTranslableAttributes($model, $attributes);
+
+        $model = self::fillModelWithTranslations($model, array_diff_key($attributes, $non_translatable), $locale);
 
         return $model->fill($non_translatable)->save($options);
     }
@@ -200,36 +206,51 @@ trait HasTranslations
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  array  $attributes
-     * @param  string  $locale
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $attributes
+     * @param string $locale
+     * 
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    private static function splitNonTranslatableFromTranslatableAttributes($model, array $attributes, string $locale)
-    {
-        $non_translatable = [];
+    private static function fillModelWithTranslations($model, array $attributes, string $locale) {
+        dump($attributes, $model);
         foreach ($attributes as $attribute => $value) {
-            // the attribute is not translatable, store it without aditional process
-            if (! $model->isTranslatableAttribute($attribute)) {
-                $non_translatable[$attribute] = $value;
-                continue;
-            }
-
             // in case case it's an array, we will check if the keys of the array match the possible translation locales,
             // if they do, we will set the attribute translations directly from the array.
-            if (is_array($value)) {
+            if(is_array($value)) {
                 $possibleTranslations = array_keys($value);
                 $translatableLocales = array_keys($model->getAvailableLocales());
-
+                
                 //if the array keys match the translatable locales (all keys must match some locale, ['en' => something, 'pt' => qualquer])
-                if ($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
+                if($possibleTranslations === array_intersect($possibleTranslations, $translatableLocales)) {
                     $model->setTranslations($attribute, $value);
                     continue;
-                }
-            }
+                }    
+            } 
 
             $model->setTranslation($attribute, $locale, $value);
         }
 
-        return [$model, $non_translatable];
+        return $model;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $attributes
+     * 
+     * @return array
+     */
+    private static function getNonTranslableAttributes($model, $attributes) {
+        $non_translatable = [];
+
+        foreach ($attributes as $attribute => $value) {
+            // the attribute is translatable continue
+            if ( $model->isTranslatableAttribute($attribute)) {     
+                continue;
+            }
+
+            $non_translatable[$attribute] = $value;
+        }
+        return $non_translatable;
     }
 }
