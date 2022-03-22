@@ -327,7 +327,6 @@ trait Validation
         if (! empty($rules)) {
             $this->setValidation($rules, $messages);
         }
-
     }
 
     /**
