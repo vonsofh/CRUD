@@ -21,7 +21,7 @@ trait Columns
     /**
      * Add a bunch of column names and their details to the CRUD object.
      *
-     * @param array|string $columns
+     * @param  array|string  $columns
      */
     public function setColumns($columns)
     {
@@ -56,8 +56,7 @@ trait Columns
     /**
      * Add a column at the end of to the CRUD object's "columns" array.
      *
-     * @param array|string $column
-     *
+     * @param  array|string  $column
      * @return self
      */
     public function addColumn($column)
@@ -127,7 +126,7 @@ trait Columns
     /**
      * Add multiple columns at the end of the CRUD object's "columns" array.
      *
-     * @param array $columns
+     * @param  array  $columns
      */
     public function addColumns($columns)
     {
@@ -141,7 +140,7 @@ trait Columns
     /**
      * Move the most recently added column after the given target column.
      *
-     * @param string|array $targetColumn The target column name or array.
+     * @param  string|array  $targetColumn  The target column name or array.
      */
     public function afterColumn($targetColumn)
     {
@@ -151,7 +150,7 @@ trait Columns
     /**
      * Move the most recently added column before the given target column.
      *
-     * @param string|array $targetColumn The target column name or array.
+     * @param  string|array  $targetColumn  The target column name or array.
      */
     public function beforeColumn($targetColumn)
     {
@@ -176,8 +175,8 @@ trait Columns
     /**
      * Move the most recently added column before or after the given target column. Default is before.
      *
-     * @param string|array $targetColumn The target column name or array.
-     * @param bool         $before       If true, the column will be moved before the target column, otherwise it will be moved after it.
+     * @param  string|array  $targetColumn  The target column name or array.
+     * @param  bool  $before  If true, the column will be moved before the target column, otherwise it will be moved after it.
      */
     private function moveColumn($targetColumn, $before = true)
     {
@@ -202,8 +201,7 @@ trait Columns
     /**
      * Add the default column type to the given Column, inferring the type from the database column type.
      *
-     * @param array $column
-     *
+     * @param  array  $column
      * @return array|bool
      */
     public function addDefaultTypeToColumn($column)
@@ -221,8 +219,7 @@ trait Columns
      * If a field or column array is missing the "label" attribute, an ugly error would be show.
      * So we add the field Name as a label - it's better than nothing.
      *
-     * @param array $array
-     *
+     * @param  array  $array
      * @return array
      */
     public function addDefaultLabel($array)
@@ -239,7 +236,7 @@ trait Columns
     /**
      * Remove a column from the CRUD panel by name.
      *
-     * @param string $columnKey The column key.
+     * @param  string  $columnKey  The column key.
      */
     public function removeColumn($columnKey)
     {
@@ -251,7 +248,7 @@ trait Columns
     /**
      * Remove multiple columns from the CRUD panel by name.
      *
-     * @param array $columns Array of column names.
+     * @param  array  $columns  Array of column names.
      */
     public function removeColumns($columns)
     {
@@ -273,8 +270,8 @@ trait Columns
     /**
      * Change attributes for multiple columns.
      *
-     * @param array $columns
-     * @param array $attributes
+     * @param  array  $columns
+     * @param  array  $attributes
      */
     public function setColumnsDetails($columns, $attributes)
     {
@@ -286,8 +283,8 @@ trait Columns
     /**
      * Change attributes for a certain column.
      *
-     * @param string $columnKey           Column key.
-     * @param array  $attributesAndValues
+     * @param  string  $columnKey  Column key.
+     * @param  array  $attributesAndValues
      */
     public function setColumnDetails($columnKey, $attributesAndValues)
     {
@@ -306,8 +303,8 @@ trait Columns
      * Alias for setColumnDetails().
      * Provides a consistent syntax with Fields, Buttons, Filters modify functionality.
      *
-     * @param string $column     Column name.
-     * @param array  $attributes
+     * @param  string  $column  Column name.
+     * @param  array  $attributes
      */
     public function modifyColumn($column, $attributes)
     {
@@ -317,8 +314,8 @@ trait Columns
     /**
      * Set label for a specific column.
      *
-     * @param string $column
-     * @param string $label
+     * @param  string  $column
+     * @param  string  $label
      */
     public function setColumnLabel($column, $label)
     {
@@ -343,7 +340,7 @@ trait Columns
      * Order the CRUD columns. If certain columns are missing from the given order array, they will be pushed to the
      * new columns array in the original order.
      *
-     * @param array $order An array of column names in the desired order.
+     * @param  array  $order  An array of column names in the desired order.
      */
     public function orderColumns($order)
     {
@@ -365,8 +362,7 @@ trait Columns
     /**
      * Get a column by the id, from the associative array.
      *
-     * @param int $column_number Placement inside the columns array.
-     *
+     * @param  int  $column_number  Placement inside the columns array.
      * @return array Column details.
      */
     public function findColumnById($column_number)
@@ -377,9 +373,8 @@ trait Columns
     }
 
     /**
-     * @param string $table
-     * @param string $name
-     *
+     * @param  string  $table
+     * @param  string  $name
      * @return bool
      */
     protected function hasColumn($table, $name)
@@ -414,8 +409,7 @@ trait Columns
      * Set a certain priority for the actions column
      * in the CRUD table view. Usually set to 10000 in order to hide it.
      *
-     * @param int $number The priority, from 1 to infinity. Lower is better.
-     *
+     * @param  int  $number  The priority, from 1 to infinity. Lower is better.
      * @return self
      */
     public function setActionsColumnPriority($number)

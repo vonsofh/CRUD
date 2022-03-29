@@ -133,10 +133,9 @@ class Install extends Command
     /**
      * Run a SSH command.
      *
-     * @param string $command      The SSH command that needs to be run
-     * @param bool   $beforeNotice Information for the user before the command is run
-     * @param bool   $afterNotice  Information for the user after the command is run
-     *
+     * @param  string  $command  The SSH command that needs to be run
+     * @param  bool  $beforeNotice  Information for the user before the command is run
+     * @param  bool  $afterNotice  Information for the user after the command is run
      * @return mixed Command-line output
      */
     public function executeProcess($command, $beforeNotice = false, $afterNotice = false)
@@ -172,11 +171,10 @@ class Install extends Command
     /**
      * Run an artisan command.
      *
-     * @param  string  $command      The artisan command to be run.
-     * @param  array   $arguments    Key-value array of arguments to the artisan command.
-     * @param  bool    $beforeNotice Information for the user before the command is run
-     * @param  bool    $afterNotice  Information for the user after the command is run
-     *
+     * @param  string  $command  The artisan command to be run.
+     * @param  array  $arguments  Key-value array of arguments to the artisan command.
+     * @param  bool  $beforeNotice  Information for the user before the command is run
+     * @param  bool  $afterNotice  Information for the user after the command is run
      * @return mixed Command-line output
      */
     public function executeArtisanProcess($command, $arguments = [], $beforeNotice = false, $afterNotice = false)
@@ -203,8 +201,8 @@ class Install extends Command
     /**
      * Write text to the screen for the user to see.
      *
-     * @param string $type    line, info, comment, question, error
-     * @param string $content
+     * @param  string  $type  line, info, comment, question, error
+     * @param  string  $content
      */
     public function echo($type, $content)
     {

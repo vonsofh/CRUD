@@ -42,10 +42,10 @@ trait Filters
     /**
      * Add a filter to the CRUD table view.
      *
-     * @param array               $options       Name, type, label, etc.
-     * @param bool|array|\Closure $values        The HTML for the filter.
-     * @param bool|\Closure       $filterLogic   Query modification (filtering) logic when filter is active.
-     * @param bool|\Closure       $fallbackLogic Query modification (filtering) logic when filter is not active.
+     * @param  array  $options  Name, type, label, etc.
+     * @param  bool|array|\Closure  $values  The HTML for the filter.
+     * @param  bool|\Closure  $filterLogic  Query modification (filtering) logic when filter is active.
+     * @param  bool|\Closure  $fallbackLogic  Query modification (filtering) logic when filter is not active.
      */
     public function addFilter($options, $values = false, $filterLogic = false, $fallbackLogic = false)
     {
@@ -77,8 +77,8 @@ trait Filters
     /**
      * Apply the filter.
      *
-     * @param CrudFilter              $filter
-     * @param ParameterBag|array|null $input
+     * @param  CrudFilter  $filter
+     * @param  ParameterBag|array|null  $input
      */
     public function applyFilter(CrudFilter $filter, $input = null)
     {
@@ -106,9 +106,9 @@ trait Filters
     }
 
     /**
-     * @param string $name
-     * @param string $operator
-     * @param array  $input
+     * @param  string  $name
+     * @param  string  $operator
+     * @param  array  $input
      */
     public function addDefaultFilterLogic($name, $operator, $input = null)
     {
@@ -166,8 +166,7 @@ trait Filters
     }
 
     /**
-     * @param string $name
-     *
+     * @param  string  $name
      * @return null|CrudFilter
      */
     public function getFilter($name)
@@ -178,8 +177,7 @@ trait Filters
     }
 
     /**
-     * @param string $name
-     *
+     * @param  string  $name
      * @return bool
      */
     public function hasActiveFilter($name)
@@ -192,9 +190,8 @@ trait Filters
     /**
      * Modify the attributes of a filter.
      *
-     * @param string $name          The filter name.
-     * @param array  $modifications An array of changes to be made.
-     *
+     * @param  string  $name  The filter name.
+     * @param  array  $modifications  An array of changes to be made.
      * @return CrudFilter The filter that has suffered modifications, for daisychaining methods.
      */
     public function modifyFilter($name, $modifications)

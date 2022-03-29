@@ -16,8 +16,7 @@ trait Create
     /**
      * Insert a row in the database.
      *
-     * @param array $data All input values to be inserted.
-     *
+     * @param  array  $data  All input values to be inserted.
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function create($data)
@@ -89,8 +88,8 @@ trait Create
     /**
      * Create the relations for the current model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $item The current CRUD model.
-     * @param array                               $data The form data.
+     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
+     * @param  array  $data  The form data.
      */
     public function createRelations($item, $data)
     {
@@ -101,8 +100,8 @@ trait Create
     /**
      * Sync the declared many-to-many associations through the pivot field.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model The current CRUD model.
-     * @param array                               $data  The form data.
+     * @param  \Illuminate\Database\Eloquent\Model  $model  The current CRUD model.
+     * @param  array  $data  The form data.
      */
     public function syncPivot($model, $data)
     {
@@ -137,8 +136,8 @@ trait Create
     /**
      * Create any existing one to one relations for the current model from the form data.
      *
-     * @param \Illuminate\Database\Eloquent\Model $item The current CRUD model.
-     * @param array                               $data The form data.
+     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
+     * @param  array  $data  The form data.
      */
     private function createOneToOneRelations($item, $data)
     {
@@ -149,9 +148,8 @@ trait Create
     /**
      * Create any existing one to one relations for the current model from the relation data.
      *
-     * @param \Illuminate\Database\Eloquent\Model $item          The current CRUD model.
-     * @param array                               $formattedData The form data.
-     *
+     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
+     * @param  array  $formattedData  The form data.
      * @return bool|null
      */
     private function createRelationsForItem($item, $formattedData)
@@ -196,8 +194,7 @@ trait Create
      * attribute values. For relations defined with the "dot" notations, this will be used to calculate the depth in the
      * final array (@see \Illuminate\Support\Arr::set() for more).
      *
-     * @param array $data The form data.
-     *
+     * @param  array  $data  The form data.
      * @return array The formatted relation data.
      */
     private function getRelationDataFromFormData($data)
