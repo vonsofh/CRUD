@@ -4,7 +4,7 @@ namespace Backpack\CRUD\app\Models;
 
 use App\User;
 use Backpack\CRUD\app\Models\Traits\InheritsRelationsFromParentModel;
-use Backpack\CRUD\app\Notifications\ResetPasswordNotification as ResetPasswordNotification;
+use Backpack\CRUD\app\Notifications\ResetPasswordNotification;
 use Illuminate\Notifications\Notifiable;
 
 class BackpackUser extends User
@@ -17,8 +17,7 @@ class BackpackUser extends User
     /**
      * Send the password reset notification.
      *
-     * @param string $token
-     *
+     * @param  string  $token
      * @return void
      */
     public function sendPasswordResetNotification($token)

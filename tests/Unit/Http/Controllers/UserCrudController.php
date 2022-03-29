@@ -3,7 +3,6 @@
 namespace Backpack\CRUD\Tests\Unit\Http\Controllers;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Illuminate\Support\Facades\Response;
 
 class UserCrudController extends CrudController
 {

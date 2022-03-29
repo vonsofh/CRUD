@@ -89,8 +89,7 @@ trait AutoSet
     /**
      * Intuit a field type, judging from the database column type.
      *
-     * @param string $field Field name.
-     *
+     * @param  string  $field  Field name.
      * @return string Field type.
      */
     public function getFieldTypeFromDbColumnType($field)
@@ -180,8 +179,7 @@ trait AutoSet
     /**
      * Turn a database column name or PHP variable into a pretty label to be shown to the user.
      *
-     * @param string $value The value.
-     *
+     * @param  string  $value  The value.
      * @return string The transformed value.
      */
     public function makeLabel($value)
@@ -204,8 +202,7 @@ trait AutoSet
     /**
      * Change the way labels are made.
      *
-     * @param callable $labeller A function that receives a string and returns the formatted string, after stripping down useless characters.
-     *
+     * @param  callable  $labeller  A function that receives a string and returns the formatted string, after stripping down useless characters.
      * @return self
      */
     public function setLabeller(callable $labeller)

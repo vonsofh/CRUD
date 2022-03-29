@@ -49,7 +49,6 @@ trait Read
      * Find and retrieve an entry in the database or fail.
      *
      * @param int The id of the row in the db to fetch.
-     *
      * @return \Illuminate\Database\Eloquent\Model The row in the db.
      */
     public function getEntry($id)
@@ -66,7 +65,6 @@ trait Read
      * Find and retrieve an entry in the database or fail.
      *
      * @param int The id of the row in the db to fetch.
-     *
      * @return \Illuminate\Database\Eloquent\Model The row in the db.
      */
     public function getEntryWithoutFakes($id)
@@ -217,9 +215,9 @@ trait Read
     /**
      * Specify array of available page lengths on the list view.
      *
-     * @param array $menu 1d array of page length values,
-     *                    or 2d array (first array: page length values, second array: page length labels)
-     *                    More at: https://datatables.net/reference/option/lengthMenu
+     * @param  array  $menu  1d array of page length values,
+     *                       or 2d array (first array: page length values, second array: page length labels)
+     *                       More at: https://datatables.net/reference/option/lengthMenu
      */
     public function setPageLengthMenu($menu)
     {
