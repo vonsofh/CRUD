@@ -19,6 +19,7 @@ class BackpackServiceProvider extends ServiceProvider
         \Backpack\CRUD\app\Console\Commands\PublishBackpackUserModel::class,
         \Backpack\CRUD\app\Console\Commands\PublishBackpackMiddleware::class,
         \Backpack\CRUD\app\Console\Commands\PublishView::class,
+        \Backpack\CRUD\app\Console\Commands\Fix::class,
     ];
 
     // Indicates if loading of the provider is deferred.
