@@ -207,7 +207,6 @@ trait HasTranslations
      *
      * @param  array  $attributes
      * @param  string  $locale
-     * 
      * @return void
      */
     private function fillModelWithTranslations(array $attributes, string $locale)
@@ -232,7 +231,7 @@ trait HasTranslations
     /**
      * Out of an array of attributes, only keep those that are NOT translatable.
      *
-     * 
+     *
      * @param  array  $attributes
      * @return array
      */
