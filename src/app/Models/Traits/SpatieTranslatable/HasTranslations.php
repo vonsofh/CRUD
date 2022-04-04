@@ -236,6 +236,8 @@ trait HasTranslations
     }
 
     /**
+     * Out of an array of attributes, only keep those that are NOT translatable.
+     * 
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  array  $attributes
      * @return array
