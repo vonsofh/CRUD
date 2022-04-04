@@ -206,6 +206,8 @@ trait HasTranslations
     }
 
     /**
+     * Add the JSONs with the translated strings to the given model, for a specific locale.
+     * 
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  array  $attributes
      * @param  string  $locale
