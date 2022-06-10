@@ -10,6 +10,7 @@
     @if($field['multiple'])<input type="hidden" name="{{ $field['name'] }}" value="" @if(in_array('disabled', $field['attributes'] ?? [])) disabled @endif />@endif
     <select
         name="{{ $field['name'] }}@if ($field['multiple'])[]@endif"
+        data-init-function="bpFieldInitSelectFromArrayElement"
         @include('crud::fields.inc.attributes')
         @if ($field['multiple'])multiple bp-field-main-input @endif
         >
@@ -34,3 +35,19 @@
         <p class="help-block">{!! $field['hint'] !!}</p>
     @endif
 @include('crud::fields.inc.wrapper_end')
+
+@push('crud_fields_scripts')
+@loadOnce('bpFieldInitSelectFromArrayElement')
+<script>
+function bpFieldInitSelectFromArrayElement(element) {
+    element.on('mousedown keydown keyup', function(e) {
+        if($(this).attr('readonly')) {
+            this.blur();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
+}
+</script>
+@endLoadOnce
+@endpush

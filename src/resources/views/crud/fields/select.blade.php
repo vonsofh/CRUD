@@ -23,6 +23,7 @@
 
     <select
         name="{{ $field['name'] }}"
+        data-init-function="bpFieldInitSelectElement"
         @include('crud::fields.inc.attributes')
         >
 
@@ -47,3 +48,19 @@
     @endif
 
 @include('crud::fields.inc.wrapper_end')
+
+@push('crud_fields_scripts')
+@loadOnce('bpFieldInitSelectElement')
+<script>
+function bpFieldInitSelectElement(element) {
+    element.on('mousedown keydown keyup', function(e) {
+        if($(this).attr('readonly')) {
+            this.blur();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
+}
+</script>
+@endLoadOnce
+@endpush

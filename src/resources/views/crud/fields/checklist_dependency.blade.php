@@ -225,25 +225,25 @@
             });
           };
           
-          thisField.find('div.hidden_fields_primary').children('input').first().on('CrudField:disable', function(e) {
+          thisField.find('div.hidden_fields_primary').children('input').first().on('CrudField:disable CrudField:readonlyOn', function(e) {
               let input = $(e.target);
               input.parent().parent().find('input[type=checkbox]').attr('disabled', 'disabled');
               input.siblings('input').attr('disabled','disabled');
           });
 
-          thisField.find('div.hidden_fields_primary').children('input').first().on('CrudField:enable', function(e) {
+          thisField.find('div.hidden_fields_primary').children('input').first().on('CrudField:enable CrudField:readonlyOff', function(e) {
               let input = $(e.target);
               input.parent().parent().find('input[type=checkbox]').not('[forced-select]').removeAttr('disabled');
               input.siblings('input').removeAttr('disabled');
           });
 
-          thisField.find('div.hidden_fields_secondary').children('input').first().on('CrudField:disable', function(e) {
+          thisField.find('div.hidden_fields_secondary').children('input').first().on('CrudField:disable CrudField:readonlyOn', function(e) {
               let input = $(e.target);
               input.parent().parent().find('input[type=checkbox]').attr('disabled', 'disabled');
               input.siblings('input').attr('disabled','disabled');
           });
 
-          thisField.find('div.hidden_fields_secondary').children('input').first().on('CrudField:enable', function(e) {
+          thisField.find('div.hidden_fields_secondary').children('input').first().on('CrudField:enable CrudField:readonlyOff', function(e) {
               let input = $(e.target);
               input.parent().parent().find('input[type=checkbox]').not('[forced-select]').removeAttr('disabled');
               input.siblings('input').removeAttr('disabled');

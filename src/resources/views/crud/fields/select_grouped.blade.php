@@ -19,6 +19,7 @@
     <select
         name="{{ $field['name'] }}"
         style="width: 100%"
+        data-init-function="bpFieldInitSelectGroupedElement"
         @include('crud::fields.inc.attributes', ['default_class' =>  'form-control'])
         >
 
@@ -59,3 +60,19 @@
         <p class="help-block">{!! $field['hint'] !!}</p>
     @endif
 @include('crud::fields.inc.wrapper_end')
+
+@push('crud_fields_scripts')
+@loadOnce('bpFieldInitSelectGroupedElement')
+<script>
+function bpFieldInitSelectGroupedElement(element) {
+    element.on('mousedown keydown keyup', function(e) {
+        if($(this).attr('readonly')) {
+            this.blur();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
+}
+</script>
+@endLoadOnce
+@endpush

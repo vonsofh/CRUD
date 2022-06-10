@@ -25,6 +25,7 @@
     	class="form-control"
         name="{{ $field['name'] }}[]"
         @include('crud::fields.inc.attributes')
+        data-init-function="bpFieldInitSelectMultipleElement"
         bp-field-main-input
     	multiple>
 
@@ -46,3 +47,19 @@
     @endif
 
 @include('crud::fields.inc.wrapper_end')
+
+@push('crud_fields_scripts')
+@loadOnce('bpFieldInitSelectMultipleElement')
+<script>
+function bpFieldInitSelectMultipleElement(element) {
+    element.on('mousedown keydown keyup', function(e) {
+        if($(this).attr('readonly')) {
+            this.blur();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    })
+}
+</script>
+@endLoadOnce
+@endpush
