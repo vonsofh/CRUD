@@ -64,13 +64,13 @@
                 $(this).siblings('label').attr('for', id+index);
             });
 
-            hiddenInput.on('CrudField:disable', function(e) {
+            hiddenInput.on('CrudField:disable CrudField:readonlyOn', function(e) {
                 element.find('.form-check input[type=radio]').each(function(index, item) {
                     $(this).prop('disabled', true);
                 });
             });
 
-            hiddenInput.on('CrudField:enable', function(e) {
+            hiddenInput.on('CrudField:enable CrudField:readonlyOff', function(e) {
                 element.find('.form-check input[type=radio]').each(function(index, item) {
                     $(this).removeAttr('disabled');
                 });

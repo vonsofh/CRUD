@@ -54,10 +54,10 @@
                   element.prop('checked', false);
                 }
 
-                hidden_element.on('CrudField:disable', function(e) {
+                hidden_element.on('CrudField:disable CrudField:readonlyOn', function(e) {
                   element.prop('disabled', true);
                 });
-                hidden_element.on('CrudField:enable', function(e) {
+                hidden_element.on('CrudField:enable CrudField:readonlyOff', function(e) {
                   element.removeAttr('disabled');
                 });
 

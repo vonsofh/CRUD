@@ -55,11 +55,11 @@
                 }
             }
 
-            element.on('CrudField:disable', function(e) {
+            element.on('CrudField:disable CrudField:readonlyOn', function(e) {
                 element.summernote('disable');
             });
 
-            element.on('CrudField:enable', function(e) {
+            element.on('CrudField:enable CrudField:readonlyOff', function(e) {
                 element.summernote('enable');
             });
             

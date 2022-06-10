@@ -139,36 +139,61 @@
   @loadOnce('bpFieldInitUploadElement')
     <script>
         function bpFieldInitUploadElement(element) {
-            var fileInput = element.find(".file_input");
-            var fileClearButton = element.find(".file_clear_button");
-            var fieldName = element.attr('data-field-name');
-            var inputWrapper = element.find(".backstrap-file");
-            var inputLabel = element.find(".backstrap-file-label");
+          var fileInput = element.find(".file_input");
+          var fileClearButton = element.find(".file_clear_button");
+          var fieldName = element.attr('data-field-name');
+          var inputWrapper = element.find(".backstrap-file");
+          var inputLabel = element.find(".backstrap-file-label");
 
-            fileClearButton.click(function(e) {
-                e.preventDefault();
-                $(this).parent().addClass('d-none');
+          fileClearButton.click(function(e) {
+              e.preventDefault();
+              $(this).parent().addClass('d-none');
 
-                fileInput.parent().removeClass('d-none');
-                fileInput.attr("value", "").replaceWith(fileInput.clone(true));
+              fileInput.parent().removeClass('d-none');
+              fileInput.attr("value", "").replaceWith(fileInput.clone(true));
 
-                // redo the selector, so we can use the same fileInput variable going forward
-                fileInput = element.find(".file_input");
+              // redo the selector, so we can use the same fileInput variable going forward
+              fileInput = element.find(".file_input");
 
-                // add a hidden input with the same name, so that the setXAttribute method is triggered
-                $("<input type='hidden' name='"+fieldName+"' value=''>").insertAfter(fileInput);
-            });
+              // add a hidden input with the same name, so that the setXAttribute method is triggered
+              $("<input type='hidden' name='"+fieldName+"' value=''>").insertAfter(fileInput);
+          });
 
-            fileInput.change(function() {
+          fileInput.change(function() {
+              if(!$(this).attr('readonly')) {
                 var path = $(this).val();
                 var path = path.replace("C:\\fakepath\\", "");
                 inputLabel.html(path);
                 // remove the hidden input, so that the setXAttribute method is no longer triggered
                 $(this).next("input[type=hidden]").remove();
-            });
+              }
+          });
 
-            element.on('CrudField:disable', function(e) {
-              element.children('.backstrap-file').find('input').prop('disabled', 'disabled');
+          element.on('CrudField:disable', function(e) {
+            changeUploadInputState(element, 'disabled', false);
+          });
+
+          element.on('CrudField:enable', function(e) {
+            changeUploadInputState(element, 'disabled');
+          });
+
+          element.on('CrudField:readonlyOn', function(e) {
+            changeUploadInputState(element, 'readonly', false);
+          });
+
+          element.on('CrudField:readonlyOff', function(e) {
+            changeUploadInputState(element, 'readonly');
+          });
+
+          function changeUploadInputState(element, attribute, enable = true) {
+
+            if(enable) {
+              element.children('.backstrap-file').find('input').removeAttr(attribute);
+              element.children('.existing-file').children('a.file_clear_button').unbind('click.prevent');
+              return;
+            }
+
+            element.children('.backstrap-file').find('input').prop(attribute, attribute);
               
               let $deleteButton = element.children('.existing-file').children('a.file_clear_button');
               
@@ -180,13 +205,7 @@
                   // make the event we just registered, the first to be triggered
                   $._data($deleteButton.get(0), "events").click.reverse();
               }
-          });
-
-          element.on('CrudField:enable', function(e) {
-            element.children('.backstrap-file').find('input').removeAttr('disabled');
-            element.children('.existing-file').children('a.file_clear_button').unbind('click.prevent');
-          });
-
+          }
         }
     </script>
   @endLoadOnce

@@ -137,6 +137,12 @@
             return this.require(!value);
         }
 
+        readonly(value = true) {
+            this.$input.attr('readonly', value && 'readonly');
+            this.$input.trigger(`CrudField:${value ? 'readonlyOn' : 'readonlyOff'}`);
+            return this;
+        }
+
         check(value = true) {
             this.wrapper.find('input[type=checkbox]').prop('checked', value).trigger('change');
             return this;

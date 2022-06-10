@@ -162,20 +162,47 @@
 		        });
 
 		        fileInput.change(function() {
-	                inputLabel.html("Files selected. After save, they will show up above.");
-					let selectedFiles = [];
+					if(!$(this).attr('readonly')) {
+						inputLabel.html("Files selected. After save, they will show up above.");
+						let selectedFiles = [];
 
-					Array.from($(this)[0].files).forEach(file => {
-						selectedFiles.push({name: file.name, type: file.type})
-					});
+						Array.from($(this)[0].files).forEach(file => {
+							selectedFiles.push({name: file.name, type: file.type})
+						});
 
-					element.find('input').first().val(JSON.stringify(selectedFiles)).trigger('change');
-		        	// remove the hidden input, so that the setXAttribute method is no longer triggered
-					$(this).next("input[type=hidden]:not([name='clear_"+fieldName+"[]'])").remove();
+						element.find('input').first().val(JSON.stringify(selectedFiles)).trigger('change');
+						// remove the hidden input, so that the setXAttribute method is no longer triggered
+						$(this).next("input[type=hidden]:not([name='clear_"+fieldName+"[]'])").remove();
+					}
 		        });
 
 				element.find('input').on('CrudField:disable', function(e) {
-					element.children('.backstrap-file').find('input').prop('disabled', 'disabled');
+					changeUploadMultipleInputState(element, 'disabled', false);
+				});
+
+				element.on('CrudField:enable', function(e) {
+					changeUploadMultipleInputState(element, 'disabled');
+				});
+
+				element.on('CrudField:readonlyOn', function(e) {
+					changeUploadMultipleInputState(element, 'readonly', false);
+				});
+
+				element.on('CrudField:readonlyOff', function(e) {
+					changeUploadMultipleInputState(element, 'readonly');
+				});
+
+				function changeUploadMultipleInputState(element, attribute, enable = true) {
+
+					if(enable) {
+						element.children('.backstrap-file').find('input').removeAttr(attribute);
+						element.children('.existing-file').find('.file-preview').each(function(i, el) {
+							$(el).find('a.file-clear-button').unbind('click.prevent');
+						});
+						return;
+					}
+
+					element.children('.backstrap-file').find('input').prop(attribute, attribute);
 					element.children('.existing-file').find('.file-preview').each(function(i, el) {
 
 						let $deleteButton = $(el).find('a.file-clear-button');
@@ -189,14 +216,7 @@
 							$._data($deleteButton.get(0), "events").click.reverse();
 						}
 					});
-				});
-
-				element.on('CrudField:enable', function(e) {
-					element.children('.backstrap-file').find('input').removeAttr('disabled');
-					element.children('.existing-file').find('.file-preview').each(function(i, el) {
-						$(el).find('a.file-clear-button').unbind('click.prevent');
-					});
-				});
+				}
         	}
         </script>
         @endLoadOnce
