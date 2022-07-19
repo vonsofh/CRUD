@@ -179,6 +179,7 @@ if (! function_exists('mb_ucfirst')) {
      */
     function mb_ucfirst($string, $encoding = false)
     {
+        $string = $string ?? '';
         $encoding = $encoding ? $encoding : mb_internal_encoding();
 
         $strlen = mb_strlen($string, $encoding);

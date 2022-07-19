@@ -16,7 +16,7 @@
     }
 
     foreach ($results_array as $key => $text) {
-        $results_array[$key] = Str::limit($text, $column['limit'], '[...]');
+        $results_array[$key] = Str::limit($text ?? '', $column['limit'], '[...]');
     }
 @endphp
 
