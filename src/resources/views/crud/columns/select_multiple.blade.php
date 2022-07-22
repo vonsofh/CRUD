@@ -21,30 +21,38 @@
             $value = Str::limit($value, $column['limit'], '…');
         })
         ->toArray();
+    
+    $exportString = function() use ($column, $crud, $entry) {
+        $string = '<div class="d-inline-flex">';
+        $string .= e($column['prefix']);
+        foreach($column['value'] as $key => $text){
+            if(!empty($column['wrapper'])) {
+                $string.= view('crud::columns.inc.wrapper_start', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
+            }
+            if($column['escaped']) {
+                $string .= e($text);
+            }else{
+                $string .= $text;
+            }
+            if (!$key === array_key_last($column['value'])) {
+                echo ',';
+            }
+            if(!empty($column['wrapper'])) {
+                $string.= view('crud::columns.inc.wrapper_end', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
+            }
+        }
+        $string .= e($column['prefix']);
+        $string .= '</div>';
+        return $string;
+    };
+
+    if(!empty($column['value'])) {
+        echo $exportString();
+    } else {
+        echo $column['default'] ?? '-';
+    }
 @endphp
 
-<span>
-    @if(!empty($column['value']))
-        {{ $column['prefix'] }}
-        @foreach($column['value'] as $key => $text)
-            @php
-                $related_key = $key;
-            @endphp
 
-            <span class="d-inline-flex">
-                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
-                    @if($column['escaped'])
-                        {{ $text }}
-                    @else
-                        {!! $text !!}
-                    @endif
-                @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_end')
+    
 
-                @if(!$loop->last), @endif
-            </span>
-        @endforeach
-        {{ $column['suffix'] }}
-    @else
-        {{ $column['default'] ?? '-' }}
-    @endif
-</span>
