@@ -34,7 +34,7 @@
                 $string .= $text;
             }
             if (!$key === array_key_last($column['value'])) {
-                echo ',';
+                echo '&nbsp;,&nbsp;';
             }
             if(!empty($column['wrapper'])) {
                 $string.= view('crud::columns.inc.wrapper_end', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
