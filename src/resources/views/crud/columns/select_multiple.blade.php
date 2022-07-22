@@ -22,9 +22,8 @@
         })
         ->toArray();
     
-    $exportString = function() use ($column, $crud, $entry) {
-        $string = '<div class="d-inline-flex">';
-        $string .= e($column['prefix']);
+    $column['render'] = $column['render'] ?? function() use ($column, $crud, $entry) {
+        $string = e($column['prefix']);
         foreach($column['value'] as $key => $text){
             if(!empty($column['wrapper'])) {
                 $string.= view('crud::columns.inc.wrapper_start', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
@@ -42,12 +41,11 @@
             }
         }
         $string .= e($column['prefix']);
-        $string .= '</div>';
         return $string;
     };
 
     if(!empty($column['value'])) {
-        echo $exportString();
+        echo $column['render']();
     } else {
         echo $column['default'] ?? '-';
     }
