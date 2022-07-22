@@ -23,7 +23,7 @@
         ->toArray();
     
     $column['render'] = $column['render'] ?? function() use ($column, $crud, $entry) {
-        $string = e($column['prefix']);
+        $string = e($column['prefix'] ?? '&nbsp;');
         foreach($column['value'] as $key => $text){
             if(!empty($column['wrapper'])) {
                 $string.= view('crud::columns.inc.wrapper_start', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
@@ -33,15 +33,15 @@
             }else{
                 $string .= $text;
             }
-            if (!$key === array_key_last($column['value'])) {
-                echo '&nbsp;,&nbsp;';
+            if ($key !== array_key_last($column['value'])) {
+                $string.= '&nbsp,&nbsp;';
             }
             if(!empty($column['wrapper'])) {
                 $string.= view('crud::columns.inc.wrapper_end', ['crud' => $crud, 'column' => $column, 'entry' => $entry, 'relatedKey' => $key])->render();
             }
         }
         $string .= e($column['prefix']);
-        return $string;
+        return str_replace(array("\r", "\n"), '', $string);
     };
 
     if(!empty($column['value'])) {
