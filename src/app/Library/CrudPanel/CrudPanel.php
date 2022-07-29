@@ -366,15 +366,11 @@ class CrudPanel
     }
 
     /**
-     * Get the given attribute from a model or models resulting from the specified relation string (eg: the list of streets from
-     * the many addresses of the company of a given user).
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model  Model (eg: user).
-     * @param  string  $relationString  Model relation. Can be a string representing the name of a relation method in the given
-     *                                  Model or one from a different Model through multiple relations. A dot notation can be used to specify
-     *                                  multiple relations (eg: user.company.address).
-     * @param  string  $attribute  The attribute from the relation model (eg: the street attribute from the address model).
-     * @return array An array containing a list of attributes from the resulting model.
+     * Return the related entries attributes from model
+     * 
+     * @param Model $model
+     * @param string $relationString
+     * @param string $attribute
      */
     public function getRelatedEntriesAttributes($model, $relationString, $attribute)
     {
@@ -389,96 +385,28 @@ class CrudPanel
         }
         if (is_a($relationInformation, Collection::class)) 
         {
-            return $relationInformation->lazy()->mapWithKeys(function($item) use ($attribute) {
+            return $relationInformation->mapWithKeys(function($item) use ($attribute) {
                 $item = $this->setLocaleOnModel($item);
+                
                 return [$item->getKey() => $item->{$attribute}];
             });
         }
     }
-
+    
     /**
-     * Parse translatable attributes from a model or models resulting from the specified relation string.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model  Model (eg: user).
-     * @param  string  $attribute  The attribute from the relation model (eg: the street attribute from the address model).
-     * @param  string  $value  Attribute value translatable or not
-     * @return string A string containing the translated attributed based on app()->getLocale()
+     * Set the locale on the model 
+     * 
+     * @param Model $model
+     * @param bool $useFallbackLocale
+     * @return Model
      */
-    public function parseTranslatableAttributes($model, $attribute, $value)
-    {
-        if (! method_exists($model, 'isTranslatableAttribute')) {
-            return $value;
-        }
-
-        if (! $model->isTranslatableAttribute($attribute)) {
-            return $value;
-        }
-
-        if (! is_array($value)) {
-            $decodedAttribute = json_decode($value, true);
-        } else {
-            $decodedAttribute = $value;
-        }
-
-        if (is_array($decodedAttribute) && ! empty($decodedAttribute)) {
-            if (isset($decodedAttribute[app()->getLocale()])) {
-                return $decodedAttribute[app()->getLocale()];
-            } else {
-                return Arr::first($decodedAttribute);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Traverse the tree of relations for the given model, defined by the given relation string, and return the ending
-     * associated model instance or instances.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model  The CRUD model.
-     * @param  string  $relationString  Relation string. A dot notation can be used to chain multiple relations.
-     * @return array An array of the associated model instances defined by the relation string.
-     */
-    private function getRelatedEntries($model, $relationString)
-    {
-        $relationArray = explode('.', $this->getOnlyRelationEntity(['entity' => $relationString]));
-        $firstRelationName = Arr::first($relationArray);
-        $relation = $model->{$firstRelationName};
-
-        $results = [];
-        if (! is_null($relation)) {
-            if ($relation instanceof Collection) {
-                $currentResults = $relation->all();
-            } elseif (is_array($relation)) {
-                $currentResults = $relation;
-            } elseif ($relation instanceof Model) {
-                $currentResults = [$relation];
-            } else {
-                $currentResults = [];
-            }
-
-            array_shift($relationArray);
-
-            if (! empty($relationArray)) {
-                foreach ($currentResults as $currentResult) {
-                    $results = array_merge_recursive($results, $this->getRelatedEntries($currentResult, implode('.', $relationArray)));
-                }
-            } else {
-                $relatedClass = get_class($model->{$firstRelationName}()->getRelated());
-                $results[$relatedClass] = $currentResults;
-            }
-        }
-
-        return $results;
-    }
-
-    public function setLocaleOnModel($model,$useFallbackLocale = true) 
+    public function setLocaleOnModel($model, $useFallbackLocale = true) 
     {
         if (method_exists($model, 'translationEnabled') && $model->translationEnabled()) {
             $locale = $this->getRequest()->input('_locale', app()->getLocale());
             if (in_array($locale, array_keys($model->getAvailableLocales()))) {
                 $model->setLocale($locale);
-                $model->useFallbackLocale =  $useFallbackLocale;
+                $model->useFallbackLocale = $useFallbackLocale;
             }
         }
         return $model;

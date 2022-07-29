@@ -101,9 +101,10 @@ trait Read
     {
         $columns = $this->columns();
         foreach ($columns as $columnName => $column) {
-            if (strpos($column['entity'] ?? '', '.') !== false) {
+            $relationString = $column['entity'] ?? null;
+            if ($relationString && strpos($column['entity'] ?? '', '.') !== false) {
                 $columnAttribute = $column['attribute'] ?? null;
-                $relationString = $column['entity'];
+                
 
                 if($columnAttribute) {
                     $relationString = Str::endsWith($relationString, $columnAttribute) ? Str::beforeLast($relationString, '.') : $relationString;
@@ -123,8 +124,12 @@ trait Read
                         $relationString = join('.', array_slice($parts, 0, $i));
                     }
                 }
+                $this->with($relationString);
+                continue;
             }
-            $this->with($relationString);
+           if($relationString) {
+                $this->with($relationString);
+           }
         }
     }
 
