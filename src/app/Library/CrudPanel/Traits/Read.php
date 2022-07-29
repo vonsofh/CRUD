@@ -4,7 +4,7 @@ namespace Backpack\CRUD\app\Library\CrudPanel\Traits;
 
 use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 use Exception;
-
+use Illuminate\Support\Str;
 /**
  * Properties and methods used by the List operation.
  */
@@ -57,7 +57,7 @@ trait Read
     public function getEntry($id)
     {
         if (! $this->entry) {
-            $this->entry = $this->getModelWithCrudPanelQuery()->findOrFail($id);
+            $this->entry = $this->query->findOrFail($id);
             $this->entry = $this->entry->withFakes();
         }
 
@@ -77,24 +77,9 @@ trait Read
             $this->entry = $this->getEntry($id);
         }
 
-        if ($this->entry->translationEnabled()) {
-            $locale = request('_locale', \App::getLocale());
-            if (in_array($locale, array_keys($this->entry->getAvailableLocales()))) {
-                $this->entry->setLocale($locale);
-            }
-        }
+        $this->entry = $this->setLocaleOnModel($this->entry);
 
         return $this->entry;
-    }
-
-    /**
-     * Return a Model builder instance with the current crud query applied.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getModelWithCrudPanelQuery()
-    {
-        return $this->model->setQuery($this->query->getQuery());
     }
 
     /**
@@ -105,7 +90,7 @@ trait Read
      */
     public function getEntryWithoutFakes($id)
     {
-        return $this->getModelWithCrudPanelQuery()->findOrFail($id);
+        return $this->query->findOrFail($id);
     }
 
     /**
@@ -114,11 +99,19 @@ trait Read
      */
     public function autoEagerLoadRelationshipColumns()
     {
-        $relationships = $this->getColumnsRelationships();
+        $columns = $this->columns();
+        foreach ($columns as $columnName => $column) {
+            if (strpos($column['entity'] ?? '', '.') !== false) {
+                $columnAttribute = $column['attribute'] ?? null;
+                $relationString = $column['entity'];
 
-        foreach ($relationships as $relation) {
-            if (strpos($relation, '.') !== false) {
-                $parts = explode('.', $relation);
+                if($columnAttribute) {
+                    $relationString = Str::endsWith($relationString, $columnAttribute) ? Str::beforeLast($relationString, '.') : $relationString;
+                    $this->with($relationString);
+                    continue;
+                }
+
+                $parts = explode('.', $relationString);
                 $model = $this->model;
 
                 // Iterate over each relation part to find the valid relations without attributes
@@ -127,11 +120,11 @@ trait Read
                     try {
                         $model = $model->$part()->getRelated();
                     } catch (Exception $e) {
-                        $relation = join('.', array_slice($parts, 0, $i));
+                        $relationString = join('.', array_slice($parts, 0, $i));
                     }
                 }
             }
-            $this->with($relation);
+            $this->with($relationString);
         }
     }
 

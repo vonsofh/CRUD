@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class CrudPanel
 {
@@ -377,42 +378,22 @@ class CrudPanel
      */
     public function getRelatedEntriesAttributes($model, $relationString, $attribute)
     {
-        $endModels = $this->getRelatedEntries($model, $relationString);
-        $attributes = [];
-        foreach ($endModels as $model => $entries) {
-            $model_instance = new $model();
-            $modelKey = $model_instance->getKeyName();
-
-            if (is_array($entries)) {
-                //if attribute does not exist in main array we have more than one entry OR the attribute
-                //is an acessor that is not in $appends property of model.
-                if (! isset($entries[$attribute])) {
-                    //we first check if we don't have the attribute because it's an acessor that is not in appends.
-                    if ($model_instance->hasGetMutator($attribute) && isset($entries[$modelKey])) {
-                        $entry_in_database = $model_instance->find($entries[$modelKey]);
-                        $attributes[$entry_in_database->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry_in_database->{$attribute});
-                    } else {
-                        //we have multiple entries
-                        //for each entry we check if $attribute exists in array or try to check if it's an acessor.
-                        foreach ($entries as $entry) {
-                            if (isset($entry[$attribute])) {
-                                $attributes[$entry[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry[$attribute]);
-                            } else {
-                                if ($model_instance->hasGetMutator($attribute)) {
-                                    $entry_in_database = $model_instance->find($entry[$modelKey]);
-                                    $attributes[$entry_in_database->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry_in_database->{$attribute});
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    //if we have the attribute we just return it, does not matter if it is direct attribute or an acessor added in $appends.
-                    $attributes[$entries[$modelKey]] = $this->parseTranslatableAttributes($model_instance, $attribute, $entries[$attribute]);
-                }
-            }
+        $relationKey = Str::endsWith($relationString, $attribute) ? Str::beforeLast($relationString, '.') : $relationString;
+        $relationInformation = data_get($model, $relationKey);
+        if(empty($relationInformation)) {
+            return [];
         }
-
-        return $attributes;
+        if(is_a($relationInformation ,Model::class)) {
+           $relatedModel = $this->setLocaleOnModel($relationInformation);
+           return [$relatedModel->getKey() => $relatedModel->{$attribute}];
+        }
+        if (is_a($relationInformation, Collection::class)) 
+        {
+            return $relationInformation->lazy()->mapWithKeys(function($item) use ($attribute) {
+                $item = $this->setLocaleOnModel($item);
+                return [$item->getKey() => $item->{$attribute}];
+            });
+        }
     }
 
     /**
@@ -489,5 +470,17 @@ class CrudPanel
         }
 
         return $results;
+    }
+
+    public function setLocaleOnModel($model,$useFallbackLocale = true) 
+    {
+        if (method_exists($model, 'translationEnabled') && $model->translationEnabled()) {
+            $locale = $this->getRequest()->input('_locale', app()->getLocale());
+            if (in_array($locale, array_keys($model->getAvailableLocales()))) {
+                $model->setLocale($locale);
+                $model->useFallbackLocale =  $useFallbackLocale;
+            }
+        }
+        return $model;
     }
 }
