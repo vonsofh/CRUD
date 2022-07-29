@@ -5,6 +5,7 @@ namespace Backpack\CRUD\app\Library\CrudPanel\Traits;
 use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 use Exception;
 use Illuminate\Support\Str;
+
 /**
  * Properties and methods used by the List operation.
  */
@@ -104,9 +105,8 @@ trait Read
             $relationString = $column['entity'] ?? null;
             if ($relationString && strpos($column['entity'] ?? '', '.') !== false) {
                 $columnAttribute = $column['attribute'] ?? null;
-                
 
-                if($columnAttribute) {
+                if ($columnAttribute) {
                     $relationString = Str::endsWith($relationString, $columnAttribute) ? Str::beforeLast($relationString, '.') : $relationString;
                     $this->with($relationString);
                     continue;
@@ -127,9 +127,9 @@ trait Read
                 $this->with($relationString);
                 continue;
             }
-           if($relationString) {
+            if ($relationString) {
                 $this->with($relationString);
-           }
+            }
         }
     }
 

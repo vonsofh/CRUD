@@ -366,41 +366,41 @@ class CrudPanel
     }
 
     /**
-     * Return the related entries attributes from model
-     * 
-     * @param Model $model
-     * @param string $relationString
-     * @param string $attribute
+     * Return the related entries attributes from model.
+     *
+     * @param  Model  $model
+     * @param  string  $relationString
+     * @param  string  $attribute
      */
     public function getRelatedEntriesAttributes($model, $relationString, $attribute)
     {
         $relationKey = Str::endsWith($relationString, $attribute) ? Str::beforeLast($relationString, '.') : $relationString;
         $relationInformation = data_get($model, $relationKey);
-        if(empty($relationInformation)) {
+        if (empty($relationInformation)) {
             return [];
         }
-        if(is_a($relationInformation ,Model::class)) {
-           $relatedModel = $this->setLocaleOnModel($relationInformation);
-           return [$relatedModel->getKey() => $relatedModel->{$attribute}];
+        if (is_a($relationInformation, Model::class)) {
+            $relatedModel = $this->setLocaleOnModel($relationInformation);
+
+            return [$relatedModel->getKey() => $relatedModel->{$attribute}];
         }
-        if (is_a($relationInformation, Collection::class)) 
-        {
-            return $relationInformation->mapWithKeys(function($item) use ($attribute) {
+        if (is_a($relationInformation, Collection::class)) {
+            return $relationInformation->mapWithKeys(function ($item) use ($attribute) {
                 $item = $this->setLocaleOnModel($item);
-                
+
                 return [$item->getKey() => $item->{$attribute}];
             })->toArray();
         }
     }
-    
+
     /**
-     * Set the locale on the model 
-     * 
-     * @param Model $model
-     * @param bool $useFallbackLocale
+     * Set the locale on the model.
+     *
+     * @param  Model  $model
+     * @param  bool  $useFallbackLocale
      * @return Model
      */
-    public function setLocaleOnModel($model, $useFallbackLocale = true) 
+    public function setLocaleOnModel($model, $useFallbackLocale = true)
     {
         if (method_exists($model, 'translationEnabled') && $model->translationEnabled()) {
             $locale = $this->getRequest()->input('_locale', app()->getLocale());
@@ -409,6 +409,7 @@ class CrudPanel
                 $model->useFallbackLocale = $useFallbackLocale;
             }
         }
+
         return $model;
     }
 }
