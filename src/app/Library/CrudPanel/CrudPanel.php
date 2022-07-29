@@ -389,7 +389,7 @@ class CrudPanel
                 $item = $this->setLocaleOnModel($item);
                 
                 return [$item->getKey() => $item->{$attribute}];
-            });
+            })->toArray();
         }
     }
     
