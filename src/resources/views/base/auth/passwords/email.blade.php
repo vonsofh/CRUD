@@ -23,14 +23,14 @@
                         {!! csrf_field() !!}
 
                         <div class="form-group">
-                            <label class="control-label" for="email">{{ trans('backpack::base.email_address') }}</label>
+                            <label class="control-label" for="{{ backpack_authentication_column() }}">{{ config('backpack.base.authentication_column_name') }}</label>
 
                             <div>
-                                <input type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" id="email" value="{{ old('email') }}">
+                                <input type="{{ backpack_authentication_column()==backpack_email_column()?'email':'text'}}" class="form-control{{ $errors->has(backpack_authentication_column()) ? ' is-invalid' : '' }}" name="{{ backpack_authentication_column() }}" id="{{ backpack_authentication_column() }}" value="{{ old(backpack_authentication_column()) }}">
 
-                                @if ($errors->has('email'))
+                                @if ($errors->has(backpack_authentication_column()))
                                     <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first(backpack_authentication_column()) }}</strong>
                                     </span>
                                 @endif
                             </div>

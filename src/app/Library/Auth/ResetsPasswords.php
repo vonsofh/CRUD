@@ -27,7 +27,7 @@ trait ResetsPasswords
     public function showResetForm(Request $request, $token = null)
     {
         return view('auth.passwords.reset')->with(
-            ['token' => $token, 'email' => $request->email]
+            ['token' => $token, backpack_authentication_column() => $request->{ backpack_authentication_column() }]
         );
     }
 
@@ -65,9 +65,11 @@ trait ResetsPasswords
      */
     protected function rules()
     {
+        $email_validation = backpack_authentication_column() == backpack_email_column() ? '|email' : '';
+
         return [
             'token' => 'required',
-            'email' => 'required|email',
+            backpack_authentication_column() => 'required' . $email_validation,
             'password' => 'required|confirmed|min:8',
         ];
     }
@@ -91,7 +93,7 @@ trait ResetsPasswords
     protected function credentials(Request $request)
     {
         return $request->only(
-            'email', 'password', 'password_confirmation', 'token'
+            backpack_authentication_column(), 'password', 'password_confirmation', 'token'
         );
     }
 
@@ -155,13 +157,13 @@ trait ResetsPasswords
     {
         if ($request->wantsJson()) {
             throw ValidationException::withMessages([
-                'email' => [trans($response)],
+                backpack_authentication_column() => [trans($response)],
             ]);
         }
 
         return redirect()->back()
-                    ->withInput($request->only('email'))
-                    ->withErrors(['email' => trans($response)]);
+                    ->withInput($request->only(backpack_authentication_column()))
+                    ->withErrors([backpack_authentication_column() => trans($response)]);
     }
 
     /**

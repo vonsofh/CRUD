@@ -29,6 +29,19 @@ if (! function_exists('backpack_authentication_column')) {
     }
 }
 
+if (! function_exists('backpack_email_column')) {
+    /**
+     * Return the email column name.
+     * The Laravel default (and Backpack default) is 'email'.
+     *
+     * @return string
+     */
+    function backpack_email_column()
+    {
+        return config('backpack.base.email_column', 'email');
+    }
+}
+
 if (! function_exists('backpack_form_input')) {
     /**
      * Parse the submitted input in request('form') to an usable array.
@@ -95,7 +108,11 @@ if (! function_exists('backpack_users_have_email')) {
         $user_model_fqn = config('backpack.base.user_model_fqn');
         $user = new $user_model_fqn();
 
-        return \Schema::hasColumn($user->getTable(), config('backpack.base.email_column') ?? 'email');
+        if( !backpack_email_column() || empty(backpack_email_column()) ) {
+            return false;
+        }
+
+        return \Schema::hasColumn($user->getTable(), config('backpack.base.email_column'));
     }
 }
 
@@ -110,8 +127,8 @@ if (! function_exists('backpack_avatar_url')) {
     {
         switch (config('backpack.base.avatar_type')) {
             case 'gravatar':
-                if (backpack_users_have_email() && ! empty($user->email)) {
-                    return Gravatar::fallback(config('backpack.base.gravatar_fallback'))->get($user->email);
+                if (backpack_users_have_email() && ! empty($user->{ backpack_email_column() })) {
+                    return Gravatar::fallback(config('backpack.base.gravatar_fallback'))->get($user->{ backpack_email_column() });
                 }
                 break;
             default:

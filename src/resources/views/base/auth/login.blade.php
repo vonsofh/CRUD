@@ -13,11 +13,11 @@
                             <label class="control-label" for="{{ $username }}">{{ config('backpack.base.authentication_column_name') }}</label>
 
                             <div>
-                                <input type="text" class="form-control{{ $errors->has($username) ? ' is-invalid' : '' }}" name="{{ $username }}" value="{{ old($username) }}" id="{{ $username }}">
+                                <input type="{{ backpack_authentication_column()==backpack_email_column()?'email':'text'}}" class="form-control{{ $errors->has(backpack_authentication_column()) ? ' is-invalid' : '' }}" name="{{ backpack_authentication_column() }}" id="{{ backpack_authentication_column() }}" value="{{ old(backpack_authentication_column()) }}">
 
-                                @if ($errors->has($username))
+                                @if ($errors->has(backpack_authentication_column()))
                                     <span class="invalid-feedback">
-                                        <strong>{{ $errors->first($username) }}</strong>
+                                        <strong>{{ $errors->first(backpack_authentication_column()) }}</strong>
                                     </span>
                                 @endif
                             </div>

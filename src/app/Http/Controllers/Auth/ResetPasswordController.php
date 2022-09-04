@@ -72,7 +72,7 @@ class ResetPasswordController extends Controller
         $this->data['title'] = trans('backpack::base.reset_password'); // set the page title
 
         return view(backpack_view('auth.passwords.reset'), $this->data)->with(
-            ['token' => $token, 'email' => $request->email]
+            ['token' => $token, backpack_authentication_column() => $request->{ backpack_authentication_column() }]
         );
     }
 

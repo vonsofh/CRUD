@@ -2,9 +2,9 @@
 
 namespace Backpack\CRUD\app\Library\Auth;
 
+use InvalidArgumentException;
 use Backpack\CRUD\app\Library\Auth\PasswordBroker as BackpackPasswordBroker;
 use Illuminate\Auth\Passwords\PasswordBrokerManager as OriginalPasswordBrokerManager;
-use InvalidArgumentException;
 
 /**
  * @mixin \Illuminate\Contracts\Auth\PasswordBroker

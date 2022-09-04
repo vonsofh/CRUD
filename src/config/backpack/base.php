@@ -277,6 +277,16 @@ return [
 
     // As default backpack will use email column as username
     // If we change email column as "authentication_column", then we can set email column here to not break recovery password and keep working route:list
+    // Be sure set email column as fillable in User model
+    /**
+     * If dont use email_column = email, then add to user Model:
+     * use CanResetPassword;
+     *
+     * public function getEmailForPasswordReset()
+     * {
+     *   return $this->{backpack_email_column()};
+     * }
+     */
     'email_column' => 'email',
 
     // The guard that protects the Backpack admin panel.

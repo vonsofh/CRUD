@@ -113,7 +113,7 @@ class Install extends Command
             try {
                 $user = collect([
                     'name' => $name,
-                    'email' => $mail,
+                    backpack_email_column() => $mail,
                     'password' => Hash::make($pass),
                 ]);
 

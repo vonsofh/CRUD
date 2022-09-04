@@ -45,7 +45,7 @@ class ForgotPasswordController extends Controller
      */
     public function sendResetLinkEmail(Request $request)
     {
-        $this->validateEmail($request);
+        $this->validatUsername($request);
 
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
@@ -60,14 +60,16 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Validate the email for the given request.
+     * Validate the username for the given request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
-    protected function validateEmail(Request $request)
+    protected function validatUsername(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $email_validation = backpack_authentication_column() == backpack_email_column() ? '|email' : '';
+
+        $request->validate([backpack_authentication_column() => 'required' . $email_validation]);
     }
 
     /**
@@ -78,7 +80,7 @@ class ForgotPasswordController extends Controller
      */
     protected function credentials(Request $request)
     {
-        return $request->only('email');
+        return $request->only(backpack_authentication_column());
     }
 
     /**
@@ -106,13 +108,13 @@ class ForgotPasswordController extends Controller
     {
         if ($request->wantsJson()) {
             throw ValidationException::withMessages([
-                'email' => [trans($response)],
+                backpack_authentication_column() => [trans($response)],
             ]);
         }
 
         return back()
-                ->withInput($request->only('email'))
-                ->withErrors(['email' => trans($response)]);
+                ->withInput($request->only(backpack_authentication_column()))
+                ->withErrors([backpack_authentication_column() => trans($response)]);
     }
 
     /**

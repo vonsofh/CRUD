@@ -153,7 +153,7 @@ trait AuthenticatesUsers
      */
     public function username()
     {
-        return 'email';
+        return backpack_authentication_column();
     }
 
     /**
