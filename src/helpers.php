@@ -108,7 +108,7 @@ if (! function_exists('backpack_users_have_email')) {
         $user_model_fqn = config('backpack.base.user_model_fqn');
         $user = new $user_model_fqn();
 
-        if( !backpack_email_column() || empty(backpack_email_column()) ) {
+        if (! backpack_email_column() || empty(backpack_email_column())) {
             return false;
         }
 

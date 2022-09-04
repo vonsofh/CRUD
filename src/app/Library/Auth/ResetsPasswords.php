@@ -69,7 +69,7 @@ trait ResetsPasswords
 
         return [
             'token' => 'required',
-            backpack_authentication_column() => 'required' . $email_validation,
+            backpack_authentication_column() => 'required'.$email_validation,
             'password' => 'required|confirmed|min:8',
         ];
     }

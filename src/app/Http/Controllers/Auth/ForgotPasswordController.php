@@ -69,7 +69,7 @@ class ForgotPasswordController extends Controller
     {
         $email_validation = backpack_authentication_column() == backpack_email_column() ? '|email' : '';
 
-        $request->validate([backpack_authentication_column() => 'required' . $email_validation]);
+        $request->validate([backpack_authentication_column() => 'required'.$email_validation]);
     }
 
     /**

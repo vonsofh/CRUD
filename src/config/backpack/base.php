@@ -280,7 +280,7 @@ return [
     // Be sure set email column as fillable in User model
     /**
      * If dont use email_column = email, then add to user Model:
-     * use CanResetPassword;
+     * use CanResetPassword;.
      *
      * public function getEmailForPasswordReset()
      * {
