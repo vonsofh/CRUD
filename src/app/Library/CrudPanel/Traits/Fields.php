@@ -43,7 +43,7 @@ trait Fields
      */
     public function makeSureFieldHasNecessaryAttributes($field)
     {
-        $key = ((array)$field['name'])[0].uniqid();
+        $key = ((array) $field['name'])[0].uniqid();
         \Debugbar::startMeasure('addingField-'.$key);
         $field = $this->makeSureFieldHasName($field);
         $field = $this->makeSureFieldHasEntity($field);
@@ -57,6 +57,7 @@ trait Fields
 
         $this->setupFieldValidation($field, $field['parentFieldName'] ?? false);
         \Debugbar::stopMeasure('addingField-'.$key);
+
         return $field;
     }
 
