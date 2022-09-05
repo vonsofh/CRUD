@@ -1,5 +1,7 @@
 <input type="hidden" name="_http_referrer" value={{ session('referrer_url_override') ?? old('_http_referrer') ?? \URL::previous() ?? url($crud->route) }}>
-
+@php
+  \Debugbar::startMeasure('renderingFields');
+@endphp
 {{-- See if we're using tabs --}}
 @if ($crud->tabsEnabled() && count($crud->getTabs()))
     @include('crud::inc.show_tabbed_fields')
@@ -11,7 +13,9 @@
     </div>
   </div>
 @endif
-
+@php
+  \Debugbar::stopMeasure('renderingFields');
+@endphp
 
 {{-- Define blade stacks so css and js can be pushed from the fields to these sections. --}}
 
