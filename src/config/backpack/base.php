@@ -287,7 +287,7 @@ return [
      *   return $this->{backpack_email_column()};
      * }
      */
-    'email_column' => 'email',
+    // 'email_column' => 'email',
 
     // The guard that protects the Backpack admin panel.
     // If null, the config.auth.defaults.guard value will be used.
