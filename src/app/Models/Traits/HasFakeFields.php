@@ -12,7 +12,6 @@ use Traversable;
 */
 trait HasFakeFields
 {
-
     /**
      * Add fake fields as regular attributes, even though they are stored as JSON.
      *
@@ -42,11 +41,12 @@ trait HasFakeFields
     }
 
     /**
-     * Return the model fake columns
+     * Return the model fake columns.
      *
      * @return array
      */
-    public function getFakeColumns() {
+    public function getFakeColumns()
+    {
         return $this->fakeColumns ?? ['extras'];
     }
 
@@ -68,7 +68,7 @@ trait HasFakeFields
     /**
      * Determine if this fake column should be json_decoded.
      *
-     * @param string $column fake column name
+     * @param  string  $column  fake column name
      * @return bool
      */
     public function shouldDecodeFake(string $column)
@@ -79,7 +79,7 @@ trait HasFakeFields
     /**
      * Determine if this fake column should get json_encoded or not.
      *
-     * @param string $column fake column name
+     * @param  string  $column  fake column name
      * @return bool
      */
     public function shouldEncodeFake(string $column)
@@ -90,7 +90,7 @@ trait HasFakeFields
     /**
      * Check if the given column name is a fakeColumn.
      *
-     * @param string $column
+     * @param  string  $column
      * @return bool
      */
     public function isFakeColumn(string $column)
