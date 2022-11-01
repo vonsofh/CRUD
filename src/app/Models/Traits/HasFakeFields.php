@@ -12,13 +12,16 @@ use Traversable;
 */
 trait HasFakeFields
 {
+
     /**
      * Add fake fields as regular attributes, even though they are stored as JSON.
      *
      * @param  array  $columns  - the database columns that contain the JSONs
      */
-    public function addFakes($columns = ['extras'])
+    public function addFakes(array $columns = [])
     {
+        $columns = ! empty($columns) ? $columns : $this->getFakeColumns();
+
         foreach ($columns as $key => $column) {
             if (! isset($this->attributes[$column])) {
                 continue;
@@ -39,20 +42,23 @@ trait HasFakeFields
     }
 
     /**
+     * Return the model fake columns
+     *
+     * @return array
+     */
+    public function getFakeColumns() {
+        return $this->fakeColumns ?? ['extras'];
+    }
+
+    /**
      * Return the entity with fake fields as attributes.
      *
      * @param  array  $columns  - the database columns that contain the JSONs
      * @return Model
      */
-    public function withFakes($columns = [])
+    public function withFakes(array $columns = [])
     {
-        $model = '\\'.get_class($this);
-
-        $columnCount = ((is_array($columns) || $columns instanceof Countable) ? count($columns) : 0);
-
-        if ($columnCount == 0) {
-            $columns = (property_exists($model, 'fakeColumns')) ? $this->fakeColumns : ['extras'];
-        }
+        $columns = ! empty($columns) ? $columns : $this->getFakeColumns();
 
         $this->addFakes($columns);
 
@@ -62,10 +68,10 @@ trait HasFakeFields
     /**
      * Determine if this fake column should be json_decoded.
      *
-     * @param $column string fake column name
+     * @param string $column fake column name
      * @return bool
      */
-    public function shouldDecodeFake($column)
+    public function shouldDecodeFake(string $column)
     {
         return ! in_array($column, array_keys($this->casts));
     }
@@ -73,11 +79,22 @@ trait HasFakeFields
     /**
      * Determine if this fake column should get json_encoded or not.
      *
-     * @param $column string fake column name
+     * @param string $column fake column name
      * @return bool
      */
-    public function shouldEncodeFake($column)
+    public function shouldEncodeFake(string $column)
     {
         return ! in_array($column, array_keys($this->casts));
+    }
+
+    /**
+     * Check if the given column name is a fakeColumn.
+     *
+     * @param string $column
+     * @return bool
+     */
+    public function isFakeColumn(string $column)
+    {
+        return in_array($column, $this->getFakeColumns());
     }
 }
