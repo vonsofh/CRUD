@@ -250,10 +250,29 @@ trait Columns
     public function getColumnsRelationships()
     {
         $columns = $this->columns();
+        $relations = [];
+        foreach ($columns as $column) {
+            // no entity, no fun!
+            if (! isset($column['entity']) || ! $column['entity']) {
+                continue;
+            }
+            // if there are no subfields, eagerload the entity.
+            if (! isset($column['subfields'])) {
+                array_push($relations, $column['entity']);
 
-        return collect($columns)->pluck('entity')->reject(function ($value, $key) {
-            return ! $value;
-        })->toArray();
+                continue;
+            }
+            // when there are nested relations, eagerload them too.
+            foreach ($column['subfields'] as $subfield) {
+                if (! isset($subfield['entity']) || ! $subfield['entity'] || ($subfield['is_pivot_select'] ?? false) || ! isset($subfield['baseEntity'])) {
+                    continue;
+                }
+
+                array_push($relations, $subfield['baseEntity'].'.'.$subfield['entity']);
+            }
+        }
+
+        return $relations;
     }
 
     /**
