@@ -14,7 +14,6 @@
     {{$element}}="{{$value}}"
 @endforeach
 >
-<span class="d-inline-flex">
 @if($column['wrapper']['prefix'] ?? false)
 <span>{{ $column['wrapper']['prefix'] }}</span>
 @endif
