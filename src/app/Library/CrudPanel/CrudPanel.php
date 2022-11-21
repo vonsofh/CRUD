@@ -14,8 +14,11 @@ use Backpack\CRUD\app\Library\CrudPanel\Traits\FakeColumns;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\FakeFields;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Fields;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Filters;
+use Backpack\CRUD\app\Library\CrudPanel\Traits\HasViewNamespaces;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\HeadingsAndTitles;
+use Backpack\CRUD\app\Library\CrudPanel\Traits\Input;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Macroable;
+use Backpack\CRUD\app\Library\CrudPanel\Traits\MorphRelationships;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Operations;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Query;
 use Backpack\CRUD\app\Library\CrudPanel\Traits\Read;
@@ -37,7 +40,8 @@ use Illuminate\Support\Arr;
 class CrudPanel
 {
     // load all the default CrudPanel features
-    use Create, Read, Search, Update, Delete, Errors, Reorder, Access, Columns, Fields, Query, Buttons, AutoSet, FakeFields, FakeColumns, AutoFocus, Filters, Tabs, Views, Validation, HeadingsAndTitles, Operations, SaveActions, Settings, Relationships;
+    use Create, Read, Search, Update, Delete, Input, Errors, Reorder, Access, Columns, Fields, Query, Buttons, AutoSet, FakeFields, FakeColumns, AutoFocus, Filters, Tabs, Views, Validation, HeadingsAndTitles, Operations, SaveActions, Settings, Relationships, HasViewNamespaces, MorphRelationships;
+
     // allow developers to add their own closures to this object
     use Macroable;
 
@@ -49,8 +53,11 @@ class CrudPanel
     // All functions and methods are also public, so they can be used in your EntityCrudController to modify these variables.
 
     public $model = "\App\Models\Entity"; // what's the namespace for your entity's model
+
     public $route; // what route have you defined for your entity? used for links.
+
     public $entity_name = 'entry'; // what name will show up on the buttons, in singural (ex: Add entity)
+
     public $entity_name_plural = 'entries'; // what name will show up on the buttons, in plural (ex: Delete 5 entities)
 
     public $entry;
@@ -79,9 +86,9 @@ class CrudPanel
     }
 
     /**
-     * [getRequest description].
+     * Get the request instance for this CRUD.
      *
-     * @return [type] [description]
+     * @return \Illuminate\Http\Request
      */
     public function getRequest()
     {
@@ -111,7 +118,7 @@ class CrudPanel
         }
 
         $this->model = new $model_namespace();
-        $this->query = $this->model->select('*');
+        $this->query = clone $this->totalQuery = $this->model->select('*');
         $this->entry = null;
     }
 
@@ -179,7 +186,7 @@ class CrudPanel
      */
     public function setRoute($route)
     {
-        $this->route = $route;
+        $this->route = ltrim($route, '/');
     }
 
     /**
@@ -193,6 +200,8 @@ class CrudPanel
      */
     public function setRouteName($route, $parameters = [])
     {
+        $route = ltrim($route, '.');
+
         $complete_route = $route.'.index';
 
         if (! \Route::has($complete_route)) {
@@ -385,7 +394,7 @@ class CrudPanel
                 //if attribute does not exist in main array we have more than one entry OR the attribute
                 //is an acessor that is not in $appends property of model.
                 if (! isset($entries[$attribute])) {
-                    //we first check if we don't have the attribute because it's and acessor that is not in appends.
+                    //we first check if we don't have the attribute because it's an acessor that is not in appends.
                     if ($model_instance->hasGetMutator($attribute) && isset($entries[$modelKey])) {
                         $entry_in_database = $model_instance->find($entries[$modelKey]);
                         $attributes[$entry_in_database->{$modelKey}] = $this->parseTranslatableAttributes($model_instance, $attribute, $entry_in_database->{$attribute});
@@ -458,7 +467,7 @@ class CrudPanel
      */
     private function getRelatedEntries($model, $relationString)
     {
-        $relationArray = explode('.', $relationString);
+        $relationArray = explode('.', $this->getOnlyRelationEntity(['entity' => $relationString]));
         $firstRelationName = Arr::first($relationArray);
         $relation = $model->{$firstRelationName};
 
