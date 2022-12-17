@@ -345,7 +345,7 @@ trait FieldsProtectedMethods
         $fieldKey = $this->getFieldKey($field);
 
         $allFields = $this->getOperationSetting('fields');
-        $allFields = array_merge($this->getCleanStateFields(), [$fieldKey => $field]);
+        $allFields = array_merge($this->getCleanStateFields()->toArray(), [$fieldKey => $field]);
 
         $this->setOperationSetting('fields', $allFields);
     }
