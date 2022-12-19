@@ -4,8 +4,6 @@ namespace Backpack\CRUD\app\Library\Components\Attributes\Fields;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
-use Backpack\CRUD\app\Library\Components\Fields\SelectFromModel;
-use Backpack\CRUD\app\Library\Components\Fields\TextField;
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 
 class FieldType extends BackpackAttribute implements ComponentAttributeInterface

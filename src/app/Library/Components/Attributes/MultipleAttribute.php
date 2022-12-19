@@ -3,7 +3,6 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 
 class MultipleAttribute extends BackpackAttribute implements ComponentAttributeInterface
@@ -22,6 +21,7 @@ class MultipleAttribute extends BackpackAttribute implements ComponentAttributeI
             default:
                 return false;
         }
+
         return false;
     }
 

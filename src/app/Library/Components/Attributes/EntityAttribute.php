@@ -3,7 +3,6 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 use Illuminate\Support\Str;
 
@@ -18,7 +17,7 @@ class EntityAttribute extends BackpackAttribute implements ComponentAttributeInt
         //if the name is dot notation we are sure it's a relationship
         if (strpos($fieldName, '.') !== false) {
             $possibleMethodName = Str::of($fieldName)->before('.');
-           
+
             return self::modelMethodIsRelationship($model, $possibleMethodName) ? $fieldName : false;
         }
 

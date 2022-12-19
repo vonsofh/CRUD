@@ -3,7 +3,6 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 
 class LabelAttribute extends BackpackAttribute implements ComponentAttributeInterface

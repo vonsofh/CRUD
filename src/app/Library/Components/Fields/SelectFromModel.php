@@ -4,9 +4,6 @@ namespace Backpack\CRUD\app\Library\Components\Fields;
 
 use Backpack\CRUD\app\Library\Components\Attributes\EntityAttribute;
 use Backpack\CRUD\app\Library\Components\Attributes\FieldType;
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\ComponentCollection;
-use Backpack\CRUD\app\Library\Components\Fields\Field;
 
 class SelectFromModel extends Field
 {

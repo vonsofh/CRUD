@@ -3,11 +3,11 @@
 namespace Backpack\CRUD\app\Library\Components\Fields;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\Fields\FieldType;
 use Backpack\CRUD\app\Library\Components\Attributes\EntityAttribute;
-use Backpack\CRUD\app\Library\Components\Attributes\RelationTypeAttribute;
+use Backpack\CRUD\app\Library\Components\Attributes\Fields\FieldType;
 use Backpack\CRUD\app\Library\Components\Attributes\LabelAttribute;
 use Backpack\CRUD\app\Library\Components\Attributes\ModelAttribute;
+use Backpack\CRUD\app\Library\Components\Attributes\RelationTypeAttribute;
 use Backpack\CRUD\app\Library\Components\Component;
 
 /**

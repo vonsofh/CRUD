@@ -2,12 +2,8 @@
 
 namespace Backpack\CRUD\app\Library\Components;
 
-use Attribute;
-use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
 use Backpack\CRUD\app\Library\Components\Fields\Field;
-use Backpack\CRUD\app\Library\Components\Buttons\Button;
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\CollectionRepository;
+use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
 
 /**
  * @mixin  Backpack\CRUD\app\Library\Components\Field
@@ -28,14 +24,17 @@ class Page
 
     public static function button(string|array $name)
     {
-        
     }
 
     public static function field(string|array|BackpackComponentInterface $input)
     {
         $fieldRepository = new CollectionRepository(
-                                function() { return self::page()->getOperationSetting('fields') ?? collect(); },
-                                function ($collection) { return self::page()->setOperationSetting('fields', $collection); }
+                                function () {
+                                    return self::page()->getOperationSetting('fields') ?? collect();
+                                },
+                                function ($collection) {
+                                    return self::page()->setOperationSetting('fields', $collection);
+                                }
                             );
 
         if ($input instanceof BackpackComponentInterface) {

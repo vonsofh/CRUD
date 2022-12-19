@@ -8,8 +8,10 @@ use Illuminate\Support\Collection;
 
 class CollectionRepository
 {
-    public function __construct(private Closure $getCollection, private Closure $saveCollection) {}
-    
+    public function __construct(private Closure $getCollection, private Closure $saveCollection)
+    {
+    }
+
     public function addItem($key, $value, $save = true)
     {
         $items = $this->getItems();
@@ -19,8 +21,9 @@ class CollectionRepository
 
     public function getItems(): Collection
     {
-        if($this->getCollection) {
+        if ($this->getCollection) {
             $collection = ($this->getCollection)();
+
             return collect($collection);
         }
     }

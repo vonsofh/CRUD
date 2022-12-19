@@ -3,7 +3,6 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\ComponentCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\HasDefault;
 use Backpack\CRUD\app\Library\Components\Interfaces\HasProvider;
 use Backpack\CRUD\app\Library\Components\Interfaces\HasValidationRules;
@@ -40,7 +39,8 @@ class BackpackAttribute implements HasValidationRules, HasDefault, HasProvider
         return null;
     }
 
-    public function validate($value) {
+    public function validate($value)
+    {
         $validator = Validator::make([$this->attribute => $value], [$this->attribute => $this->rules])->stopOnFirstFailure();
 
         if ($validator->fails()) {

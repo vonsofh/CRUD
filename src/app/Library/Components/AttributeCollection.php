@@ -3,11 +3,10 @@
 namespace Backpack\CRUD\app\Library\Components;
 
 use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
+use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use Backpack\CRUD\app\Library\Components\AttributeDefaults;
-use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
 
 class AttributeCollection
 {
@@ -21,7 +20,7 @@ class AttributeCollection
         $attributes = is_string($attributes) ? collect(['name' => $attributes]) : collect($attributes);
         $rules = is_array($rules) ? new ValidationRules($rules) : $rules;
         //$defaults = is_array($defaults) ? new AttributeDefaults($defaults) : $defaults;
-        if(!empty($defaults)) {
+        if (! empty($defaults)) {
             dump($defaults);
         }
         $defaults = collect($defaults)->mapWithKeys(function ($default, $attribute) {
@@ -29,9 +28,10 @@ class AttributeCollection
             if (is_a($default, ComponentAttributeInterface::class, true)) {
                 return [$default::getAttributeName() => $default];
             }
+
             return [$attribute => $default];
         })->toArray();
-        if(!empty($defaults)) {
+        if (! empty($defaults)) {
             dd($defaults);
         }
         $attributes = $attributes->mapWithKeys(function ($attribute, $key) use ($rules, $defaults) {
@@ -89,10 +89,10 @@ class AttributeCollection
         $rules = new ValidationRules($rules);
 
         $this->items->each(function ($item, $key) use ($rules) {
-            if(!is_string($key) && is_a($item, ComponentAttributeInterface::class, true)) {
+            if (! is_string($key) && is_a($item, ComponentAttributeInterface::class, true)) {
                 $key = $item::getAttributeName();
             }
-            if(is_string($rules->for($key) ?? [])) {
+            if (is_string($rules->for($key) ?? [])) {
                 dd($key, $rules);
             }
             $item->setRules($rules->for($key) ?? []);
@@ -121,8 +121,8 @@ class AttributeCollection
     {
         // attribute = stack, name, etc
         // value = string/function etc
-        $item = $this->hasAttribute($attribute) ? $this->items->get($attribute)->setValue($value) : new BackpackAttribute($attribute, $value);   
-        
+        $item = $this->hasAttribute($attribute) ? $this->items->get($attribute)->setValue($value) : new BackpackAttribute($attribute, $value);
+
         $item->validate($value);
         dump($attribute, $value, $item);
         $this->updateItem($item);
@@ -162,8 +162,7 @@ class AttributeCollection
     public function setAttributeDefaults(array $defaults)
     {
         foreach ($defaults as $key => $default) {
-            
-            if(!is_string($key) && is_a($default, ComponentAttributeInterface::class, true)) {
+            if (! is_string($key) && is_a($default, ComponentAttributeInterface::class, true)) {
                 $key = $default::getAttributeName();
             }
 
@@ -172,7 +171,7 @@ class AttributeCollection
                     $this->items[$key] = $default::make($key, $default::getDefault($this), $default, []);
                     continue;
                 }
-                
+
                 if ($default instanceof \Closure) {
                     $this->items[$key] = new BackpackAttribute($key, $default($this), $default []);
                     continue;

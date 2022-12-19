@@ -1,6 +1,7 @@
 <?php
 
 namespace Backpack\CRUD\app\Library\Components;
+
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 
 class ValidationRules
@@ -11,6 +12,7 @@ class ValidationRules
             if (is_a($rule, ComponentAttributeInterface::class, true)) {
                 return [$rule::getAttributeName() => $rule::getValidationRules()];
             }
+
             return [$attribute =>  $rule];
         })->toArray();
     }

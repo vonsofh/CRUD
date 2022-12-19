@@ -14,7 +14,7 @@ class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlocked
     {
         $attributes->setAttributeDefaults(static::getAttributeDefaults());
         $attributes->setValidationRules(static::getAttributeValidationRules());
-        
+
         $item = $attributes->getCollectionRepository()->getItemByName($attributes->getAttributeValue('name'));
 
         if ($item) {
@@ -73,7 +73,6 @@ class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlocked
 
     public function __call($name, $arguments)
     {
-        
         if (! method_exists($this, $name)) {
             if ($this->isAttributeBlocked($name)) {
                 throw new \Exception("Attribute {$name} cannot be changed in this component.");

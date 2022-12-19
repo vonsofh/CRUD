@@ -1,6 +1,7 @@
 <?php
 
 namespace Backpack\CRUD\app\Library\Components;
+
 use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
 
 class AttributeDefaults
@@ -9,10 +10,10 @@ class AttributeDefaults
     {
         dump($defaults);
         $this->defaults = collect($defaults)->mapWithKeys(function ($default, $attribute) {
-            
             if (is_a($default, ComponentAttributeInterface::class, true)) {
                 return [$default::getAttributeName() => $default];
             }
+
             return [$attribute =>  $default];
         })->toArray();
     }

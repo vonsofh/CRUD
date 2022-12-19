@@ -2,9 +2,9 @@
 
 namespace Backpack\CRUD\app\Library\Components\Buttons;
 
+use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Attributes\Fields\StackAttribute;
 use Backpack\CRUD\app\Library\Components\Component;
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 
 class Button extends Component
 {
