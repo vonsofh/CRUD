@@ -3,9 +3,9 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\ComponentAttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 
-class RelationTypeAttribute extends BackpackAttribute implements ComponentAttributeInterface
+class RelationTypeAttribute extends BackpackAttribute implements AttributeInterface
 {
     public static function getDefault(AttributeCollection $attributes)
     {

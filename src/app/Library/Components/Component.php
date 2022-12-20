@@ -2,25 +2,22 @@
 
 namespace Backpack\CRUD\app\Library\Components;
 
-use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
-use Backpack\CRUD\app\Library\Components\Interfaces\HasAttributeDefaults;
-use Backpack\CRUD\app\Library\Components\Interfaces\HasBlockedAttributes;
-use Backpack\CRUD\app\Library\Components\Interfaces\ValidatesAttributes;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartComponentInterface;
 use Illuminate\Support\Collection;
 
-class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlockedAttributes, BackpackComponentInterface
+class Component implements SmartComponentInterface
 {
     public function __construct(protected AttributeCollection $attributes)
     {
-        $attributes->setAttributeDefaults(static::getAttributeDefaults());
-        $attributes->setValidationRules(static::getAttributeValidationRules());
+        $attributes->setAttributeDefaults(static::getDefaults());
+        $attributes->setValidationRules(static::getValidationRules());
 
         $item = $attributes->getCollectionRepository()->getItemByName($attributes->getAttributeValue('name'));
 
         if ($item) {
             $attributes = $item->attributes();
         } else {
-            $attributes->addCollectionItem($this);
+            $attributes->addCollectionOfAttributes($this);
         }
     }
 
@@ -34,7 +31,7 @@ class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlocked
         return $this->attributes->getItems();
     }
 
-    public static function make(string|array|Collection $name, CollectionRepository $collectionRepository): BackpackComponentInterface
+    public static function make(string|array|Collection $name, CollectionRepository $collectionRepository): SmartComponentInterface
     {
         $attributes = new AttributeCollection($name, $collectionRepository);
 
@@ -53,7 +50,7 @@ class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlocked
 
     protected function setAttribute(string $attribute, $value)
     {
-        $this->attributes->addItem($attribute, $value);
+        $this->attributes->addAttribute($attribute, $value);
     }
 
     public function getName(): string
@@ -89,12 +86,12 @@ class Component implements HasAttributeDefaults, ValidatesAttributes, HasBlocked
         return in_array($attribute, $this->getBlockedAttributes());
     }
 
-    public static function getAttributeDefaults(): array
+    public static function getDefaults(): array
     {
         return static::getAttributes();
     }
 
-    public static function getAttributeValidationRules(): array
+    public static function getValidationRules(): array
     {
         return static::getAttributes();
     }

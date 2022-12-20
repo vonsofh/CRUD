@@ -3,7 +3,7 @@
 namespace Backpack\CRUD\app\Library\Components;
 
 use Backpack\CRUD\app\Library\Components\Fields\Field;
-use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\Components\SmartComponentInterface;
 
 /**
  * @mixin  Backpack\CRUD\app\Library\Components\Field
@@ -26,18 +26,18 @@ class Page
     {
     }
 
-    public static function field(string|array|BackpackComponentInterface $input)
+    public static function field(string|array|SmartComponentInterface $input)
     {
         $fieldRepository = new CollectionRepository(
-                                function () {
-                                    return self::page()->getOperationSetting('fields') ?? collect();
-                                },
-                                function ($collection) {
-                                    return self::page()->setOperationSetting('fields', $collection);
-                                }
-                            );
+            function () {
+                return self::page()->getOperationSetting('fields') ?? collect();
+            },
+            function ($collection) {
+                return self::page()->setOperationSetting('fields', $collection);
+            }
+        );
 
-        if ($input instanceof BackpackComponentInterface) {
+        if ($input instanceof SmartComponentInterface) {
             $attributes = new AttributeCollection($input->attributes(), $fieldRepository);
 
             return $input::makeOf($attributes);

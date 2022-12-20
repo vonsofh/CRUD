@@ -3,19 +3,17 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\HasDefault;
-use Backpack\CRUD\app\Library\Components\Interfaces\HasProvider;
-use Backpack\CRUD\app\Library\Components\Interfaces\HasValidationRules;
+use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Support\Facades\Validator;
 
-class BackpackAttribute implements HasValidationRules, HasDefault, HasProvider
+class BackpackAttribute implements AttributeInterface
 {
     public function __construct(
-                    public string $attribute,
-                    public $value = null,
-                    public $default = null,
-                    public $rules = []
+                    protected string $name,
+                    private $value = null,
+                    private $default = null,
+                    private $rules = []
                 ) {
     }
 
@@ -29,9 +27,9 @@ class BackpackAttribute implements HasValidationRules, HasDefault, HasProvider
         return [];
     }
 
-    public static function make(string $attribute, $value = null, $default = [], $rules = [])
+    public static function make(string $name, $value = null, $default = [], $rules = [])
     {
-        return new static($attribute, $value, $default, $rules);
+        return new static($name, $value, $default, $rules);
     }
 
     public static function getDefault(AttributeCollection $attributes)
@@ -39,18 +37,9 @@ class BackpackAttribute implements HasValidationRules, HasDefault, HasProvider
         return null;
     }
 
-    public function validate($value)
-    {
-        $validator = Validator::make([$this->attribute => $value], [$this->attribute => $this->rules])->stopOnFirstFailure();
-
-        if ($validator->fails()) {
-            throw new \Exception($validator->errors()->first());
-        }
-    }
-
     public static function getAttributeName(): string
     {
-        return static::$attribute;
+        return static::$name;
     }
 
     public function setValue($value)
@@ -65,5 +54,24 @@ class BackpackAttribute implements HasValidationRules, HasDefault, HasProvider
     public function setRules(array $rules)
     {
         $this->rules = $rules;
+    }
+
+    public function rules(): array
+    {
+        return $this->rules;
+    }
+
+    public function value()
+    {
+        return $this->value;
+    }
+
+    private function validate($value)
+    {
+        $validator = Validator::make([$this->name => $value], [$this->name => $this->rules])->stopOnFirstFailure();
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first());
+        }
     }
 }

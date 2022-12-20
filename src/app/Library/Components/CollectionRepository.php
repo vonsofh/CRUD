@@ -2,7 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\Components;
 
-use Backpack\CRUD\app\Library\Components\Interfaces\BackpackComponentInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\Components\SmartComponentInterface;
 use Closure;
 use Illuminate\Support\Collection;
 
@@ -56,7 +56,7 @@ class CollectionRepository
         });
     }
 
-    public function replaceItem(BackpackComponentInterface $item)
+    public function replaceItem(SmartComponentInterface $item)
     {
         $items = $this->removeItem($item, false);
         $items = $this->addItem($item, false);
