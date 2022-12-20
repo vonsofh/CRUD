@@ -1,6 +1,7 @@
 <?php
 
 namespace Backpack\CRUD\app\Library\Components\Interfaces;
+
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 
