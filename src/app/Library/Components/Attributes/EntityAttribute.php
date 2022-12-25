@@ -6,7 +6,7 @@ use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 use Illuminate\Support\Str;
 
-class EntityAttribute extends BackpackAttribute implements AttributeInterface
+class EntityAttribute extends BaseAttribute implements AttributeInterface
 {
     public static function getDefault(AttributeCollection $attributes)
     {

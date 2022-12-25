@@ -3,10 +3,10 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes\Fields;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
+use Backpack\CRUD\app\Library\Components\Attributes\BaseAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 
-class FieldType extends BackpackAttribute implements AttributeInterface
+class FieldType extends BaseAttribute implements AttributeInterface
 {
     public static function getDefault(AttributeCollection $attributes)
     {

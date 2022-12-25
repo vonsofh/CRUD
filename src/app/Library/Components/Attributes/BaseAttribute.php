@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Support\Facades\Validator;
 
-class BackpackAttribute implements AttributeInterface
+class BaseAttribute implements AttributeInterface
 {
     public function __construct(
                     protected string $name,

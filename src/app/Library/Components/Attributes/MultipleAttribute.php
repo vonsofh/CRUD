@@ -5,7 +5,7 @@ namespace Backpack\CRUD\app\Library\Components\Attributes;
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 
-class MultipleAttribute extends BackpackAttribute implements AttributeInterface
+class MultipleAttribute extends BaseAttribute implements AttributeInterface
 {
     public static function getDefault(AttributeCollection $attributes)
     {

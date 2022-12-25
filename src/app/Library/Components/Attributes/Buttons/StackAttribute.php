@@ -3,9 +3,9 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes\Buttons;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
+use Backpack\CRUD\app\Library\Components\Attributes\BaseAttribute;
 
-class StackAttribute extends BackpackAttribute
+class StackAttribute extends BaseAttribute
 {
     public static function getDefault(AttributeCollection $attributes)
     {

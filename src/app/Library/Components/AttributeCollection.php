@@ -2,7 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\Components;
 
-use Backpack\CRUD\app\Library\Components\Attributes\BackpackAttribute;
+use Backpack\CRUD\app\Library\Components\Attributes\BaseAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartComponentInterface;
 use Illuminate\Support\Collection;
@@ -38,7 +38,7 @@ class AttributeCollection
     {
         return $attributes->mapWithKeys(function ($attribute, $key) use ($rules, $defaults) {
             if (! is_a($attribute, AttributeInterface::class, true)) {
-                return [$key => new BackpackAttribute($key, $attribute, $defaults[$key] ?? null, $rules->for($key))];
+                return [$key => new BaseAttribute($key, $attribute, $defaults[$key] ?? null, $rules->for($key))];
             }
 
             return [$attribute::getAttributeName() => $attribute];
@@ -107,7 +107,7 @@ class AttributeCollection
 
     public function addAttribute($attribute, $value)
     {
-        $item = $this->hasAttribute($attribute) ? $this->items->get($attribute)->setValue($value) : new BackpackAttribute($attribute, $value);
+        $item = $this->hasAttribute($attribute) ? $this->items->get($attribute)->setValue($value) : new BaseAttribute($attribute, $value);
         $item->validate($value);
         $this->updateItem($item);
     }
@@ -117,7 +117,7 @@ class AttributeCollection
         $this->collectionRepository->addItem($item->getAttribute('name'), $item->getAttributesArray());
     }
 
-    private function updateItem(AttributeInterface|BackpackAttribute $item)
+    private function updateItem(AttributeInterface|BaseAttribute $item)
     {
         $this->items[$item->attribute] = $item;
         $this->collectionRepository->setItemAttributes($this->getAttributeValue('name'), $this->toArray());
@@ -151,12 +151,12 @@ class AttributeCollection
                 }
 
                 if ($default instanceof \Closure) {
-                    $this->items[$key] = new BackpackAttribute($key, $default($this), $default, []);
+                    $this->items[$key] = new BaseAttribute($key, $default($this), $default, []);
 
                     continue;
                 }
 
-                $this->items[$key] = new BackpackAttribute($key, $default, $default, []);
+                $this->items[$key] = new BaseAttribute($key, $default, $default, []);
             }
         }
     }
