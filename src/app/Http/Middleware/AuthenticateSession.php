@@ -6,4 +6,12 @@ if (class_exists('Illuminate\Contracts\Session\Middleware\AuthenticatesSessions'
     class AuthenticateSession extends AuthenticateSessionL9
     {
     }
+} else {
+    class AuthenticateSession
+    {
+        public function handle($request, \Closure $next)
+        {
+            return $next($request);
+        }
+    }
 }
