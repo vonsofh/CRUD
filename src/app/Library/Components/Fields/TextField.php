@@ -2,18 +2,20 @@
 
 namespace  Backpack\CRUD\app\Library\Components\Fields;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Field;
+use Backpack\CRUD\app\Library\Components\BaseField;
 
-class TextField extends Field
+/**
+ * @method self skizo(string $test)
+ */
+class TextField extends BaseField
 {
-    public function __construct(AttributeCollection $attributes)
+    public function __construct(string|array $attributes)
     {
         parent::__construct($attributes);
-        $this->setAttribute('type', 'text');
+        $this->attributes->setAttribute('type', 'text');
     }
 
-    public static function getBlockedAttributes(): array
+    public static function blocked(): array
     {
         return ['type'];
     }

@@ -2,44 +2,37 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 use Illuminate\Support\Facades\Validator;
 
-class BaseAttribute implements AttributeInterface
+class BaseAttribute implements SmartAttributeInterface
 {
     public function __construct(
                     protected string $name,
                     private $value = null,
-                    private $default = null,
                     private $rules = []
                 ) {
     }
 
-    public static function provider(): CrudPanel
-    {
-        return app('crud');
-    }
-
-    public static function getValidationRules(): array
+    public static function getValidationRules(SmartCollectionInterface $attributes): array
     {
         return [];
     }
 
-    public static function make(string $name, $value = null, $default = [], $rules = [])
+    public static function make(string $name, $value = null, $rules = [])
     {
-        return new static($name, $value, $default, $rules);
+        return new static($name, $value, $rules);
     }
 
-    public static function getDefault(AttributeCollection $attributes)
+    public static function getDefault(SmartCollectionInterface $attributes)
     {
         return null;
     }
 
     public static function getAttributeName(): string
     {
-        return static::$name;
+        return self::$name;
     }
 
     public function setValue($value)
@@ -64,6 +57,11 @@ class BaseAttribute implements AttributeInterface
     public function value()
     {
         return $this->value;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
     }
 
     private function validate($value)

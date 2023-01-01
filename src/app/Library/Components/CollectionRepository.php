@@ -2,7 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\Components;
 
-use Backpack\CRUD\app\Library\Components\Interfaces\Components\SmartComponentInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartComponentInterface;
 use Closure;
 use Illuminate\Support\Collection;
 

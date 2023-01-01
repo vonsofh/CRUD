@@ -4,11 +4,12 @@ namespace Backpack\CRUD\app\Library\Components\Attributes\Fields;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Attributes\BaseAttribute;
-use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 
-class FieldType extends BaseAttribute implements AttributeInterface
+class FieldType extends BaseAttribute implements SmartAttributeInterface
 {
-    public static function getDefault(AttributeCollection $attributes)
+    public static function getDefault(SmartCollectionInterface $attributes)
     {
         if (backpack_pro() && $attributes->getAttributeValue('relation_type')) {
             return 'relationship';
@@ -25,7 +26,7 @@ class FieldType extends BaseAttribute implements AttributeInterface
         }
     }
 
-    public static function getValidationRules(): array
+    public static function getValidationRules(SmartCollectionInterface $attributes): array
     {
         return ['required'];
     }

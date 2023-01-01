@@ -3,11 +3,12 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 
-class MultipleAttribute extends BaseAttribute implements AttributeInterface
+class Multiple extends BaseAttribute implements SmartAttributeInterface
 {
-    public static function getDefault(AttributeCollection $attributes)
+    public static function getDefault(SmartCollectionInterface $attributes)
     {
         switch ($attributes->getAttributeValue('relation_type')) {
             case 'BelongsToMany':
@@ -25,9 +26,9 @@ class MultipleAttribute extends BaseAttribute implements AttributeInterface
         return false;
     }
 
-    public static function getValidationRules(): array
+    public static function getValidationRules(SmartCollectionInterface $attributes): array
     {
-        return ['nullable|string'];
+        return ['nullable','string'];
     }
 
     public static function getAttributeName(): string

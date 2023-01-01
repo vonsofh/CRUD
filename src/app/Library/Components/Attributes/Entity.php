@@ -3,14 +3,15 @@
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
 use Backpack\CRUD\app\Library\Components\AttributeCollection;
-use Backpack\CRUD\app\Library\Components\Interfaces\AttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
+use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 use Illuminate\Support\Str;
 
-class EntityAttribute extends BaseAttribute implements AttributeInterface
+class Entity extends BaseAttribute implements SmartAttributeInterface
 {
-    public static function getDefault(AttributeCollection $attributes)
+    public static function getDefault(SmartCollectionInterface $attributes)
     {
-        $model = $attributes->hasAttribute('baseModel') ? (new $attributes->getAttributeValue('baseModel')) : static::provider()->model;
+        $model = $attributes->hasAttribute('baseModel') ? (new $attributes->getAttributeValue('baseModel')) : app('crud')->model;
 
         $fieldName = $attributes->getAttributeValue('name');
 
