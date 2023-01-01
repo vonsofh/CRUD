@@ -2,7 +2,6 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 use Illuminate\Support\Str;

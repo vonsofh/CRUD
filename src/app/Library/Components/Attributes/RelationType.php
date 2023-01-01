@@ -2,10 +2,8 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
-use Backpack\CRUD\app\Library\Components\Interfaces\SmartComponentInterface;
 
 class RelationType extends BaseAttribute implements SmartAttributeInterface
 {
@@ -23,7 +21,7 @@ class RelationType extends BaseAttribute implements SmartAttributeInterface
                         $fail('The '.$attribute.' should be a valid relation type string.');
                     }
                 }
-            }
+            },
         ];
     }
 

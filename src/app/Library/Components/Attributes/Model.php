@@ -2,7 +2,6 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 
@@ -18,7 +17,6 @@ class Model extends BaseAttribute implements SmartAttributeInterface
         return [
             'required',
             function ($attribute, $value, $fail) use ($attributes) {
-                
                 if ($attributes->hasAttribute('entity') && $attributes->getAttributeValue('entity')) {
                     if (! is_string($value)) {
                         $fail('The '.$attribute.' should be a valid model string.');
@@ -27,12 +25,11 @@ class Model extends BaseAttribute implements SmartAttributeInterface
                     if (! is_a($value, 'Illuminate\Database\Eloquent\Model', true)) {
                         $fail('The '.$attribute.' should be a valid class that extends Illuminate\Database\Eloquent\Model .');
                     }
-                }else{
-                    if($value !== false){
+                } else {
+                    if ($value !== false) {
                         $fail('The '.$attribute.' should be either false or a valid class that extends Illuminate\Database\Eloquent\Model.');
                     }
                 }
-
             },
         ];
     }

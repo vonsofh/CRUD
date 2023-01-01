@@ -8,7 +8,7 @@ class FieldCollection extends BaseCollection
 {
     public function getCollection()
     {
-       return app('crud')->getOperationSetting('fields') ?? [];
+        return app('crud')->getOperationSetting('fields') ?? [];
     }
 
     public function saveCollection($collection)

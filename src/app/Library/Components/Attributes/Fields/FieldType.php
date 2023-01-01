@@ -2,7 +2,6 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes\Fields;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Attributes\BaseAttribute;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;

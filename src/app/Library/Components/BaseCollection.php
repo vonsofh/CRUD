@@ -21,12 +21,12 @@ class BaseCollection implements SmartCollectionInterface
         $this->attributes = $this->buildAttributes($initAttributes, $componentAttributes);
 
         $this->setAttributeDefaults($componentAttributes);
-        
+
         $this->validate();
 
         $item = $this->getItemByName((string) $this->getAttributeValue('name'));
         if ($item) {
-            $this->attributes = $this->buildAttributes((array)$item, $componentAttributes);
+            $this->attributes = $this->buildAttributes((array) $item, $componentAttributes);
         } else {
             $this->addCollectionItem($this);
         }
@@ -101,9 +101,10 @@ class BaseCollection implements SmartCollectionInterface
     private function getValidationRules()
     {
         $rules = [];
-        foreach($this->attributes as $attribute) {
-            $rules[$attribute->name()] = $attribute->rules(); 
+        foreach ($this->attributes as $attribute) {
+            $rules[$attribute->name()] = $attribute->rules();
         }
+
         return $rules;
     }
 

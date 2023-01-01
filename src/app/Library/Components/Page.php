@@ -3,7 +3,7 @@
 namespace Backpack\CRUD\app\Library\Components;
 
 /**
- * This is a test class
+ * This is a test class.
  */
 class Page
 {
@@ -12,9 +12,9 @@ class Page
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
-     * @param string|array $input
+     * @param  string|array  $input
      * @return Field
      */
     public static function field(string|array $input)

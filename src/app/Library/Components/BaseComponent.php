@@ -8,7 +8,9 @@ use Illuminate\Support\Collection;
 
 class BaseComponent implements SmartComponentInterface
 {
-    public function __construct(protected SmartCollectionInterface $attributes) { }
+    public function __construct(protected SmartCollectionInterface $attributes)
+    {
+    }
 
     public static function makeOf(SmartCollectionInterface $attributes)
     {

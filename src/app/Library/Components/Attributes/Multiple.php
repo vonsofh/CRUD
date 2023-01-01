@@ -2,7 +2,6 @@
 
 namespace Backpack\CRUD\app\Library\Components\Attributes;
 
-use Backpack\CRUD\app\Library\Components\AttributeCollection;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartAttributeInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 
@@ -28,7 +27,7 @@ class Multiple extends BaseAttribute implements SmartAttributeInterface
 
     public static function getValidationRules(SmartCollectionInterface $attributes): array
     {
-        return ['nullable','string'];
+        return ['nullable', 'string'];
     }
 
     public static function getAttributeName(): string
