@@ -13,48 +13,57 @@ class BaseCollection implements SmartCollectionInterface
     private Collection $attributes;
 
     public function __construct(array|string $initAttributes,
-                                array $componentAttributes = [],
-                                array $rules = [],
-                                array $defaults = [],
+                                private array $componentAttributes = [],
+                                private array $rules = [],
+                                private array $defaults = [],
                                 private array $blockedAttributes = []
                             ) {
-        $this->attributes = $this->buildAttributes($initAttributes, $componentAttributes);
-
-        $this->setAttributeDefaults($componentAttributes);
-
-        $this->validate();
-
-        $item = $this->getItemByName((string) $this->getAttributeValue('name'));
+        $item = $this->getItemByName($initAttributes['name'] ?? $initAttributes);
         if ($item) {
-            $this->attributes = $this->buildAttributes((array) $item, $componentAttributes);
+            $this->buildAttributes((array) $item, $componentAttributes, $rules, $defaults);
         } else {
-            $this->addCollectionItem($this);
+            $this->addCollectionItem($initAttributes, $componentAttributes);
         }
     }
 
-    private function buildAttributes(array|string $attributes, $componentAttributes)
+    private function buildAttributes(array|string $attributes)
     {
         if (is_string($attributes)) {
             $attributes = ['name' => $attributes];
         }
 
-        $attributeNames = collect($componentAttributes)->mapWithKeys(function ($attribute) {
+        $rules = $this->rules;
+        $defaults = $this->defaults;
+
+        $attributeNames = collect($this->componentAttributes)->mapWithKeys(function ($attribute) {
             return [$attribute::getAttributeName() => $attribute];
         })->toArray();
 
-        return collect($attributes)->mapWithKeys(function ($value, $key) use ($attributeNames) {
+        $attributeRules = collect($rules)->mapWithKeys(function ($rule) {
+            if (is_a($rule, SmartAttributeInterface::class, true)) {
+                return [$rule::getAttributeName() => $rule::getValidationRules($this)];
+            }
+
+            return [$rule::getAttributeName() => $rule];
+        })->toArray();
+
+        $this->attributes = collect($attributes)->mapWithKeys(function ($value, $key) use ($attributeNames, $attributeRules, $defaults) {
             if (isset($attributeNames[$key])) {
                 return [$key => $attributeNames[$key]::make($key, $value, $attributeNames[$key]::getValidationRules($this))];
             }
 
-            return [$key => new BaseAttribute($key, $value)];
+            return [$key => new BaseAttribute($key, $value, $attributeRules[$key] ?? [], $defaults)];
         });
+
+        $this->setAttributeDefaults();
+        $this->validate();
     }
 
     public function addCollectionItem($attributes)
     {
+        $this->buildAttributes($attributes);
         $collection = $this->getCollection();
-        $collection[$attributes->getAttributeValue('name')] = $attributes->toArray();
+        $collection[$this->getAttributeValue('name')] = $this->toArray();
         $this->saveCollection($collection);
     }
 
@@ -142,9 +151,9 @@ class BaseCollection implements SmartCollectionInterface
         return $this->toCollection()->toArray();
     }
 
-    private function setAttributeDefaults($componentAttributes)
+    private function setAttributeDefaults()
     {
-        foreach ($componentAttributes as $attribute) {
+        foreach ($this->componentAttributes as $attribute) {
             if (! $this->hasAttribute($attribute::getAttributeName())) {
                 $this->attributes[$attribute::getAttributeName()] = $attribute::make($attribute::getAttributeName(), $attribute::getDefault($this), $attribute::getValidationRules($this));
             }

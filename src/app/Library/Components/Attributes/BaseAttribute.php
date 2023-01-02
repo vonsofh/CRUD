@@ -11,7 +11,8 @@ class BaseAttribute implements SmartAttributeInterface
     public function __construct(
                     protected string $name,
                     private $value = null,
-                    private $rules = []
+                    private $rules = [],
+                    private $default = []
                 ) {
     }
 

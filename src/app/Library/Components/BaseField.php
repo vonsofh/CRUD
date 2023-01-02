@@ -44,7 +44,7 @@ class BaseField extends BaseComponent
         ];
     }
 
-    public static function make(string|array $attributes): self
+    public static function make(string|array $attributes): static
     {
         return new static($attributes);
     }

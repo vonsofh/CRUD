@@ -4,7 +4,6 @@ namespace Backpack\CRUD\app\Library\Components;
 
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartCollectionInterface;
 use Backpack\CRUD\app\Library\Components\Interfaces\SmartComponentInterface;
-use Illuminate\Support\Collection;
 
 class BaseComponent implements SmartComponentInterface
 {
@@ -17,11 +16,6 @@ class BaseComponent implements SmartComponentInterface
         return new static($attributes);
     }
 
-    public function getAttributes(): Collection
-    {
-        return $this->attributes->getAttributes();
-    }
-
     public static function make(string|array $name): SmartComponentInterface
     {
         $attributes = new BaseCollection($name, static::attributes(), static::rules(), static::defaults(), static::blocked());
@@ -32,21 +26,6 @@ class BaseComponent implements SmartComponentInterface
     protected function remove()
     {
         $this->attributes->deleteItem($this->getName());
-    }
-
-    public function getName(): string
-    {
-        return $this->attributes->getAttributeValue('name');
-    }
-
-    public function hasAttribute(string $attribute): bool
-    {
-        return $this->attributes->hasAttribute($attribute);
-    }
-
-    public function getAttribute(string $attribute)
-    {
-        return $this->attributes->getAttributeValue($attribute);
     }
 
     public function __call($name, $arguments)

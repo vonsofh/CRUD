@@ -41,7 +41,7 @@ class Entity extends BaseAttribute implements SmartAttributeInterface
         return false;
     }
 
-    public static function getValidation()
+    public static function getValidationRules(SmartCollectionInterface $attributes): array
     {
         return ['required'];
     }

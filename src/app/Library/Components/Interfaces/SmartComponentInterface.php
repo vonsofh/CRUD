@@ -4,10 +4,6 @@ namespace Backpack\CRUD\app\Library\Components\Interfaces;
 
 interface SmartComponentInterface
 {
-    public function getName(): string;
-
-    public function getAttribute(string $attribute);
-
     public static function make(string|array $name): SmartComponentInterface;
 
     public static function makeOf(SmartCollectionInterface $attributes);
