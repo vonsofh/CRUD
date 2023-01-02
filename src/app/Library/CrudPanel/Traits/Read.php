@@ -90,8 +90,8 @@ trait Read
     }
 
     /**
-     * Make the query JOIN all relationships used in the columns, too,
-     * so there will be less database queries overall.
+     * Make the query JOIN all relationships used in the definitions (fields, columns).
+     * So there will be less database queries overall.
      */
     public function eagerLoadRelationships(string $definitions)
     {
