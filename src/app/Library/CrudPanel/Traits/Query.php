@@ -12,6 +12,9 @@ trait Query
     /** @var Builder */
     public $totalQuery;
 
+    /** @var array */
+    private $ranQueries;
+
     // ----------------
     // ADVANCED QUERIES
     // ----------------
@@ -40,6 +43,42 @@ trait Query
         }
 
         return call_user_func_array([$this->query, $function], array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * Check if a query has been ran before.
+     *
+     * @param string $query
+     * @return boolean
+     */
+    public function hasQuery(string $query)
+    {
+        return isset($this->ranQueries[$query]);
+    }
+
+    /**
+     * Get the previously ran query.
+     *
+     * @param string $query
+     * @return void
+     */
+    public function getQuery(string $query)
+    {
+        abort_if(!$this->hasQuery($query), 500, 'Trying to get an unexisting query.');
+        
+        return $this->ranQueries[$query];
+    }
+
+    /**
+     * Saves a query that will be returned if the same query is ran again.
+     *
+     * @param string $query
+     * @param array $result
+     * @return void
+     */
+    public function saveQuery(string $query, array $result)
+    {
+        $this->ranQueries[$query] = $result;
     }
 
     /**
