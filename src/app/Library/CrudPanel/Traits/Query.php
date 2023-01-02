@@ -48,8 +48,8 @@ trait Query
     /**
      * Check if a query has been ran before.
      *
-     * @param string $query
-     * @return boolean
+     * @param  string  $query
+     * @return bool
      */
     public function hasQuery(string $query)
     {
@@ -59,21 +59,21 @@ trait Query
     /**
      * Get the previously ran query.
      *
-     * @param string $query
+     * @param  string  $query
      * @return void
      */
     public function getQuery(string $query)
     {
-        abort_if(!$this->hasQuery($query), 500, 'Trying to get an unexisting query.');
-        
+        abort_if(! $this->hasQuery($query), 500, 'Trying to get an unexisting query.');
+
         return $this->ranQueries[$query];
     }
 
     /**
      * Saves a query that will be returned if the same query is ran again.
      *
-     * @param string $query
-     * @param array $result
+     * @param  string  $query
+     * @param  array  $result
      * @return void
      */
     public function saveQuery(string $query, array $result)
