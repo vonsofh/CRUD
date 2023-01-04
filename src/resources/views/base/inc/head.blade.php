@@ -10,14 +10,14 @@
     @stack('before_styles')
 
     @basset('https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css')
-    @basset('packages/backpack/base/css/bundle.css')
+    @basset('https://unpkg.com/@digitallyhappy/backstrap@0.5.1/dist/css/legacy.css')
     @basset('https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css')
     @basset('https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/fonts/la-regular-400.woff2')
     @basset('https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/fonts/la-solid-900.woff2')
     @basset('https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/fonts/la-brands-400.woff2')
 
-    @basset('packages/source-sans-pro/source-sans-pro.css')
-    {{-- The above should be turned into the following, but it doesn't quite work yet: --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    {{-- TODO: We should use Basset for Google Fonts too, but it doesn't quite work yet: --}}
     {{-- @basset('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap', true, [], 'style') --}}
 
     @if (config('backpack.base.styles') && count(config('backpack.base.styles')))
@@ -42,3 +42,10 @@
 
     @yield('after_styles')
     @stack('after_styles')
+
+    {{-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries --}}
+    {{-- WARNING: Respond.js doesn't work if you view the page via file:// --}}
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
