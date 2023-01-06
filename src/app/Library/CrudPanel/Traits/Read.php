@@ -96,14 +96,16 @@ trait Read
     public function eagerLoadRelationships(string $definitions)
     {
         $definitions = $this->{$definitions}();
+        $relationStrings = [];
+        // dd($definitions);
         foreach ($definitions as $definitionName => $definition) {
-            $relationString = $definition['entity'] ?? null;
-            if ($relationString && strpos($definition['entity'] ?? '', '.') !== false) {
+            $relationString = isset($definition['entity']) && $definition['entity'] !== false ? $definition['entity'] : '';
+            if (strpos($definition['entity'], '.') !== false) {
                 $definitionAttribute = $definition['attribute'] ?? null;
-
                 if ($definitionAttribute) {
                     $relationString = Str::endsWith($relationString, $definitionAttribute) ? Str::beforeLast($relationString, '.') : $relationString;
-                    $this->with($relationString);
+
+                    $relationStrings[] = $relationString;
 
                     continue;
                 }
@@ -120,14 +122,17 @@ trait Read
                         $relationString = implode('.', array_slice($parts, 0, $i));
                     }
                 }
-                $this->with($relationString);
+
+                $relationStrings[] = $relationString;
 
                 continue;
             }
             if ($relationString) {
-                $this->with($relationString);
+                $relationStrings[] = $relationString;
             }
         }
+
+        $this->with(array_unique($relationStrings));
     }
 
     /**

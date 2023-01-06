@@ -70,6 +70,16 @@ trait Query
     }
 
     /**
+     * Clears the query cache.
+     *
+     * @return void
+     */
+    public function flushQueryCache()
+    {
+        $this->ranQueries = [];
+    }
+
+    /**
      * Saves a query that will be returned if the same query is ran again.
      *
      * @param  string  $query

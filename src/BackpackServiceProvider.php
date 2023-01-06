@@ -5,8 +5,10 @@ namespace Backpack\CRUD;
 use Backpack\CRUD\app\Http\Middleware\ThrottlePasswordRecovery;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\Database\DatabaseSchema;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
 class BackpackServiceProvider extends ServiceProvider
@@ -52,6 +54,7 @@ class BackpackServiceProvider extends ServiceProvider
         $this->setupCustomRoutes($this->app->router);
         $this->publishFiles();
         $this->sendUsageStats();
+        $this->registerQueryCacheEvents();
     }
 
     /**
@@ -274,6 +277,15 @@ class BackpackServiceProvider extends ServiceProvider
                 'provider' => 'backpack',
             ],
         ];
+    }
+
+    private function registerQueryCacheEvents(): void
+    {
+        DB::listen(function (QueryExecuted $q) {
+            if ($q->connection->hasModifiedRecords()) {
+                app('crud')->flushQueryCache();
+            }
+        });
     }
 
     /**
