@@ -13,17 +13,17 @@ use Illuminate\Support\Facades\Facade;
  * @codeCoverageIgnore
  * Class CrudPanelFacade.
  *
- * @method static setModel($model)
- * @method static setRoute(string $route)
- * @method static setEntityNameStrings(string $singular, string $plural)
- * @method static field(string $name)
- * @method static addField(array $field)
- * @method static addFields(array $fields)
- * @method static column(string $name)
- * @method static addColumn(array $column)
- * @method static addColumns(array $columns)
- * @method static afterColumn(string $targetColumn)
- * @method static setValidation($class)
+ * @method static void setModel($model)
+ * @method static void setRoute(string $route)
+ * @method static void setEntityNameStrings(string $singular, string $plural)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudField field(string $name)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudPanel addField(array $field)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudPanel addFields(array $fields)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudColumn column(string $name)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudPaneladdColumn(array $column)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudPaneladdColumns(array $columns)
+ * @method static \Backpack\CRUD\app\Library\CrudPanel\CrudPanelafterColumn(string $targetColumn)
+ * @method static void setValidation($class)
  * @mixin CrudPanel
  */
 class CrudPanelFacade extends Facade
