@@ -26,8 +26,7 @@
 
 @section('content')
     <?php
-    function tree_element($entry, $key, $all_entries, $crud)
-    {
+    function tree_element($entry, $key, $all_entries, $crud) {
         if (! isset($entry->tree_element_shown)) {
             // mark the element as shown
             $all_entries[$key]->tree_element_shown = true;
@@ -82,7 +81,7 @@
 
             </div>{{-- /.card --}}
 
-            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <div class="btn-group mt-3" role="group" aria-label="Basic mixed styles example">
                 <button id="toArray" class="btn btn-success text-light" data-style="zoom-in"><i class="la la-save"></i> {{ trans('backpack::crud.save') }}</button>
                 <a href="{{ $crud->hasAccess('list') ? url($crud->route) : url()->previous() }}" class="btn btn-secondary text-decoration-none"><span class="la la-ban"></span> &nbsp;{{ trans('backpack::crud.cancel') }}</a>
             </div>
