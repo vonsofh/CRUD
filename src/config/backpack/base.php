@@ -356,4 +356,7 @@ return [
     */
 
     'token_username' => env('BACKPACK_TOKEN_USERNAME', false),
+
+    // Set in minutes how often need to clean Dropzone temporary files
+    'purge_temporary_files_oldest_than' => 60,
 ];
