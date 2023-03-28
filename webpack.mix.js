@@ -76,7 +76,8 @@ mix.copy('node_modules/bootstrap-datepicker/dist', 'src/public/packages/bootstra
 	.copy('node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js', 'src/public/packages/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js')
     .copy('node_modules/urijs/src/URI.min.js', 'src/public/packages/URI.js/URI.min.js')
     .copy('node_modules/intl-tel-input/build', 'src/public/packages/intl-tel-input/build')
-    .copy('node_modules/dropzone/dist', 'src/public/packages/dropzone/dist');
+    .copy('node_modules/dropzone/dist', 'src/public/packages/dropzone/dist')
+    .copy('node_modules/sortablejs/Sortable.min.js', 'src/public/packages/sortablejs/Sortable.min.js');
 
 // FOR MAINTAINERS
 // copy asset files from Base's public folder the main app's public folder
