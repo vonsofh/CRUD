@@ -2,8 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\CrudPanel;
 
-use Backpack\CRUD\app\Library\CrudPanel\Traits\Support\HasMacros;
-use Illuminate\Support\Traits\Macroable;
+use Backpack\CRUD\app\Library\CrudPanel\Traits\Support\MacroableWithAttributes;
 
 /**
  * Adds fluent syntax to Backpack CRUD Fields.
@@ -34,11 +33,11 @@ use Illuminate\Support\Traits\Macroable;
  * @method self addMorphOption(string $key, string $label, array $options)
  * @method self morphTypeField(array $value)
  * @method self morphIdField(array $value)
+ * @method self upload(bool $value)
  */
 class CrudField
 {
-    use Macroable { __call as macroCall; }
-    use HasMacros;
+    use MacroableWithAttributes;
 
     protected $attributes;
 
@@ -220,7 +219,20 @@ class CrudField
     {
         $this->attributes['subfields'] = $subfields;
         $this->attributes = $this->crud()->makeSureFieldHasNecessaryAttributes($this->attributes);
-        $this->crud()->callRegisteredAttributeMacros($this);
+        $this->callRegisteredAttributeMacros();
+
+        return $this->save();
+    }
+
+    /**
+     * Mark the field has having upload functionality, so that the form would become multipart.
+     *
+     * @param  bool  $upload
+     * @return self
+     */
+    public function upload($upload = true)
+    {
+        $this->attributes['upload'] = $upload;
 
         return $this->save();
     }

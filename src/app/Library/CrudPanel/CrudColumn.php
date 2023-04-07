@@ -2,8 +2,7 @@
 
 namespace Backpack\CRUD\app\Library\CrudPanel;
 
-use Backpack\CRUD\app\Library\CrudPanel\Traits\Support\HasMacros;
-use Illuminate\Support\Traits\Macroable;
+use Backpack\CRUD\app\Library\CrudPanel\Traits\Support\MacroableWithAttributes;
 
 /**
  * Adds fluent syntax to Backpack CRUD Columns.
@@ -29,13 +28,20 @@ use Illuminate\Support\Traits\Macroable;
  * @method self visibleInShow(bool $value)
  * @method self priority(int $value)
  * @method self key(string $value)
+ * @method self upload(bool $value)
  */
 class CrudColumn
 {
-    use Macroable { __call as macroCall; }
-    use HasMacros;
+    use MacroableWithAttributes;
 
     protected $attributes;
+
+    public function upload($upload = true)
+    {
+        $this->attributes['upload'] = $upload;
+
+        return $this->save();
+    }
 
     public function __construct($name)
     {
