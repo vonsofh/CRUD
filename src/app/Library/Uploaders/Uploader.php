@@ -163,7 +163,6 @@ abstract class Uploader implements UploaderInterface
      *******************************/
     protected function uploadFiles(Model $entry, $values = null)
     {
-
     }
 
     private function retrieveFiles(Model $entry): Model
