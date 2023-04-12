@@ -63,7 +63,7 @@ final class RegisterUploadEvents
             return;
         }
 
-        $model = $subfield['baseModel'] ?? $crudObject['model'] ?? get_class($this->crudObject->crud()->getModel());
+        $model = $subfield['baseModel'] ?? get_class($this->crudObject->crud()->getModel());
 
         if (isset($crudObject['relation_type']) && $crudObject['entity'] !== false) {
             $uploader = $uploader->relationship(true);
