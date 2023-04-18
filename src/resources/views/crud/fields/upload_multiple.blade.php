@@ -34,8 +34,6 @@
     </div>
     @endif
     @endif
-	{{-- Show the file picker on CREATE form. --}}
-	<input name="{{ $field['name'] }}[]" type="hidden" value="">
 	<div class="backstrap-file mt-2">
 		<input
 	        type="file"
@@ -201,6 +199,7 @@
 		        	// if the file container is empty, remove it
 		        	if ($.trim(container.html())=='') {
 		        		container.remove();
+						$('<input type="hidden" name="'+fieldName+'" value="">').insertBefore(fileInput);
 		        	}
 		        	$("<input type='hidden' class='clear-files' name='clear_"+fieldName+"[]' value='"+$(this).data('filename')+"'>").insertAfter(fileInput);
 		        });
