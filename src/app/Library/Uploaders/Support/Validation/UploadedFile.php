@@ -7,6 +7,7 @@ class UploadedFile extends File
 {
     public ?int $maxFiles = null;
     public ?int $minFiles = null;
+    public bool $shouldValidateFiles = false;
 
     public function maxFiles(int $maxFiles): self
     {
@@ -20,5 +21,14 @@ class UploadedFile extends File
         $this->minFiles = $minFiles;
 
         return $this;
+    }
+
+    public function passes($attribute, $value)
+    {
+        if(!$this->shouldValidateFiles) {
+            return true;
+        }
+
+        return parent::passes($attribute, $value);
     }
 }
