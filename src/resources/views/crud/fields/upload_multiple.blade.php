@@ -198,6 +198,7 @@
 					}
 		        	// if the file container is empty, remove it
 		        	if ($.trim(container.html())=='') {
+						//$('<input type="hidden" name="'+fieldName+'[]" value="">').insertBefore(fileInput);
 		        		container.remove();
 						$('<input type="hidden" name="'+fieldName+'" value="">').insertBefore(fileInput);
 		        	}

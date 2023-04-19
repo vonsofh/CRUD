@@ -11,7 +11,7 @@ class FileNameGenerator implements FileNameGeneratorInterface
 {
     public function getName(string|UploadedFile|File $file): string
     {
-        if (! is_string($file) && get_class($file) === File::class) {
+        if (is_object($file) && get_class($file) === File::class) {
             return $file->getFileName();
         }
 
