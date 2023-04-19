@@ -1,6 +1,7 @@
 <?php
 
 namespace Backpack\CRUD\app\Library\Uploaders\Support\Validation;
+
 use Illuminate\Validation\Rules\File;
 
 class UploadedFile extends File
@@ -25,7 +26,7 @@ class UploadedFile extends File
 
     public function passes($attribute, $value)
     {
-        if(!$this->shouldValidateFiles) {
+        if (! $this->shouldValidateFiles) {
             return true;
         }
 
