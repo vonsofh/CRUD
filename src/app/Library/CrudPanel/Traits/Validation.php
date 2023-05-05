@@ -10,8 +10,6 @@ trait Validation
 {
     /**
      * Adds the required rules from an array and allows validation of that array.
-     *
-     * @param  array  $requiredFields
      */
     public function setValidationFromArray(array $rules, array $messages = [])
     {
@@ -42,10 +40,8 @@ trait Validation
     /**
      * Mark a FormRequest file as required for the current operation, in Settings.
      * Adds the required rules to an array for easy access.
-     *
-     * @param  string  $class  Class that extends FormRequest
      */
-    public function setValidationFromRequest($class)
+    public function setValidationFromRequest(string $class)
     {
         $this->setFormRequest($class);
         $this->setRequiredFields($class);
@@ -54,11 +50,8 @@ trait Validation
     /**
      * Mark a FormRequest file as required for the current operation, in Settings.
      * Adds the required rules to an array for easy access.
-     *
-     * @param  string|array  $classOrRulesArray  Class that extends FormRequest or array of validation rules
-     * @param  array  $messages  Array of validation messages.
      */
-    public function setValidation(string|array $classOrRulesArray = false, $messages = [])
+    public function setValidation(string|array|bool $classOrRulesArray = false, array $messages = [])
     {
         if (! $classOrRulesArray) {
             $this->setValidationFromFields();
@@ -117,10 +110,8 @@ trait Validation
      * - the FormRequest when provided.
      * - the rules added in the controller.
      * - the rules defined in the fields itself.
-     *
-     * @return \Illuminate\Http\Request
      */
-    public function validateRequest()
+    public function validateRequest(): \Illuminate\Http\Request
     {
         $formRequest = $this->getFormRequest();
 
@@ -144,11 +135,8 @@ trait Validation
 
     /**
      * Merge the form request validation with the fields validation.
-     *
-     * @param  FormRequest  $request
-     * @return array
      */
-    public function mergeRequestAndFieldRules($request, ?array $rules = null, ?array $messages = null)
+    public function mergeRequestAndFieldRules(FormRequest $request, ?array $rules = null, ?array $messages = null): array
     {
         $rules ??= $this->getOperationSetting('validationRules') ?? [];
         $messages ??= $this->getOperationSetting('validationMessages') ?? [];
@@ -163,8 +151,6 @@ trait Validation
     /**
      * Parse a FormRequest class, figure out what inputs are required
      * and store this knowledge in the current object.
-     *
-     * @param  string|array  $classOrRulesArray  Class that extends FormRequest or rules array
      */
     public function setRequiredFields(string|array $classOrRulesArray)
     {
@@ -218,12 +204,8 @@ trait Validation
     /**
      * Check the current object to see if an input is required
      * for the given operation.
-     *
-     * @param  string  $inputKey  Field or input name.
-     * @param  string  $operation  create / update
-     * @return bool
      */
-    public function isRequired($inputKey)
+    public function isRequired(string $inputKey): bool
     {
         if (! $this->hasOperationSetting('requiredFields')) {
             return false;
@@ -238,11 +220,8 @@ trait Validation
 
     /**
      * Add the validation setup by developer in field `validationRules` to the crud validation.
-     *
-     * @param  array  $field  - the field we want to get the validation from.
-     * @param  bool|string  $parent  - the parent name when setting up validation for subfields.
      */
-    private function setupFieldValidation($field, bool|string $parent = false)
+    private function setupFieldValidation(array $field, bool|string $parent = false)
     {
         [$rules, $messages] = $this->getValidationRulesAndMessagesFromField($field, $parent);
 

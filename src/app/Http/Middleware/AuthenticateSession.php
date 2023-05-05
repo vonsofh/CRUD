@@ -103,8 +103,6 @@ class AuthenticateSession extends LaravelAuthenticateSession
 
     /**
      * Get the guard instance that should be used by the middleware.
-     *
-     * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard
      */
     protected function guard(): AuthFactory|\Illuminate\Contracts\Auth\Guard
     {
