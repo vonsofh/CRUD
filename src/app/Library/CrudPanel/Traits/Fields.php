@@ -159,6 +159,7 @@ trait Fields
 
         $firstField = array_keys(array_slice($this->getCleanStateFields(), 0, 1))[0];
         $this->beforeField($firstField);
+
         return true;
     }
 
@@ -348,7 +349,7 @@ trait Fields
     /**
      * Get a namespaced version of the field type name.
      * Appends the 'view_namespace' attribute of the field to the `type', using dot notation.
-     * Eg: 'text', 'custom.view.path.text'
+     * Eg: 'text', 'custom.view.path.text'.
      */
     public function getFieldTypeWithNamespace(mixed $field): string
     {

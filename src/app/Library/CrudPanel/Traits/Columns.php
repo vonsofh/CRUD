@@ -116,6 +116,7 @@ trait Columns
 
         $firstColumn = array_keys(array_slice($this->columns(), 0, 1))[0];
         $this->beforeColumn($firstColumn);
+
         return true;
     }
 
