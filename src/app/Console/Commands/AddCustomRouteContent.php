@@ -94,7 +94,7 @@ class AddCustomRouteContent extends Command
 
         // otherwise, in case the last line HAS been modified
         // return the last line that has an ending in it
-        $possible_end_lines = array_filter($file_lines, fn($k) => str_starts_with((string) $k, '});'));
+        $possible_end_lines = array_filter($file_lines, fn ($k) => str_starts_with((string) $k, '});'));
 
         if ($possible_end_lines) {
             $end_line_number = array_key_last($possible_end_lines);
@@ -112,7 +112,7 @@ class AddCustomRouteContent extends Command
      */
     private function getLastLineNumberThatContains($needle, $haystack): bool|int
     {
-        $matchingLines = array_filter($haystack, fn($k) => str_contains((string) $k, $needle));
+        $matchingLines = array_filter($haystack, fn ($k) => str_contains((string) $k, $needle));
 
         if ($matchingLines) {
             return array_key_last($matchingLines);

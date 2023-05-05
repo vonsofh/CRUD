@@ -93,7 +93,7 @@ trait HasUploadFields
         if ($files_to_clear) {
             foreach ($files_to_clear as $key => $filename) {
                 \Storage::disk($disk)->delete($filename);
-                $attribute_value = Arr::where($attribute_value, fn($value, $key) => $value != $filename);
+                $attribute_value = Arr::where($attribute_value, fn ($value, $key) => $value != $filename);
             }
         }
 

@@ -174,7 +174,7 @@ trait Relationships
                     $fields = array_merge($field['subfields'], $fields);
                 }
             }
-            $fields = array_filter($fields, fn($field) => isset($field['relation_type']) && $field['relation_type'] === 'BelongsTo');
+            $fields = array_filter($fields, fn ($field) => isset($field['relation_type']) && $field['relation_type'] === 'BelongsTo');
         }
 
         foreach ($fields as $field) {
@@ -227,7 +227,7 @@ trait Relationships
     {
         $all_relation_fields = $this->getRelationFields();
 
-        return Arr::where($all_relation_fields, fn($value, $key) => isset($value['pivot']) && ! $value['pivot']);
+        return Arr::where($all_relation_fields, fn ($value, $key) => isset($value['pivot']) && ! $value['pivot']);
     }
 
     /**
@@ -239,7 +239,7 @@ trait Relationships
     {
         $all_relation_fields = $this->getRelationFields();
 
-        return Arr::where($all_relation_fields, fn($value, $key) => isset($value['pivot']) && $value['pivot']);
+        return Arr::where($all_relation_fields, fn ($value, $key) => isset($value['pivot']) && $value['pivot']);
     }
 
     /**

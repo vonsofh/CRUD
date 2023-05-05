@@ -164,7 +164,7 @@ class CrudFilter
             $namespaces = array_merge([$this->viewNamespace], $namespaces);
         }
 
-        return array_map(fn($item) => $item.'.'.$type, $namespaces);
+        return array_map(fn ($item) => $item.'.'.$type, $namespaces);
     }
 
     // ---------------------

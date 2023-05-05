@@ -59,7 +59,7 @@ if (! function_exists('backpack_form_input')) {
             $repeatableRowKey = null;
 
             // regular fields don't need any aditional parsing
-            if (!str_contains((string) $row['name'], '[')) {
+            if (! str_contains((string) $row['name'], '[')) {
                 $result[$row['name']] = $row['value'];
 
                 continue;

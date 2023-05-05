@@ -132,7 +132,7 @@ trait Buttons
      */
     public function removeButton($name, $stack = null)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $stack == null ? $button->name == $name : ($button->stack == $stack) && ($button->name == $name)));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn ($button) => $stack == null ? $button->name == $name : ($button->stack == $stack) && ($button->name == $name)));
     }
 
     /**
@@ -155,12 +155,12 @@ trait Buttons
 
     public function removeAllButtonsFromStack($stack)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $button->stack == $stack));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn ($button) => $button->stack == $stack));
     }
 
     public function removeButtonFromStack($name, $stack)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $button->name == $name && $button->stack == $stack));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn ($button) => $button->name == $name && $button->stack == $stack));
     }
 
     /**
@@ -177,7 +177,7 @@ trait Buttons
         $destinationButton = $this->firstButtonWhere('name', $destination);
         $destinationKey = $this->getButtonKey($destination);
         $newDestinationKey = ($where == 'before' ? $destinationKey : $destinationKey + 1);
-        $newButtons = $this->buttons()->filter(fn($value, $key) => $value->name != $target);
+        $newButtons = $this->buttons()->filter(fn ($value, $key) => $value->name != $target);
 
         if (! $targetButton) {
             return;

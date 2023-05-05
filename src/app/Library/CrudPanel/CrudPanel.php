@@ -302,7 +302,7 @@ class CrudPanel
      */
     public function getFirstOfItsTypeInArray($type, $array)
     {
-        return Arr::first($array, fn($item) => $item['type'] == $type);
+        return Arr::first($array, fn ($item) => $item['type'] == $type);
     }
 
     /**

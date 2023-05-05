@@ -95,7 +95,7 @@ trait Input
         }
 
         //remove fields that are not in the submitted form input
-        $relationFields = array_filter($relationFields, fn($field) => Arr::has($input, $field['name']) || isset($input[$field['name']]) || Arr::has($input, Str::afterLast($field['name'], '.')));
+        $relationFields = array_filter($relationFields, fn ($field) => Arr::has($input, $field['name']) || isset($input[$field['name']]) || Arr::has($input, Str::afterLast($field['name'], '.')));
 
         $relationDetails = [];
 
@@ -185,6 +185,6 @@ trait Input
             }
         }
 
-        return Arr::where($input, fn($item, $key) => ! in_array($key, $excludedFields));
+        return Arr::where($input, fn ($item, $key) => ! in_array($key, $excludedFields));
     }
 }

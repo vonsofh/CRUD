@@ -60,6 +60,7 @@ trait AuthenticatesUsers
      * Validate the user login request.
      *
      * @return void
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     protected function validateLogin(Request $request)
@@ -126,6 +127,7 @@ trait AuthenticatesUsers
      * Get the failed login response instance.
      *
      * @return \Symfony\Component\HttpFoundation\Response
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     protected function sendFailedLoginResponse(Request $request): never

@@ -36,7 +36,7 @@ class CrudPanelTitlesAndHeadingsTest extends \Backpack\CRUD\Tests\config\CrudPan
     {
         $this->crudPanel->setModel(User::class);
         $request = request()->create('/admin/users/create', 'POST', ['name' => 'foo']);
-        $request->setRouteResolver(fn() => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
         $this->crudPanel->setRequest($request);
 
         $this->crudPanel->setOperation('create');
@@ -49,7 +49,7 @@ class CrudPanelTitlesAndHeadingsTest extends \Backpack\CRUD\Tests\config\CrudPan
     {
         $this->crudPanel->setModel(User::class);
         $request = request()->create('/admin/users/create', 'POST', ['name' => 'foo']);
-        $request->setRouteResolver(fn() => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
         $this->crudPanel->setRequest($request);
 
         $this->crudPanel->setOperation('create');
@@ -62,7 +62,7 @@ class CrudPanelTitlesAndHeadingsTest extends \Backpack\CRUD\Tests\config\CrudPan
     {
         $this->crudPanel->setModel(User::class);
         $request = request()->create('/admin/users/create', 'POST', ['name' => 'foo']);
-        $request->setRouteResolver(fn() => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'admin/users/create', ['UserCrudController', 'create']))->bind($request));
         $this->crudPanel->setRequest($request);
 
         $this->crudPanel->setOperation('create');

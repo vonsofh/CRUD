@@ -49,7 +49,7 @@ class CrudPanelFiltersTest extends BaseCrudPanel
     {
         $this->crudPanel->setModel(User::class);
         $request = request()->create('/admin/users', 'GET', ['my_custom_filter' => 'foo']);
-        $request->setRouteResolver(fn() => (new Route('GET', 'admin/users', ['UserCrudController', 'index']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('GET', 'admin/users', ['UserCrudController', 'index']))->bind($request));
         $this->crudPanel->setRequest($request);
 
         $isActive = CrudFilter::name('my_custom_filter')->isActive();
@@ -64,8 +64,8 @@ class CrudPanelFiltersTest extends BaseCrudPanel
                     ->options(['test' => 'test'])
                     ->view('simple')
                     ->viewNamespace('crud::filters')
-                    ->ifActive(fn() => true)
-                    ->ifInactive(fn() => true);
+                    ->ifActive(fn () => true)
+                    ->ifInactive(fn () => true);
 
         $this->assertCount(1, $this->crudPanel->filters());
         $filter = $this->crudPanel->filters()[0];
@@ -80,8 +80,8 @@ class CrudPanelFiltersTest extends BaseCrudPanel
     public function testWhenActiveAndWhenInactiveAliases()
     {
         $filter = CrudFilter::name('my_filter')
-                        ->whenActive(fn() => true)
-                        ->whenInactive(fn() => true);
+                        ->whenActive(fn () => true)
+                        ->whenInactive(fn () => true);
 
         $this->assertCount(1, $this->crudPanel->filters());
         $this->assertTrue(is_callable($filter->fallbackLogic));
@@ -90,21 +90,21 @@ class CrudPanelFiltersTest extends BaseCrudPanel
 
     public function testWhenNotActiveAlias()
     {
-        $filter = CrudFilter::name('my_filter')->whenNotActive(fn() => true);
+        $filter = CrudFilter::name('my_filter')->whenNotActive(fn () => true);
         $this->assertCount(1, $this->crudPanel->filters());
         $this->assertTrue(is_callable($filter->fallbackLogic));
     }
 
     public function testIfNotActiveAlias()
     {
-        $filter = CrudFilter::name('my_filter')->ifNotActive(fn() => true);
+        $filter = CrudFilter::name('my_filter')->ifNotActive(fn () => true);
         $this->assertCount(1, $this->crudPanel->filters());
         $this->assertTrue(is_callable($filter->fallbackLogic));
     }
 
     public function testElseAlias()
     {
-        $filter = CrudFilter::name('my_filter')->else(fn() => true);
+        $filter = CrudFilter::name('my_filter')->else(fn () => true);
         $this->assertCount(1, $this->crudPanel->filters());
         $this->assertTrue(is_callable($filter->fallbackLogic));
     }

@@ -69,16 +69,16 @@ class BackpackServiceProvider extends ServiceProvider
         include_once __DIR__.'/macros.php';
 
         // Bind the CrudPanel object to Laravel's service container
-        $this->app->scoped('crud', fn($app) => new CrudPanel());
+        $this->app->scoped('crud', fn ($app) => new CrudPanel());
 
-        $this->app->scoped('DatabaseSchema', fn($app) => new DatabaseSchema());
+        $this->app->scoped('DatabaseSchema', fn ($app) => new DatabaseSchema());
 
-        $this->app->singleton('BackpackViewNamespaces', fn($app) => new ViewNamespaces());
+        $this->app->singleton('BackpackViewNamespaces', fn ($app) => new ViewNamespaces());
 
         // Bind the widgets collection object to Laravel's service container
-        $this->app->singleton('widgets', fn($app) => new Collection());
+        $this->app->singleton('widgets', fn ($app) => new Collection());
 
-        $this->app->scoped('UploadersRepository', fn($app) => new UploadersRepository());
+        $this->app->scoped('UploadersRepository', fn ($app) => new UploadersRepository());
 
         // register the helper functions
         $this->loadHelpers();

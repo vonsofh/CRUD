@@ -169,7 +169,7 @@ class Install extends Command
 
     private function isEveryAddonInstalled()
     {
-        return collect($this->addons)->every(fn($addon) => file_exists($addon->path));
+        return collect($this->addons)->every(fn ($addon) => file_exists($addon->path));
     }
 
     private function updateAddonsStatus()
@@ -185,7 +185,7 @@ class Install extends Command
     {
         // map the addons
         $this->addons = collect($this->addons)
-            ->map(fn($class) => (object) $class::$addon);
+            ->map(fn ($class) => (object) $class::$addon);
 
         // set addons current status (installed / not installed)
         $this->updateAddonsStatus();
@@ -202,8 +202,8 @@ class Install extends Command
 
         // Calculate the printed line count
         $printedLines = $this->addons
-            ->map(fn($e) => is_countable($e->description) ? count($e->description) : 0)
-            ->reduce(fn($sum, $item) => $sum + $item + 2, 0);
+            ->map(fn ($e) => is_countable($e->description) ? count($e->description) : 0)
+            ->reduce(fn ($sum, $item) => $sum + $item + 2, 0);
 
         $total = 0;
         while (! $this->isEveryAddonInstalled()) {

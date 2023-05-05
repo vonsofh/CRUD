@@ -151,7 +151,7 @@ class Widget extends Fluent
             }
         }
         $type = $this->type;
-        $paths = array_map(fn($item) => $item.'.'.$type, ViewNamespaces::getWithFallbackFor('widgets', 'backpack.ui.component_view_namespaces.widgets'));
+        $paths = array_map(fn ($item) => $item.'.'.$type, ViewNamespaces::getWithFallbackFor('widgets', 'backpack.ui.component_view_namespaces.widgets'));
 
         foreach ($paths as $path) {
             if (view()->exists($path)) {

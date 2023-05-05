@@ -4,7 +4,6 @@ namespace Backpack\CRUD\app\Library\CrudPanel\Traits;
 
 use Backpack\CRUD\app\Library\CrudPanel\CrudFilter;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait Filters
 {
@@ -188,7 +187,7 @@ trait Filters
 
     public function removeFilter($name)
     {
-        $strippedCollection = $this->filters()->reject(fn($filter) => $filter->name == $name);
+        $strippedCollection = $this->filters()->reject(fn ($filter) => $filter->name == $name);
 
         $this->setOperationSetting('filters', $strippedCollection);
     }
@@ -257,7 +256,7 @@ trait Filters
         $destinationFilter = $this->firstFilterWhere('name', $destination);
         $destinationKey = $this->getFilterKey($destination);
         $newDestinationKey = ($where == 'before' ? $destinationKey : $destinationKey + 1);
-        $newFilters = $this->filters()->filter(fn($value, $key) => $value->name != $target);
+        $newFilters = $this->filters()->filter(fn ($value, $key) => $value->name != $target);
 
         if (! $targetFilter) {
             return;

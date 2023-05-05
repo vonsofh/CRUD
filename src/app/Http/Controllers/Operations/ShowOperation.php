@@ -45,7 +45,7 @@ trait ShowOperation
         $this->crud->operation(['create', 'update'], function () {
             $this->crud->addSaveAction([
                 'name' => 'save_and_preview',
-                'visible' => fn($crud) => $crud->hasAccess('show'),
+                'visible' => fn ($crud) => $crud->hasAccess('show'),
                 'redirect' => function ($crud, $request, $itemId = null) {
                     $itemId = $itemId ?: $request->input('id');
                     $redirectUrl = $crud->route.'/'.$itemId.'/show';

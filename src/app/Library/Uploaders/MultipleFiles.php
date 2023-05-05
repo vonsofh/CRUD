@@ -30,7 +30,7 @@ class MultipleFiles extends Uploader
                 if (in_array($previousFile, $filesToDelete)) {
                     Storage::disk($this->getDisk())->delete($previousFile);
 
-                    $previousFiles = Arr::where($previousFiles, fn($value, $key) => $value != $previousFile);
+                    $previousFiles = Arr::where($previousFiles, fn ($value, $key) => $value != $previousFile);
                 }
             }
         }

@@ -299,7 +299,7 @@ trait Views
         }
         // otherwise, loop through all the possible view namespaces
         // until you find a view that exists
-        $paths = array_map(fn($item) => $item.'.'.$viewPath, ViewNamespaces::getFor('fields'));
+        $paths = array_map(fn ($item) => $item.'.'.$viewPath, ViewNamespaces::getFor('fields'));
 
         foreach ($paths as $path) {
             if (view()->exists($path)) {

@@ -609,7 +609,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     {
         $this->crudPanel->setOperationSetting(
             'strippedRequest',
-            static fn(Request $request) => $request->toArray(),
+            static fn (Request $request) => $request->toArray(),
             'update'
         );
         $this->crudPanel->setOperation('update');

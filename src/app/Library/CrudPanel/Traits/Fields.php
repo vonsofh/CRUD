@@ -135,7 +135,7 @@ trait Fields
      */
     public function afterField($targetFieldName)
     {
-        $this->transformFields(fn($fields) => $this->moveField($fields, $targetFieldName, false));
+        $this->transformFields(fn ($fields) => $this->moveField($fields, $targetFieldName, false));
     }
 
     /**
@@ -145,7 +145,7 @@ trait Fields
      */
     public function beforeField($targetFieldName)
     {
-        $this->transformFields(fn($fields) => $this->moveField($fields, $targetFieldName, true));
+        $this->transformFields(fn ($fields) => $this->moveField($fields, $targetFieldName, true));
     }
 
     /**
@@ -318,7 +318,7 @@ trait Fields
      */
     public function orderFields($order)
     {
-        $this->transformFields(fn($fields) => $this->applyOrderToFields($fields, $order));
+        $this->transformFields(fn ($fields) => $this->applyOrderToFields($fields, $order));
     }
 
     /**
@@ -503,7 +503,7 @@ trait Fields
      */
     public function hasFieldWhere($attribute, $value)
     {
-        $match = Arr::first($this->getCleanStateFields(), fn($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
+        $match = Arr::first($this->getCleanStateFields(), fn ($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
 
         return (bool) $match;
     }
@@ -517,7 +517,7 @@ trait Fields
      */
     public function firstFieldWhere($attribute, $value)
     {
-        return Arr::first($this->getCleanStateFields(), fn($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
+        return Arr::first($this->getCleanStateFields(), fn ($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
     }
 
     /**

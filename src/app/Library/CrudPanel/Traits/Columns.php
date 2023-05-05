@@ -247,7 +247,7 @@ trait Columns
     {
         $columns = $this->columns();
 
-        return collect($columns)->pluck('entity')->reject(fn($value, $key) => ! $value)->toArray();
+        return collect($columns)->pluck('entity')->reject(fn ($value, $key) => ! $value)->toArray();
     }
 
     /**
@@ -320,7 +320,7 @@ trait Columns
      */
     public function hasColumnWhere($attribute, $value)
     {
-        $match = Arr::first($this->columns(), fn($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
+        $match = Arr::first($this->columns(), fn ($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
 
         return (bool) $match;
     }
@@ -334,7 +334,7 @@ trait Columns
      */
     public function firstColumnWhere($attribute, $value)
     {
-        return Arr::first($this->columns(), fn($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
+        return Arr::first($this->columns(), fn ($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
     }
 
     /**
@@ -381,7 +381,7 @@ trait Columns
      */
     public function countColumnsWithoutActions()
     {
-        return collect($this->columns())->filter(fn($column, $key) => ! isset($column['hasActions']) || $column['hasActions'] == false)->count();
+        return collect($this->columns())->filter(fn ($column, $key) => ! isset($column['hasActions']) || $column['hasActions'] == false)->count();
     }
 
     /**

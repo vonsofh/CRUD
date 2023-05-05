@@ -45,7 +45,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'password' => 'test',
         ]);
 
-        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [
@@ -83,7 +83,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'email'    => '',
         ]);
 
-        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [
@@ -121,7 +121,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'password' => 'test',
         ]);
 
-        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addField([
             'name'            => 'email',
@@ -242,7 +242,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'name'        => 'test',
         ]);
 
-        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
+        $request->setRouteResolver(fn () => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [

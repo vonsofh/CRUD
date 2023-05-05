@@ -54,7 +54,7 @@ class Fix extends Command
         }
 
         $views = scandir($errorsDirectory);
-        $views = array_filter($views, fn($file) => !str_starts_with((string) $file, '.'));
+        $views = array_filter($views, fn ($file) => ! str_starts_with((string) $file, '.'));
 
         // check if there are actually views inside the directory
         if (! count($views)) {
@@ -68,7 +68,7 @@ class Fix extends Command
             $contents = file_get_contents($errorsDirectory.'/'.$view);
 
             // does it even work with exception messages?
-            if (!str_contains($contents, '->getMessage()')) {
+            if (! str_contains($contents, '->getMessage()')) {
                 continue;
             }
 

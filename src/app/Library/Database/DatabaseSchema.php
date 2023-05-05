@@ -47,6 +47,6 @@ final class DatabaseSchema
      */
     private static function mapTables($rawTables)
     {
-        return LazyCollection::make($rawTables->getTables())->mapWithKeys(fn($table, $key) => [$table->getName() => $table])->toArray();
+        return LazyCollection::make($rawTables->getTables())->mapWithKeys(fn ($table, $key) => [$table->getName() => $table])->toArray();
     }
 }

@@ -260,7 +260,7 @@ class CrudField
         // append the field name to the rule name of validationMessages array.
         // eg: ['required => 'This field is required']
         // will be transformed into: ['field_name.required' => 'This field is required]
-        $this->crud()->setValidationFromArray([], array_merge(...array_map(fn($rule, $message) => [$this->attributes['name'].'.'.$rule => $message], array_keys($messages), $messages)));
+        $this->crud()->setValidationFromArray([], array_merge(...array_map(fn ($rule, $message) => [$this->attributes['name'].'.'.$rule => $message], array_keys($messages), $messages)));
 
         return $this;
     }
@@ -294,6 +294,7 @@ class CrudField
      * Allow developer to configure the morph type field.
      *
      * @return self
+     *
      * @throws \Exception
      */
     public function morphTypeField(array $configs)
@@ -318,6 +319,7 @@ class CrudField
      * Allow developer to configure the morph type id selector.
      *
      * @return self
+     *
      * @throws \Exception
      */
     public function morphIdField(array $configs)

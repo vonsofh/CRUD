@@ -273,7 +273,7 @@ class CrudButton
     private function getViewPathsWithFallbacks()
     {
         $type = $this->name;
-        $paths = array_map(fn($item) => $item.'.'.$type, ViewNamespaces::getFor('buttons'));
+        $paths = array_map(fn ($item) => $item.'.'.$type, ViewNamespaces::getFor('buttons'));
 
         return array_merge([$this->content], $paths);
     }

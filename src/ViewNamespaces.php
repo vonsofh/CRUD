@@ -77,6 +77,6 @@ class ViewNamespaces
      */
     public static function getViewPathsFor(string $domain, string $viewName)
     {
-        return array_map(fn($item) => $item.'.'.$viewName, self::getFor($domain));
+        return array_map(fn ($item) => $item.'.'.$viewName, self::getFor($domain));
     }
 }

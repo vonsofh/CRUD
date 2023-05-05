@@ -136,7 +136,7 @@ trait Search
         $table = $this->model->getTable();
         $key = $this->model->getKeyName();
 
-        $hasOrderByPrimaryKey = collect($orderBy)->some(fn($item) => (isset($item['column']) && $item['column'] === $key)
+        $hasOrderByPrimaryKey = collect($orderBy)->some(fn ($item) => (isset($item['column']) && $item['column'] === $key)
             || (isset($item['sql']) && str_contains((string) $item['sql'], "$table.$key")));
 
         if (! $hasOrderByPrimaryKey) {
@@ -318,7 +318,7 @@ trait Search
         if (isset($column['type'])) {
             // create a list of paths to column blade views
             // including the configured view_namespaces
-            $columnPaths = array_map(fn($item) => $item.'.'.$column['type'], ViewNamespaces::getFor('columns'));
+            $columnPaths = array_map(fn ($item) => $item.'.'.$column['type'], ViewNamespaces::getFor('columns'));
 
             // but always fall back to the stock 'text' column
             // if a view doesn't exist

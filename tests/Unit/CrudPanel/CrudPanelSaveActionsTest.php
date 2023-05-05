@@ -25,20 +25,20 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         $this->singleSaveAction = [
             'name' => 'save_action_one',
             'button_text' => 'custom',
-            'redirect' => fn($crud, $request, $itemId) => $crud->route,
-            'visible' => fn($crud) => true,
+            'redirect' => fn ($crud, $request, $itemId) => $crud->route,
+            'visible' => fn ($crud) => true,
         ];
 
         $this->multipleSaveActions = [
             [
                 'name' => 'save_action_one',
-                'redirect' => fn($crud, $request, $itemId) => $crud->route,
-                'visible' => fn($crud) => true,
+                'redirect' => fn ($crud, $request, $itemId) => $crud->route,
+                'visible' => fn ($crud) => true,
             ],
             [
                 'name' => 'save_action_two',
-                'redirect' => fn($crud, $request, $itemId) => $crud->route,
-                'visible' => fn($crud) => true,
+                'redirect' => fn ($crud, $request, $itemId) => $crud->route,
+                'visible' => fn ($crud) => true,
             ],
         ];
     }

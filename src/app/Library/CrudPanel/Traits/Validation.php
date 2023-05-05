@@ -240,24 +240,24 @@ trait Validation
     {
         $messages = [];
         collect($fields)
-            ->filter(fn($value, $key) => // only keep fields where 'validationMessages' OR there are subfields
+            ->filter(fn ($value, $key) => // only keep fields where 'validationMessages' OR there are subfields
 array_key_exists('validationMessages', $value) || array_key_exists('subfields', $value))->each(function ($item, $key) use (&$messages) {
-                if (isset($item['validationMessages'])) {
-                    foreach ($item['validationMessages'] as $rule => $message) {
-                        $messages[$key.'.'.$rule] = $message;
-                    }
-                }
-                // add messages from subfields
-                if (array_key_exists('subfields', $item)) {
-                    $subfieldsWithValidationMessages = array_filter($item['subfields'], fn($subfield) => array_key_exists('validationRules', $subfield));
+    if (isset($item['validationMessages'])) {
+        foreach ($item['validationMessages'] as $rule => $message) {
+            $messages[$key.'.'.$rule] = $message;
+        }
+    }
+    // add messages from subfields
+    if (array_key_exists('subfields', $item)) {
+        $subfieldsWithValidationMessages = array_filter($item['subfields'], fn ($subfield) => array_key_exists('validationRules', $subfield));
 
-                    foreach ($subfieldsWithValidationMessages as $subfield) {
-                        foreach ($subfield['validationMessages'] ?? [] as $rule => $message) {
-                            $messages[$item['name'].'.*.'.$subfield['name'].'.'.$rule] = $message;
-                        }
-                    }
-                }
-            })->toArray();
+        foreach ($subfieldsWithValidationMessages as $subfield) {
+            foreach ($subfield['validationMessages'] ?? [] as $rule => $message) {
+                $messages[$item['name'].'.*.'.$subfield['name'].'.'.$rule] = $message;
+            }
+        }
+    }
+})->toArray();
 
         return $messages;
     }
@@ -271,24 +271,24 @@ array_key_exists('validationMessages', $value) || array_key_exists('subfields', 
     private function getValidationRulesFromFieldsAndSubfields($fields)
     {
         $rules = collect($fields)
-            ->filter(fn($value, $key) => // only keep fields where 'validationRules' OR there are subfields
+            ->filter(fn ($value, $key) => // only keep fields where 'validationRules' OR there are subfields
 array_key_exists('validationRules', $value) || array_key_exists('subfields', $value))->map(function ($item, $key) {
-                $validationRules = [];
-                // only keep the rules, not the entire field definition
-                if (isset($item['validationRules'])) {
-                    $validationRules[$key] = $item['validationRules'];
-                }
-                // add validation rules for subfields
-                if (array_key_exists('subfields', $item)) {
-                    $subfieldsWithValidation = array_filter($item['subfields'], fn($subfield) => array_key_exists('validationRules', $subfield));
+    $validationRules = [];
+    // only keep the rules, not the entire field definition
+    if (isset($item['validationRules'])) {
+        $validationRules[$key] = $item['validationRules'];
+    }
+    // add validation rules for subfields
+    if (array_key_exists('subfields', $item)) {
+        $subfieldsWithValidation = array_filter($item['subfields'], fn ($subfield) => array_key_exists('validationRules', $subfield));
 
-                    foreach ($subfieldsWithValidation as $subfield) {
-                        $validationRules[$item['name'].'.*.'.$subfield['name']] = $subfield['validationRules'];
-                    }
-                }
+        foreach ($subfieldsWithValidation as $subfield) {
+            $validationRules[$item['name'].'.*.'.$subfield['name']] = $subfield['validationRules'];
+        }
+    }
 
-                return $validationRules;
-            })->toArray();
+    return $validationRules;
+})->toArray();
 
         return array_merge(...array_values($rules));
     }
@@ -387,7 +387,7 @@ array_key_exists('validationRules', $value) || array_key_exists('subfields', $va
     private function checkIfRuleIsRequired($key, $rule): string|bool
     {
         if (
-            (is_string($rule) && str_contains($rule, 'required') && !str_contains($rule, 'required_')) ||
+            (is_string($rule) && str_contains($rule, 'required') && ! str_contains($rule, 'required_')) ||
             (is_array($rule) && array_search('required', $rule) !== false && array_search('required_', $rule) === false)
         ) {
             if (Str::contains($key, '.')) {
