@@ -81,10 +81,9 @@ class CrudField
     /**
      * When defining the entity, make sure Backpack guesses the relationship attributes if needed.
      *
-     * @param  string|bool  $entity
      * @return self
      */
-    public function entity($entity)
+    public function entity(string|bool $entity)
     {
         $this->attributes['entity'] = $entity;
 
@@ -264,9 +263,7 @@ class CrudField
         // append the field name to the rule name of validationMessages array.
         // eg: ['required => 'This field is required']
         // will be transformed into: ['field_name.required' => 'This field is required]
-        $this->crud()->setValidationFromArray([], array_merge(...array_map(function ($rule, $message) {
-            return [$this->attributes['name'].'.'.$rule => $message];
-        }, array_keys($messages), $messages)));
+        $this->crud()->setValidationFromArray([], array_merge(...array_map(fn($rule, $message) => [$this->attributes['name'].'.'.$rule => $message], array_keys($messages), $messages)));
 
         return $this;
     }
@@ -289,7 +286,7 @@ class CrudField
      *
      * @throws \Exception
      */
-    public function addMorphOption(string $key, $label = null, array $options = [])
+    public function addMorphOption(string $key, ?string $label = null, array $options = [])
     {
         $this->crud()->addMorphOption($this->attributes['name'], $key, $label, $options);
 
@@ -299,9 +296,7 @@ class CrudField
     /**
      * Allow developer to configure the morph type field.
      *
-     * @param  array  $configs
      * @return self
-     *
      * @throws \Exception
      */
     public function morphTypeField(array $configs)
@@ -325,9 +320,7 @@ class CrudField
     /**
      * Allow developer to configure the morph type id selector.
      *
-     * @param  array  $configs
      * @return self
-     *
      * @throws \Exception
      */
     public function morphIdField(array $configs)
@@ -363,7 +356,7 @@ class CrudField
      * @param  string  $attribute  Name of the attribute.
      * @param  mixed  $value  Value of that attribute.
      */
-    private function setAttributeValue($attribute, $value)
+    private function setAttributeValue($attribute, mixed $value)
     {
         $this->attributes[$attribute] = $value;
     }

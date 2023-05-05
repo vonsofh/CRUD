@@ -24,9 +24,7 @@ abstract class BaseCrudPanel extends BaseTestClass
     {
         parent::setUp();
 
-        $this->app->singleton('crud', function ($app) {
-            return new CrudPanel($app);
-        });
+        $this->app->singleton('crud', fn($app) => new CrudPanel($app));
         $this->crudPanel = app('crud');
         $this->crudPanel->setModel(TestModel::class);
         $this->model = $this->crudPanel->getModel();

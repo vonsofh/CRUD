@@ -233,7 +233,7 @@ class CrudColumn
      * @param  string  $attribute  Name of the attribute.
      * @param  mixed  $value  Value of that attribute.
      */
-    private function setAttributeValue($attribute, $value)
+    private function setAttributeValue($attribute, mixed $value)
     {
         $this->attributes[$attribute] = $value;
     }

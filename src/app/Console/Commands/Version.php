@@ -39,7 +39,7 @@ class Version extends Command
         $this->comment('### BACKPACK PACKAGE VERSIONS:');
         $packages = \Composer\InstalledVersions::getInstalledPackages();
         foreach ($packages as $package) {
-            if (substr($package, 0, 9) == 'backpack/') {
+            if (str_starts_with($package, 'backpack/')) {
                 $this->line($package.': '.\Composer\InstalledVersions::getPrettyVersion($package));
             }
         }

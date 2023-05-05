@@ -15,19 +15,16 @@ use Backpack\CRUD\Tests\config\Models\FakeColumnsModel;
 class CrudTraitFakeFieldsTest extends BaseCrudTrait
 {
     private $locale;
-    /**
-     * @var FakeColumnsModel
-     */
-    private $model;
+    private \Backpack\CRUD\Tests\config\Models\FakeColumnsModel|\Illuminate\Database\Eloquent\Model $model;
 
     // DEFINE THE DATA
 
-    private $extras = [
+    private array $extras = [
         'extras_first'  => 'Extras first',
         'extras_second' => 'Extras second',
     ];
 
-    private $extras_translatable = [
+    private array $extras_translatable = [
         'en' => [
             'extras_translatable_first'  => 'extras_translatable first en',
             'extras_translatable_second' => 'extras_translatable second en',
@@ -44,7 +41,7 @@ class CrudTraitFakeFieldsTest extends BaseCrudTrait
         'fake_object_second' => 'fake_object second',
     ];
 
-    private $fake_assoc_array = [
+    private array $fake_assoc_array = [
         'fake_assoc_array_first'  => 'fake_assoc_array first',
         'fake_assoc_array_second' => 'fake_assoc_array second',
     ];
@@ -62,10 +59,10 @@ class CrudTraitFakeFieldsTest extends BaseCrudTrait
 
         $this->model = new FakeColumnsModel();
 
-        $this->model->extras = json_encode($this->extras);
+        $this->model->extras = json_encode($this->extras, JSON_THROW_ON_ERROR);
 
-        $this->model->setTranslation('extras_translatable', 'en', json_encode($this->extras_translatable['en']));
-        $this->model->setTranslation('extras_translatable', 'ro', json_encode($this->extras_translatable['ro']));
+        $this->model->setTranslation('extras_translatable', 'en', json_encode($this->extras_translatable['en'], JSON_THROW_ON_ERROR));
+        $this->model->setTranslation('extras_translatable', 'ro', json_encode($this->extras_translatable['ro'], JSON_THROW_ON_ERROR));
 
         $this->model->fake_object = $this->fake_object;
         $this->model->fake_assoc_array = $this->fake_assoc_array;
@@ -75,7 +72,7 @@ class CrudTraitFakeFieldsTest extends BaseCrudTrait
 
     public function testExtrasGetFaked()
     {
-        $this->assertEquals($this->extras, json_decode($this->model->extras, true));
+        $this->assertEquals($this->extras, json_decode((string) $this->model->extras, true, 512, JSON_THROW_ON_ERROR));
 
         $this->assertEquals($this->extras['extras_first'], $this->model->extras_first);
         $this->assertEquals($this->extras['extras_second'], $this->model->extras_second);
@@ -83,7 +80,7 @@ class CrudTraitFakeFieldsTest extends BaseCrudTrait
 
     public function testExtrasTranslatableGetFaked()
     {
-        $this->assertEquals($this->extras_translatable[$this->locale], json_decode($this->model->extras_translatable, true));
+        $this->assertEquals($this->extras_translatable[$this->locale], json_decode((string) $this->model->extras_translatable, true, 512, JSON_THROW_ON_ERROR));
 
         $this->assertEquals($this->extras_translatable[$this->locale]['extras_translatable_first'], $this->model->extras_translatable_first);
         $this->assertEquals($this->extras_translatable[$this->locale]['extras_translatable_second'], $this->model->extras_translatable_second);

@@ -10,7 +10,7 @@ if (! function_exists('backpack_url')) {
      */
     function backpack_url($path = null, $parameters = [], $secure = null)
     {
-        $path = ! $path || (substr($path, 0, 1) == '/') ? $path : '/'.$path;
+        $path = ! $path || (str_starts_with((string) $path, '/')) ? $path : '/'.$path;
 
         return url(config('backpack.base.route_prefix', 'admin').$path, $parameters, $secure);
     }
@@ -59,39 +59,39 @@ if (! function_exists('backpack_form_input')) {
             $repeatableRowKey = null;
 
             // regular fields don't need any aditional parsing
-            if (strpos($row['name'], '[') === false) {
+            if (!str_contains((string) $row['name'], '[')) {
                 $result[$row['name']] = $row['value'];
 
                 continue;
             }
 
-            $isMultiple = substr($row['name'], -2, 2) === '[]';
+            $isMultiple = str_ends_with((string) $row['name'], '[]');
 
-            if ($isMultiple && substr_count($row['name'], '[') === 1) {
-                $result[substr($row['name'], 0, -2)][] = $row['value'];
+            if ($isMultiple && substr_count((string) $row['name'], '[') === 1) {
+                $result[substr((string) $row['name'], 0, -2)][] = $row['value'];
                 continue;
             }
 
             // dot notation fields
-            if (substr_count($row['name'], '[') === 1) {
+            if (substr_count((string) $row['name'], '[') === 1) {
                 // start in the first occurence since it's HasOne/MorphOne with dot notation (address[street] in request) to get the input name (address)
-                $inputNameStart = strpos($row['name'], '[') + 1;
+                $inputNameStart = strpos((string) $row['name'], '[') + 1;
             } else {
                 // repeatable fields, we need to get the input name and the row number
                 // start on the second occurence since it's a repeatable and we want to bypass the row number (repeatableName[rowNumber][inputName])
-                $inputNameStart = strpos($row['name'], '[', strpos($row['name'], '[') + 1) + 1;
+                $inputNameStart = strpos((string) $row['name'], '[', strpos((string) $row['name'], '[') + 1) + 1;
 
                 // get the array key (aka repeatable row) from field name
-                $startKey = strpos($row['name'], '[') + 1;
-                $endKey = strpos($row['name'], ']', $startKey);
+                $startKey = strpos((string) $row['name'], '[') + 1;
+                $endKey = strpos((string) $row['name'], ']', $startKey);
                 $lengthKey = $endKey - $startKey;
-                $repeatableRowKey = substr($row['name'], $startKey, $lengthKey);
+                $repeatableRowKey = substr((string) $row['name'], $startKey, $lengthKey);
             }
 
-            $inputNameEnd = strpos($row['name'], ']', $inputNameStart);
+            $inputNameEnd = strpos((string) $row['name'], ']', $inputNameStart);
             $inputNameLength = $inputNameEnd - $inputNameStart;
-            $inputName = substr($row['name'], $inputNameStart, $inputNameLength);
-            $parentInputName = substr($row['name'], 0, strpos($row['name'], '['));
+            $inputName = substr((string) $row['name'], $inputNameStart, $inputNameLength);
+            $parentInputName = substr((string) $row['name'], 0, strpos((string) $row['name'], '['));
 
             if (isset($repeatableRowKey)) {
                 if ($isMultiple) {
@@ -212,7 +212,7 @@ if (! function_exists('mb_ucfirst')) {
      */
     function mb_ucfirst($string, $encoding = false)
     {
-        $encoding = $encoding ? $encoding : mb_internal_encoding();
+        $encoding = $encoding ?: mb_internal_encoding();
 
         $strlen = mb_strlen($string, $encoding);
         $firstChar = mb_substr($string, 0, 1, $encoding);
@@ -288,7 +288,7 @@ if (! function_exists('square_brackets_to_dots')) {
      */
     function square_brackets_to_dots($string)
     {
-        $string = str_replace(['[', ']'], ['.', ''], $string);
+        $string = str_replace(['[', ']'], ['.', ''], (string) $string);
 
         return $string;
     }
@@ -311,7 +311,7 @@ if (! function_exists('old_empty_or_null')) {
      * @param  array|string  $empty_value
      * @return mixed
      */
-    function old_empty_or_null($key, $empty_value = '')
+    function old_empty_or_null($key, array|string $empty_value = '')
     {
         $key = square_brackets_to_dots($key);
         $old_inputs = session()->getOldInput();
@@ -330,7 +330,6 @@ if (! function_exists('is_multidimensional_array')) {
     /**
      * If any of the items inside a given array is an array, the array is considered multidimensional.
      *
-     * @param  array  $array
      * @return bool
      */
     function is_multidimensional_array(array $array)

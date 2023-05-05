@@ -115,8 +115,6 @@ final class UploadersRepository
      */
     public function getRegisteredUploadNames(string $uploadName): array
     {
-        return array_map(function ($uploader) {
-            return $uploader->getName();
-        }, $this->getRepeatableUploadersFor($uploadName));
+        return array_map(fn($uploader) => $uploader->getName(), $this->getRepeatableUploadersFor($uploadName));
     }
 }

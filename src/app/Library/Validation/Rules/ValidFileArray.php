@@ -63,8 +63,8 @@ abstract class ValidFileArray extends BackpackCustomRule
 
     protected function validateArrayData(string $attribute, Closure $fail, null|array $data = null, null|array $rules = null): void
     {
-        $data = $data ?? $this->data;
-        $rules = $rules ?? $this->getFieldRules();
+        $data ??= $this->data;
+        $rules ??= $this->getFieldRules();
 
         $validator = Validator::make($data, [
             $attribute => $rules,
@@ -81,8 +81,8 @@ abstract class ValidFileArray extends BackpackCustomRule
     {
         if (! is_array($value)) {
             try {
-                $value = json_decode($value, true);
-            } catch (\Exception $e) {
+                $value = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\Exception) {
                 return false;
             }
         }

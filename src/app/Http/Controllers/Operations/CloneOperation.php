@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 if (! backpack_pro()) {
     trait CloneOperation
     {
-        public function setupCloneOperationDefaults()
+        public function setupCloneOperationDefaults(): never
         {
             throw new BackpackProRequiredException('CloneOperation');
         }

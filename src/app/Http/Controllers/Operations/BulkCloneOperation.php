@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 if (! backpack_pro()) {
     trait BulkCloneOperation
     {
-        public function setupBulkCloneOperationDefaults()
+        public function setupBulkCloneOperationDefaults(): never
         {
             throw new BackpackProRequiredException('BulkCloneOperation');
         }

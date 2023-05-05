@@ -22,9 +22,9 @@ trait AddonsHelper
         $process = new Process(['composer', 'config', 'repositories']);
         $process->run(function ($type, $buffer) use (&$details) {
             if ($type !== Process::ERR && $buffer !== '') {
-                $details = json_decode($buffer);
+                $details = json_decode($buffer, null, 512, JSON_THROW_ON_ERROR);
             } else {
-                $details = json_decode(File::get('composer.json'))->repositories ?? false;
+                $details = json_decode(File::get('composer.json'), null, 512, JSON_THROW_ON_ERROR)->repositories ?? false;
             }
         });
 
@@ -44,7 +44,7 @@ trait AddonsHelper
                 // Fallback
                 $composerJson = Str::of(File::get('composer.json'));
 
-                $currentRepositories = json_decode($composerJson)->repositories ?? false;
+                $currentRepositories = json_decode($composerJson, null, 512, JSON_THROW_ON_ERROR)->repositories ?? false;
 
                 $repositories = Str::of(json_encode([
                     'repositories' => [
@@ -80,9 +80,9 @@ trait AddonsHelper
         $process = new Process(['composer', 'config', 'http-basic.backpackforlaravel.com']);
         $process->run(function ($type, $buffer) use (&$details) {
             if ($type !== Process::ERR && $buffer !== '') {
-                $details = json_decode($buffer);
+                $details = json_decode($buffer, null, 512, JSON_THROW_ON_ERROR);
             } elseif (File::exists('auth.json')) {
-                $details = json_decode(File::get('auth.json'), true)['http-basic']['backpackforlaravel.com'] ?? false;
+                $details = json_decode(File::get('auth.json'), true, 512, JSON_THROW_ON_ERROR)['http-basic']['backpackforlaravel.com'] ?? false;
             }
         });
 
@@ -118,7 +118,7 @@ trait AddonsHelper
                 ];
 
                 if (File::exists('auth.json')) {
-                    $currentFile = json_decode(File::get('auth.json'), true);
+                    $currentFile = json_decode(File::get('auth.json'), true, 512, JSON_THROW_ON_ERROR);
                     if (! ($currentFile['http-basic']['backpackforlaravel.com'] ?? false)) {
                         $authFile = array_merge_recursive($authFile, $currentFile);
                     }
@@ -139,7 +139,7 @@ trait AddonsHelper
     public function clearAuthentication()
     {
         if (File::exists('auth.json')) {
-            $auth = json_decode(File::get('auth.json'));
+            $auth = json_decode((string) File::get('auth.json'), null, 512, JSON_THROW_ON_ERROR);
             if ($auth->{'http-basic'}->{'backpackforlaravel.com'} ?? false) {
                 unset($auth->{'http-basic'}->{'backpackforlaravel.com'});
 
@@ -163,20 +163,20 @@ trait AddonsHelper
                 \Log::error($buffer);
             }
 
-            if (strpos($buffer, 'Permission denied') !== false) {
+            if (str_contains($buffer, 'Permission denied')) {
                 // Clear authentication
                 $this->clearAuthentication();
 
                 throw new Exception('Permission denied. Could not authenticate the credentials.');
             }
 
-            if (strpos($buffer, 'curl error') !== false) {
+            if (str_contains($buffer, 'curl error')) {
                 $process->stop(0);
 
                 throw new Exception('Connection refused. Failed to connect due to network issues.');
             }
 
-            if (strpos($buffer, 'Your requirements could not be resolved') !== false) {
+            if (str_contains($buffer, 'Your requirements could not be resolved')) {
                 $process->stop(0);
 
                 throw new Exception($buffer);

@@ -22,9 +22,8 @@ trait ResetsPasswords
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string|null  $token
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm(Request $request, ?string $token = null): \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     {
         return view('auth.passwords.reset')->with(
             ['token' => $token, 'email' => $request->email]
@@ -33,11 +32,8 @@ trait ResetsPasswords
 
     /**
      * Reset the given user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function reset(Request $request)
+    public function reset(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->validate($this->rules(), $this->validationErrorMessages());
 
@@ -85,7 +81,6 @@ trait ResetsPasswords
     /**
      * Get the password reset credentials from the request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     protected function credentials(Request $request)
@@ -130,11 +125,9 @@ trait ResetsPasswords
     /**
      * Get the response for a successful password reset.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    protected function sendResetResponse(Request $request, $response)
+    protected function sendResetResponse(Request $request, $response): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         if ($request->wantsJson()) {
             return new JsonResponse(['message' => trans($response)], 200);
@@ -147,11 +140,9 @@ trait ResetsPasswords
     /**
      * Get the response for a failed password reset.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    protected function sendResetFailedResponse(Request $request, $response)
+    protected function sendResetFailedResponse(Request $request, $response): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         if ($request->wantsJson()) {
             throw ValidationException::withMessages([

@@ -10,11 +10,11 @@ use Backpack\CRUD\Tests\config\CrudPanel\BaseCrudPanel;
  */
 class CrudPanelAccessTest extends BaseCrudPanel
 {
-    private $unknownPermission = 'unknownPermission';
+    private string $unknownPermission = 'unknownPermission';
 
-    private $defaultAccessList = [];
+    private array $defaultAccessList = [];
 
-    private $fullAccessList = [
+    private array $fullAccessList = [
         'list',
         'create',
         'update',

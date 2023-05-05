@@ -32,7 +32,7 @@ class Fix extends Command
 
         if ($this->confirm('[SUGGESTION] Would you like to publish updated JS & CSS dependencies to public/packages?', false)) {
             Artisan::call('vendor:publish', [
-                '--provider' => 'Backpack\CRUD\BackpackServiceProvider',
+                '--provider' => \Backpack\CRUD\BackpackServiceProvider::class,
                 '--tag' => 'assets',
                 '--force' => 'true',
             ]);
@@ -54,10 +54,7 @@ class Fix extends Command
         }
 
         $views = scandir($errorsDirectory);
-        $views = array_filter($views, function ($file) {
-            // eliminate ".", ".." and any hidden files like .gitignore or .gitkeep
-            return substr($file, 0, 1) != '.';
-        });
+        $views = array_filter($views, fn($file) => !str_starts_with((string) $file, '.'));
 
         // check if there are actually views inside the directory
         if (! count($views)) {
@@ -71,12 +68,12 @@ class Fix extends Command
             $contents = file_get_contents($errorsDirectory.'/'.$view);
 
             // does it even work with exception messages?
-            if (strpos($contents, '->getMessage()') == false) {
+            if (!str_contains($contents, '->getMessage()')) {
                 continue;
             }
 
             // does it already escape the exception message?
-            if (strpos($contents, 'e($exception->getMessage())') !== false) {
+            if (str_contains($contents, 'e($exception->getMessage())')) {
                 $this->info($view.' was ok.');
                 continue;
             }

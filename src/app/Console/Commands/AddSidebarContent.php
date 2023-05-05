@@ -87,11 +87,9 @@ class AddSidebarContent extends Command
      * @param  array  $haystack  The file where the search is being performed.
      * @return bool|int The last line number where the string was found. Or false.
      */
-    private function getLastLineNumberThatContains($needle, $haystack)
+    private function getLastLineNumberThatContains($needle, $haystack): bool|int
     {
-        $matchingLines = array_filter($haystack, function ($k) use ($needle) {
-            return strpos($k, $needle) !== false;
-        });
+        $matchingLines = array_filter($haystack, fn($k) => str_contains((string) $k, $needle));
 
         if ($matchingLines) {
             return array_key_last($matchingLines);

@@ -29,7 +29,7 @@ trait Settings
      * @param  mixed  $value  The value you want to store.
      * @return mixed Setting value.
      */
-    public function set(string $key, $value)
+    public function set(string $key, mixed $value)
     {
         return $this->settings[$key] = $value;
     }
@@ -56,9 +56,7 @@ trait Settings
      */
     public function settings()
     {
-        return Arr::sort($this->settings, function ($value, $key) {
-            return $key;
-        });
+        return Arr::sort($this->settings, fn($value, $key) => $key);
     }
 
     /**
@@ -68,7 +66,7 @@ trait Settings
      * @param  mixed  $value  The value you want to store.
      * @return mixed Setting value for setter. True/false for getter.
      */
-    public function setting(string $key, $value = null)
+    public function setting(string $key, mixed $value = null)
     {
         if ($value === null) {
             return $this->get($key);
@@ -84,9 +82,9 @@ trait Settings
      * @param  mixed  $value  The value you want to store.
      * @return mixed Setting value for setter. True/false for getter.
      */
-    public function operationSetting(string $key, $value = null, $operation = null)
+    public function operationSetting(string $key, mixed $value = null, $operation = null)
     {
-        $operation = $operation ?? $this->getCurrentOperation();
+        $operation ??= $this->getCurrentOperation();
 
         return $this->setting($operation.'.'.$key, $value);
     }
@@ -100,7 +98,7 @@ trait Settings
      */
     public function getOperationSetting(string $key, $operation = null)
     {
-        $operation = $operation ?? $this->getCurrentOperation();
+        $operation ??= $this->getCurrentOperation();
 
         return $this->get($operation.'.'.$key) ?? config('backpack.crud.operations.'.$this->getCurrentOperation().'.'.$key) ?? null;
     }
@@ -114,7 +112,7 @@ trait Settings
      */
     public function hasOperationSetting(string $key, $operation = null)
     {
-        $operation = $operation ?? $this->getCurrentOperation();
+        $operation ??= $this->getCurrentOperation();
 
         return $this->has($operation.'.'.$key);
     }
@@ -128,7 +126,7 @@ trait Settings
      */
     public function setOperationSetting(string $key, $value, $operation = null)
     {
-        $operation = $operation ?? $this->getCurrentOperation();
+        $operation ??= $this->getCurrentOperation();
 
         return $this->set($operation.'.'.$key, $value);
     }
@@ -142,7 +140,7 @@ trait Settings
     public function loadDefaultOperationSettingsFromConfig($configPath = null)
     {
         $operation = $this->getCurrentOperation();
-        $configPath = $configPath ?? 'backpack.operations.'.$operation;
+        $configPath ??= 'backpack.operations.'.$operation;
         $configSettings = config($configPath);
 
         if (is_array($configSettings) && count($configSettings)) {

@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
  */
 if (! Str::hasMacro('dotsToSquareBrackets')) {
     Str::macro('dotsToSquareBrackets', function ($string, $ignore = [], $keyFirst = true) {
-        $stringParts = explode('.', $string);
+        $stringParts = explode('.', (string) $string);
         $result = '';
 
         foreach ($stringParts as $key => $part) {

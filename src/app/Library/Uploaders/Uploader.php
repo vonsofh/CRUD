@@ -15,7 +15,7 @@ abstract class Uploader implements UploaderInterface
     use HandleFileNaming;
     use HandleRepeatableUploads;
 
-    private string $name;
+    private readonly string $name;
 
     private string $disk = 'public';
 
@@ -174,7 +174,7 @@ abstract class Uploader implements UploaderInterface
 
         if ($this->handleMultipleFiles) {
             if (! isset($entry->getCasts()[$this->name]) && is_string($value)) {
-                $entry->{$this->name} = json_decode($value, true);
+                $entry->{$this->name} = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
             }
 
             return $entry;
@@ -192,7 +192,7 @@ abstract class Uploader implements UploaderInterface
         if ($this->handleMultipleFiles) {
             // ensure we have an array of values when field is not casted in model.
             if (! isset($entry->getCasts()[$this->name]) && is_string($values)) {
-                $values = json_decode($values, true);
+                $values = json_decode($values, true, 512, JSON_THROW_ON_ERROR);
             }
             foreach ($values as $value) {
                 Storage::disk($this->disk)->delete($this->path.$value);

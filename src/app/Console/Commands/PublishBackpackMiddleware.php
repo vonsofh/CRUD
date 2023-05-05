@@ -32,10 +32,8 @@ class PublishBackpackMiddleware extends GeneratorCommand
 
     /**
      * Execute the console command.
-     *
-     * @return bool|null
      */
-    public function handle()
+    public function handle(): ?bool
     {
         $destination_path = $this->laravel['path'].'/Http/Middleware/CheckIfAdmin.php';
 

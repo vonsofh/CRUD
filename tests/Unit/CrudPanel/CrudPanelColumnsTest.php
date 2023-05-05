@@ -13,12 +13,12 @@ use Backpack\CRUD\Tests\config\Models\User;
  */
 class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $oneColumnArray = [
+    private array $oneColumnArray = [
         'name'  => 'column1',
         'label' => 'Column1',
     ];
 
-    private $expectedOneColumnArray = [
+    private array $expectedOneColumnArray = [
         'column1' => [
             'label'       => 'Column1',
             'name'        => 'column1',
@@ -31,12 +31,12 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $otherOneColumnArray = [
+    private array $otherOneColumnArray = [
         'name'  => 'column4',
         'label' => 'Column4',
     ];
 
-    private $twoColumnsArray = [
+    private array $twoColumnsArray = [
         [
             'name'  => 'column1',
             'label' => 'Column1',
@@ -47,7 +47,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedTwoColumnsArray = [
+    private array $expectedTwoColumnsArray = [
         'column1' => [
             'name'        => 'column1',
             'key'         => 'column1',
@@ -71,7 +71,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $threeColumnsArray = [
+    private array $threeColumnsArray = [
         [
             'name'  => 'column1',
             'label' => 'Column1',
@@ -86,7 +86,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedThreeColumnsArray = [
+    private array $expectedThreeColumnsArray = [
         'column1' => [
             'name'        => 'column1',
             'key'         => 'column1',
@@ -119,7 +119,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedRelationColumnsArrayWithoutPro = [
+    private array $expectedRelationColumnsArrayWithoutPro = [
         'accountDetails' => [
             'name'          => 'accountDetails',
             'label'         => 'AccountDetails',
@@ -130,7 +130,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'orderable'     => false,
             'searchLogic'   => false,
             'entity'        => 'accountDetails',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\AccountDetails',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\AccountDetails::class,
             'relation_type' => 'HasOne',
             'attribute'     => 'nickname',
         ],
@@ -146,7 +146,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'searchLogic'   => false,
             'relation_type' => 'HasOne',
             'entity'        => 'accountDetails.nickname',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\AccountDetails',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\AccountDetails::class,
         ],
         'accountDetails__user' => [
             'name'          => 'accountDetails.user',
@@ -159,12 +159,12 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'searchLogic'   => false,
             'relation_type' => 'BelongsTo',
             'entity'        => 'accountDetails.user',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\User',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\User::class,
             'attribute'     => 'name',
         ],
     ];
 
-    private $expectedRelationColumnsArrayWithPro = [
+    private array $expectedRelationColumnsArrayWithPro = [
         'accountDetails' => [
             'name'          => 'accountDetails',
             'label'         => 'AccountDetails',
@@ -175,7 +175,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'orderable'     => false,
             'searchLogic'   => false,
             'entity'        => 'accountDetails',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\AccountDetails',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\AccountDetails::class,
             'relation_type' => 'HasOne',
             'attribute'     => 'nickname',
         ],
@@ -191,7 +191,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'searchLogic'   => false,
             'relation_type' => 'HasOne',
             'entity'        => 'accountDetails.nickname',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\AccountDetails',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\AccountDetails::class,
         ],
         'accountDetails__user' => [
             'name'          => 'accountDetails.user',
@@ -204,26 +204,26 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'searchLogic'   => false,
             'relation_type' => 'BelongsTo',
             'entity'        => 'accountDetails.user',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\User',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\User::class,
             'attribute'     => 'name',
         ],
     ];
 
-    private $relationColumnArray = [
+    private array $relationColumnArray = [
         'name'      => 'nickname',
         'type'      => 'select',
         'entity'    => 'accountDetails',
         'attribute' => 'nickname',
     ];
 
-    private $expectedRelationColumnArray = [
+    private array $expectedRelationColumnArray = [
         'nickname' => [
             'name'          => 'nickname',
             'type'          => 'select',
             'entity'        => 'accountDetails',
             'attribute'     => 'nickname',
             'label'         => 'Nickname',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\AccountDetails',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\AccountDetails::class,
             'key'           => 'nickname',
             'tableColumn'   => false,
             'orderable'     => false,
@@ -233,23 +233,23 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $nestedRelationColumnArray = [
+    private array $nestedRelationColumnArray = [
         'name'      => 'accountDetails.article',
     ];
 
-    private $secondNestedRelationColumnArray = [
+    private array $secondNestedRelationColumnArray = [
         'name'      => 'accountDetails.article',
         'attribute' => 'content',
         'key'       => 'ac_article_content',
     ];
 
-    private $expectedNestedRelationColumnArrayWithPro = [
+    private array $expectedNestedRelationColumnArrayWithPro = [
         'accountDetails__article' => [
             'name'          => 'accountDetails.article',
             'type'          => 'relationship',
             'entity'        => 'accountDetails.article',
             'label'         => 'AccountDetails.article',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\Article',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\Article::class,
             'key'           => 'accountDetails__article',
             'tableColumn'   => false,
             'orderable'     => false,
@@ -263,7 +263,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'type'          => 'relationship',
             'entity'        => 'accountDetails.article',
             'label'         => 'AccountDetails.article',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\Article',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\Article::class,
             'key'           => 'ac_article_content',
             'tableColumn'   => false,
             'orderable'     => false,
@@ -274,13 +274,13 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedNestedRelationColumnArrayWithoutPro = [
+    private array $expectedNestedRelationColumnArrayWithoutPro = [
         'accountDetails__article' => [
             'name'          => 'accountDetails.article',
             'type'          => 'select',
             'entity'        => 'accountDetails.article',
             'label'         => 'AccountDetails.article',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\Article',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\Article::class,
             'key'           => 'accountDetails__article',
             'tableColumn'   => false,
             'orderable'     => false,
@@ -294,7 +294,7 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
             'type'          => 'select',
             'entity'        => 'accountDetails.article',
             'label'         => 'AccountDetails.article',
-            'model'         => 'Backpack\CRUD\Tests\Config\Models\Article',
+            'model'         => \Backpack\CRUD\Tests\Config\Models\Article::class,
             'key'           => 'ac_article_content',
             'tableColumn'   => false,
             'orderable'     => false,
@@ -477,14 +477,14 @@ class CrudPanelColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         $this->assertNotContains($this->otherOneColumnArray, $this->crudPanel->columns());
     }
 
-    public function testSetColumnDetails()
+    public function testSetColumnDetails(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
         // TODO: refactor crud panel sync method
     }
 
-    public function testSetColumnsDetails()
+    public function testSetColumnsDetails(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 

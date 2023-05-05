@@ -18,11 +18,11 @@ class MultipleFiles extends Uploader
     public function uploadFiles(Model $entry, $value = null)
     {
         $filesToDelete = CRUD::getRequest()->get('clear_'.$this->getName());
-        $value = $value ?? CRUD::getRequest()->file($this->getName());
+        $value ??= CRUD::getRequest()->file($this->getName());
         $previousFiles = $entry->getOriginal($this->getName()) ?? [];
 
         if (! is_array($previousFiles) && is_string($previousFiles)) {
-            $previousFiles = json_decode($previousFiles, true);
+            $previousFiles = json_decode($previousFiles, true, 512, JSON_THROW_ON_ERROR);
         }
 
         if ($filesToDelete) {
@@ -30,9 +30,7 @@ class MultipleFiles extends Uploader
                 if (in_array($previousFile, $filesToDelete)) {
                     Storage::disk($this->getDisk())->delete($previousFile);
 
-                    $previousFiles = Arr::where($previousFiles, function ($value, $key) use ($previousFile) {
-                        return $value != $previousFile;
-                    });
+                    $previousFiles = Arr::where($previousFiles, fn($value, $key) => $value != $previousFile);
                 }
             }
         }
@@ -45,7 +43,7 @@ class MultipleFiles extends Uploader
             }
         }
 
-        return isset($entry->getCasts()[$this->getName()]) ? $previousFiles : json_encode($previousFiles);
+        return isset($entry->getCasts()[$this->getName()]) ? $previousFiles : json_encode($previousFiles, JSON_THROW_ON_ERROR);
     }
 
     public function uploadRepeatableFiles($files, $previousRepeatableValues, $entry = null)

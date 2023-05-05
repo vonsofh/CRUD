@@ -11,15 +11,15 @@ use Backpack\CRUD\Tests\config\CrudPanel\BaseCrudPanel;
  */
 class CrudPanelButtonsTest extends BaseCrudPanel
 {
-    private $defaultButtonNames = [];
+    private array $defaultButtonNames = [];
 
-    private $topViewButton;
+    private \Backpack\CRUD\app\Library\CrudPanel\CrudButton $topViewButton;
 
-    private $lineViewButton;
+    private \Backpack\CRUD\app\Library\CrudPanel\CrudButton $lineViewButton;
 
-    private $bottomViewButton;
+    private \Backpack\CRUD\app\Library\CrudPanel\CrudButton $bottomViewButton;
 
-    private $topModelFunctionButton;
+    private \Backpack\CRUD\app\Library\CrudPanel\CrudButton $topModelFunctionButton;
 
     protected function setUp(): void
     {
@@ -70,7 +70,7 @@ class CrudPanelButtonsTest extends BaseCrudPanel
         $this->assertEquals($expectedButton, $this->crudPanel->buttons()->last());
     }
 
-    public function testAddButtonBottomUnknownStackName()
+    public function testAddButtonBottomUnknownStackName(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -92,7 +92,7 @@ class CrudPanelButtonsTest extends BaseCrudPanel
         $this->assertEquals(count($this->defaultButtonNames) + 1, count($this->crudPanel->buttons()));
     }
 
-    public function testAddButtonsWithSameNameWithoutReplacing()
+    public function testAddButtonsWithSameNameWithoutReplacing(): never
     {
         $this->markTestIncomplete('This no longer makes sense in Backpack 4.1. Button names are unique now.');
 
@@ -122,7 +122,7 @@ class CrudPanelButtonsTest extends BaseCrudPanel
         $this->assertEquals($expectedButton, $this->crudPanel->buttons()->last());
     }
 
-    public function testAddButtonUnknownPosition()
+    public function testAddButtonUnknownPosition(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -268,8 +268,6 @@ class CrudPanelButtonsTest extends BaseCrudPanel
 
     private function getButtonByName($name)
     {
-        return $this->crudPanel->buttons()->first(function ($value) use ($name) {
-            return $value->name == $name;
-        });
+        return $this->crudPanel->buttons()->first(fn($value) => $value->name == $name);
     }
 }

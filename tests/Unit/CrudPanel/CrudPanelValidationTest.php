@@ -45,9 +45,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'password' => 'test',
         ]);
 
-        $request->setRouteResolver(function () use ($request) {
-            return (new Route('POST', 'users', ['Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController', 'create']))->bind($request);
-        });
+        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [
@@ -85,9 +83,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'email'    => '',
         ]);
 
-        $request->setRouteResolver(function () use ($request) {
-            return (new Route('POST', 'users', ['Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController', 'create']))->bind($request);
-        });
+        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [
@@ -125,9 +121,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'password' => 'test',
         ]);
 
-        $request->setRouteResolver(function () use ($request) {
-            return (new Route('POST', 'users', ['Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController', 'create']))->bind($request);
-        });
+        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addField([
             'name'            => 'email',
@@ -166,6 +160,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
 
     public function testItThrowsExceptionWithInvalidValidationClass()
     {
+        $e = null;
         $this->crudPanel->setModel(User::class);
         $this->crudPanel->setOperation('create');
 
@@ -247,9 +242,7 @@ class CrudPanelValidationTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
             'name'        => 'test',
         ]);
 
-        $request->setRouteResolver(function () use ($request) {
-            return (new Route('POST', 'users', ['Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController', 'create']))->bind($request);
-        });
+        $request->setRouteResolver(fn() => (new Route('POST', 'users', [\Backpack\CRUD\Tests\Config\Http\Controllers\UserCrudController::class, 'create']))->bind($request));
 
         $this->crudPanel->addFields([
             [

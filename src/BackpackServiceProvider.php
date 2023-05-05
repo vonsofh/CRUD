@@ -69,26 +69,16 @@ class BackpackServiceProvider extends ServiceProvider
         include_once __DIR__.'/macros.php';
 
         // Bind the CrudPanel object to Laravel's service container
-        $this->app->scoped('crud', function ($app) {
-            return new CrudPanel();
-        });
+        $this->app->scoped('crud', fn($app) => new CrudPanel());
 
-        $this->app->scoped('DatabaseSchema', function ($app) {
-            return new DatabaseSchema();
-        });
+        $this->app->scoped('DatabaseSchema', fn($app) => new DatabaseSchema());
 
-        $this->app->singleton('BackpackViewNamespaces', function ($app) {
-            return new ViewNamespaces();
-        });
+        $this->app->singleton('BackpackViewNamespaces', fn($app) => new ViewNamespaces());
 
         // Bind the widgets collection object to Laravel's service container
-        $this->app->singleton('widgets', function ($app) {
-            return new Collection();
-        });
+        $this->app->singleton('widgets', fn($app) => new Collection());
 
-        $this->app->scoped('UploadersRepository', function ($app) {
-            return new UploadersRepository();
-        });
+        $this->app->scoped('UploadersRepository', fn($app) => new UploadersRepository());
 
         // register the helper functions
         $this->loadHelpers();
@@ -138,16 +128,7 @@ class BackpackServiceProvider extends ServiceProvider
         $gravatar_assets = [$vendorPath.'/creativeorange/gravatar/config' => config_path()];
 
         // establish the minimum amount of files that need to be published, for Backpack to work; there are the files that will be published by the install command
-        $minimum = array_merge(
-            // $backpack_views,
-            // $backpack_lang_files,
-            $error_views,
-            $backpack_public_assets,
-            $backpack_config_files,
-            $backpack_menu_contents_view,
-            $backpack_custom_routes_file,
-            $gravatar_assets
-        );
+        $minimum = [...$error_views, ...$backpack_public_assets, ...$backpack_config_files, ...$backpack_menu_contents_view, ...$backpack_custom_routes_file, ...$gravatar_assets];
 
         // register all possible publish commands and assign tags to each
         $this->publishes($backpack_config_files, 'config');
@@ -164,7 +145,6 @@ class BackpackServiceProvider extends ServiceProvider
     /**
      * Define the routes for the application.
      *
-     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
     public function setupRoutes(Router $router)
@@ -183,7 +163,6 @@ class BackpackServiceProvider extends ServiceProvider
     /**
      * Load custom routes file.
      *
-     * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
     public function setupCustomRoutes(Router $router)
@@ -218,7 +197,7 @@ class BackpackServiceProvider extends ServiceProvider
         foreach ($configs as $configFile) {
             $this->mergeConfigFrom(
                 __DIR__."/config/backpack/$dir/$configFile",
-                "backpack.$dir.".substr($configFile, 0, strrpos($configFile, '.'))
+                "backpack.$dir.".substr((string) $configFile, 0, strrpos((string) $configFile, '.'))
             );
         }
     }

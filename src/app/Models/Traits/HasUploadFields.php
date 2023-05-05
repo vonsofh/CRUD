@@ -81,7 +81,7 @@ trait HasUploadFields
         $originalModelValue = $this->getOriginal()[$attribute_name] ?? [];
 
         if (! is_array($originalModelValue)) {
-            $attribute_value = json_decode($originalModelValue, true) ?? [];
+            $attribute_value = json_decode((string) $originalModelValue, true, 512, JSON_THROW_ON_ERROR) ?? [];
         } else {
             $attribute_value = $originalModelValue;
         }
@@ -93,9 +93,7 @@ trait HasUploadFields
         if ($files_to_clear) {
             foreach ($files_to_clear as $key => $filename) {
                 \Storage::disk($disk)->delete($filename);
-                $attribute_value = Arr::where($attribute_value, function ($value, $key) use ($filename) {
-                    return $value != $filename;
-                });
+                $attribute_value = Arr::where($attribute_value, fn($value, $key) => $value != $filename);
             }
         }
 
@@ -115,6 +113,6 @@ trait HasUploadFields
             }
         }
 
-        $this->attributes[$attribute_name] = json_encode($attribute_value);
+        $this->attributes[$attribute_name] = json_encode($attribute_value, JSON_THROW_ON_ERROR);
     }
 }

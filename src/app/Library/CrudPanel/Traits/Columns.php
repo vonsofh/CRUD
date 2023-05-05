@@ -25,10 +25,8 @@ trait Columns
 
     /**
      * Add a bunch of column names and their details to the CRUD object.
-     *
-     * @param  array|string  $columns
      */
-    public function setColumns($columns)
+    public function setColumns(array|string $columns)
     {
         // clear any columns already set
         $this->removeAllColumns();
@@ -61,10 +59,9 @@ trait Columns
     /**
      * Add a column at the end of to the CRUD object's "columns" array.
      *
-     * @param  array|string  $column
      * @return self
      */
-    public function addColumn($column)
+    public function addColumn(array|string $column)
     {
         $column = $this->makeSureColumnHasNeededAttributes($column);
         $this->addColumnToOperationSettings($column);
@@ -93,7 +90,7 @@ trait Columns
      *
      * @param  string|array  $targetColumn  The target column name or array.
      */
-    public function afterColumn($targetColumn)
+    public function afterColumn(string|array $targetColumn)
     {
         $this->moveColumn($targetColumn, false);
     }
@@ -103,17 +100,15 @@ trait Columns
      *
      * @param  string|array  $targetColumn  The target column name or array.
      */
-    public function beforeColumn($targetColumn)
+    public function beforeColumn(string|array $targetColumn)
     {
         $this->moveColumn($targetColumn);
     }
 
     /**
      * Move this column to be first in the columns list.
-     *
-     * @return bool|null
      */
-    public function makeFirstColumn()
+    public function makeFirstColumn(): ?bool
     {
         if (! $this->columns()) {
             return false;
@@ -127,9 +122,8 @@ trait Columns
      * Add the default column type to the given Column, inferring the type from the database column type.
      *
      * @param  array  $column
-     * @return array|bool
      */
-    public function addDefaultTypeToColumn($column)
+    public function addDefaultTypeToColumn($column): array|bool
     {
         if (array_key_exists('name', (array) $column)) {
             $default_type = $this->inferFieldTypeFromDbColumnType($column['name']);
@@ -253,9 +247,7 @@ trait Columns
     {
         $columns = $this->columns();
 
-        return collect($columns)->pluck('entity')->reject(function ($value, $key) {
-            return ! $value;
-        })->toArray();
+        return collect($columns)->pluck('entity')->reject(fn($value, $key) => ! $value)->toArray();
     }
 
     /**
@@ -328,9 +320,7 @@ trait Columns
      */
     public function hasColumnWhere($attribute, $value)
     {
-        $match = Arr::first($this->columns(), function ($column, $columnKey) use ($attribute, $value) {
-            return isset($column[$attribute]) && $column[$attribute] == $value;
-        });
+        $match = Arr::first($this->columns(), fn($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
 
         return (bool) $match;
     }
@@ -344,9 +334,7 @@ trait Columns
      */
     public function firstColumnWhere($attribute, $value)
     {
-        return Arr::first($this->columns(), function ($column, $columnKey) use ($attribute, $value) {
-            return isset($column[$attribute]) && $column[$attribute] == $value;
-        });
+        return Arr::first($this->columns(), fn($column, $columnKey) => isset($column[$attribute]) && $column[$attribute] == $value);
     }
 
     /**
@@ -359,7 +347,7 @@ trait Columns
      * @param  string|array  $column  The column definition array OR column name as string.
      * @return array Proper column definition array.
      */
-    public function makeSureColumnHasNeededAttributes($column)
+    public function makeSureColumnHasNeededAttributes(string|array $column)
     {
         $column = $this->makeSureColumnHasName($column);
         $column = $this->makeSureColumnHasKey($column);
@@ -376,9 +364,9 @@ trait Columns
         $column_exists_in_db = $this->hasDatabaseColumn($this->model->getTable(), $column['name']);
 
         // make sure column has tableColumn, orderable and searchLogic
-        $column['tableColumn'] = $column['tableColumn'] ?? $column_exists_in_db;
-        $column['orderable'] = $column['orderable'] ?? $column_exists_in_db;
-        $column['searchLogic'] = $column['searchLogic'] ?? $column_exists_in_db;
+        $column['tableColumn'] ??= $column_exists_in_db;
+        $column['orderable'] ??= $column_exists_in_db;
+        $column['searchLogic'] ??= $column_exists_in_db;
 
         return $column;
     }
@@ -393,9 +381,7 @@ trait Columns
      */
     public function countColumnsWithoutActions()
     {
-        return collect($this->columns())->filter(function ($column, $key) {
-            return ! isset($column['hasActions']) || $column['hasActions'] == false;
-        })->count();
+        return collect($this->columns())->filter(fn($column, $key) => ! isset($column['hasActions']) || $column['hasActions'] == false)->count();
     }
 
     /**

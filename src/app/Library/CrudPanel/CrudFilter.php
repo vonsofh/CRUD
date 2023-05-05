@@ -120,7 +120,7 @@ class CrudFilter
             $input = new ParameterBag($input);
         }
 
-        $input = $input ?? new ParameterBag($this->crud()->getRequest()->all());
+        $input ??= new ParameterBag($this->crud()->getRequest()->all());
 
         if (! $input->has($this->name)) {
             // if fallback logic was supplied and is a closure
@@ -164,9 +164,7 @@ class CrudFilter
             $namespaces = array_merge([$this->viewNamespace], $namespaces);
         }
 
-        return array_map(function ($item) use ($type) {
-            return $item.'.'.$type;
-        }, $namespaces);
+        return array_map(fn($item) => $item.'.'.$type, $namespaces);
     }
 
     // ---------------------
@@ -230,6 +228,7 @@ class CrudFilter
      */
     public function removeFilterAttribute($filter, $attribute)
     {
+        $field = null;
         $fields = $this->fields();
 
         unset($fields[$field][$attribute]);
@@ -514,7 +513,7 @@ class CrudFilter
      */
     private function applyDefaultLogic($name, $operator, $input = null)
     {
-        $input = $input ?? $this->crud()->getRequest()->all();
+        $input ??= $this->crud()->getRequest()->all();
 
         // if this filter is active (the URL has it as a GET parameter)
         switch ($operator) {

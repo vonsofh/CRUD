@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CrudPanelDeleteTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    public function testDelete()
+    public function testDelete(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 

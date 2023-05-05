@@ -58,7 +58,7 @@ trait Validation
      * @param  string|array  $classOrRulesArray  Class that extends FormRequest or array of validation rules
      * @param  array  $messages  Array of validation messages.
      */
-    public function setValidation($classOrRulesArray = false, $messages = [])
+    public function setValidation(string|array $classOrRulesArray = false, $messages = [])
     {
         if (! $classOrRulesArray) {
             $this->setValidationFromFields();
@@ -146,14 +146,12 @@ trait Validation
      * Merge the form request validation with the fields validation.
      *
      * @param  FormRequest  $request
-     * @param  array|null  $rules
-     * @param  array|null  $messages
      * @return array
      */
-    public function mergeRequestAndFieldRules($request, $rules = null, $messages = null)
+    public function mergeRequestAndFieldRules($request, ?array $rules = null, ?array $messages = null)
     {
-        $rules = $rules ?? $this->getOperationSetting('validationRules') ?? [];
-        $messages = $messages ?? $this->getOperationSetting('validationMessages') ?? [];
+        $rules ??= $this->getOperationSetting('validationRules') ?? [];
+        $messages ??= $this->getOperationSetting('validationMessages') ?? [];
 
         $request = (new $request)->createFrom($this->getRequest());
         $extendedRules = $this->mergeRules($request, $rules);
@@ -168,7 +166,7 @@ trait Validation
      *
      * @param  string|array  $classOrRulesArray  Class that extends FormRequest or rules array
      */
-    public function setRequiredFields($classOrRulesArray)
+    public function setRequiredFields(string|array $classOrRulesArray)
     {
         $requiredFields = $this->getOperationSetting('requiredFields') ?? [];
 
@@ -244,7 +242,7 @@ trait Validation
      * @param  array  $field  - the field we want to get the validation from.
      * @param  bool|string  $parent  - the parent name when setting up validation for subfields.
      */
-    private function setupFieldValidation($field, $parent = false)
+    private function setupFieldValidation($field, bool|string $parent = false)
     {
         [$rules, $messages] = $this->getValidationRulesAndMessagesFromField($field, $parent);
 
@@ -263,10 +261,8 @@ trait Validation
     {
         $messages = [];
         collect($fields)
-            ->filter(function ($value, $key) {
-                // only keep fields where 'validationMessages' OR there are subfields
-                return array_key_exists('validationMessages', $value) || array_key_exists('subfields', $value);
-            })->each(function ($item, $key) use (&$messages) {
+            ->filter(fn($value, $key) => // only keep fields where 'validationMessages' OR there are subfields
+array_key_exists('validationMessages', $value) || array_key_exists('subfields', $value))->each(function ($item, $key) use (&$messages) {
                 if (isset($item['validationMessages'])) {
                     foreach ($item['validationMessages'] as $rule => $message) {
                         $messages[$key.'.'.$rule] = $message;
@@ -274,9 +270,7 @@ trait Validation
                 }
                 // add messages from subfields
                 if (array_key_exists('subfields', $item)) {
-                    $subfieldsWithValidationMessages = array_filter($item['subfields'], function ($subfield) {
-                        return array_key_exists('validationRules', $subfield);
-                    });
+                    $subfieldsWithValidationMessages = array_filter($item['subfields'], fn($subfield) => array_key_exists('validationRules', $subfield));
 
                     foreach ($subfieldsWithValidationMessages as $subfield) {
                         foreach ($subfield['validationMessages'] ?? [] as $rule => $message) {
@@ -298,10 +292,8 @@ trait Validation
     private function getValidationRulesFromFieldsAndSubfields($fields)
     {
         $rules = collect($fields)
-            ->filter(function ($value, $key) {
-                // only keep fields where 'validationRules' OR there are subfields
-                return array_key_exists('validationRules', $value) || array_key_exists('subfields', $value);
-            })->map(function ($item, $key) {
+            ->filter(fn($value, $key) => // only keep fields where 'validationRules' OR there are subfields
+array_key_exists('validationRules', $value) || array_key_exists('subfields', $value))->map(function ($item, $key) {
                 $validationRules = [];
                 // only keep the rules, not the entire field definition
                 if (isset($item['validationRules'])) {
@@ -309,9 +301,7 @@ trait Validation
                 }
                 // add validation rules for subfields
                 if (array_key_exists('subfields', $item)) {
-                    $subfieldsWithValidation = array_filter($item['subfields'], function ($subfield) {
-                        return array_key_exists('validationRules', $subfield);
-                    });
+                    $subfieldsWithValidation = array_filter($item['subfields'], fn($subfield) => array_key_exists('validationRules', $subfield));
 
                     foreach ($subfieldsWithValidation as $subfield) {
                         $validationRules[$item['name'].'.*.'.$subfield['name']] = $subfield['validationRules'];
@@ -331,7 +321,7 @@ trait Validation
      * @param  array  $field  - the field we want to get the rules and messages from.
      * @param  bool|string  $parent  - the parent name when setting up validation for subfields.
      */
-    private function getValidationRulesAndMessagesFromField($field, $parent = false)
+    private function getValidationRulesAndMessagesFromField($field, bool|string $parent = false)
     {
         $rules = [];
         $messages = [];
@@ -399,12 +389,11 @@ trait Validation
      *
      * @param  array  $rules
      * @param  array  $messages
-     * @param  \Illuminate\Http\Request|null  $request
      * @return \Illuminate\Http\Request
      */
-    private function checkRequestValidity($rules, $messages, $request = null)
+    private function checkRequestValidity($rules, $messages, ?\Illuminate\Http\Request $request = null)
     {
-        $request = $request ?? $this->getRequest();
+        $request ??= $this->getRequest();
         $request->validate($rules, $messages);
 
         return $request;
@@ -415,12 +404,11 @@ trait Validation
      *
      * @param  string  $key
      * @param  string  $rule
-     * @return string|bool
      */
-    private function checkIfRuleIsRequired($key, $rule)
+    private function checkIfRuleIsRequired($key, $rule): string|bool
     {
         if (
-            (is_string($rule) && strpos($rule, 'required') !== false && strpos($rule, 'required_') === false) ||
+            (is_string($rule) && str_contains($rule, 'required') && !str_contains($rule, 'required_')) ||
             (is_array($rule) && array_search('required', $rule) !== false && array_search('required_', $rule) === false)
         ) {
             if (Str::contains($key, '.')) {
@@ -442,6 +430,6 @@ trait Validation
             return $rules;
         }
 
-        return explode('|', $rules);
+        return explode('|', (string) $rules);
     }
 }

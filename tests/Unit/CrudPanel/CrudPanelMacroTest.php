@@ -11,19 +11,16 @@ class CrudPanelMacroTest extends BaseCrudPanel
 {
     public function testItCanRegisterMacro()
     {
-        $this->crudPanel::macro('validMacro', function () {
-            return true;
-        });
+        $this->crudPanel::macro('validMacro', fn() => true);
 
         $this->assertTrue($this->crudPanel->validMacro());
     }
 
     public function testThrowsErrorIfMacroExists()
     {
+        $e = null;
         try {
-            $this->crudPanel::macro('setModel', function () {
-                return true;
-            });
+            $this->crudPanel::macro('setModel', fn() => true);
         } catch (\Throwable $e) {
         }
         $this->assertEquals(

@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 if (! backpack_pro()) {
     trait InlineCreateOperation
     {
-        public function setupInlineCreateOperationDefaults()
+        public function setupInlineCreateOperationDefaults(): never
         {
             throw new BackpackProRequiredException('InlineCreateOperation');
         }

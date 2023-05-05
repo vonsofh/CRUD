@@ -27,11 +27,11 @@ trait HasEnumFields
                         DB::raw('SHOW COLUMNS FROM `'.$table_prefix.$instance->getTable().'` WHERE Field = "'.$field_name.'"')->getValue($connection->getQueryGrammar());
 
             $type = $connection->select($select)[0]->Type;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             abort(500, 'Enum field type is not supported - it only works on MySQL. Please use select_from_array instead.');
         }
 
-        preg_match('/^enum\((.*)\)$/', $type, $matches);
+        preg_match('/^enum\((.*)\)$/', (string) $type, $matches);
         $enum = [];
         foreach (explode(',', $matches[1]) as $value) {
             $enum[] = trim($value, "'");

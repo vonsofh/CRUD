@@ -30,10 +30,8 @@ class AdminController extends Controller
 
     /**
      * Redirect to the dashboard.
-     *
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    public function redirect()
+    public function redirect(): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         // The '/admin' route is not to be used as a page, because it breaks the menu's active state.
         return redirect(backpack_url('dashboard'));

@@ -43,7 +43,7 @@ trait Update
         $entry = ($id != false) ? $this->getEntry($id) : $this->getCurrentEntry();
 
         foreach ($fields as &$field) {
-            $field['value'] = $field['value'] ?? $this->getModelAttributeValue($entry, $field);
+            $field['value'] ??= $this->getModelAttributeValue($entry, $field);
         }
 
         // always have a hidden input for the entry id
@@ -107,7 +107,7 @@ trait Update
         }
 
         $relation = $relatedModel->{$relationMethod}();
-        $relationType = Str::afterLast(get_class($relation), '\\');
+        $relationType = Str::afterLast($relation::class, '\\');
 
         switch ($relationType) {
             case 'MorphMany':
@@ -233,13 +233,13 @@ trait Update
         // HasOne and MorphOne relations contains the field in the relation string. We want only the relation part.
         $relationEntity = $this->getOnlyRelationEntity($field);
 
-        $relationArray = explode('.', $relationEntity);
+        $relationArray = explode('.', (string) $relationEntity);
 
         $relatedModel = array_reduce(array_splice($relationArray, 0, -1), function ($obj, $method) {
             // if the string ends with `_id` we strip it out
             $method = Str::endsWith($method, '_id') ? Str::replaceLast('_id', '', $method) : $method;
 
-            return $obj->{$method} ? $obj->{$method} : $obj;
+            return $obj->{$method} ?: $obj;
         }, $model);
 
         $relationMethod = Str::afterLast($relationEntity, '.');
@@ -279,7 +279,7 @@ trait Update
                     // or a model instance (eg: AddressModel)
                     $iterator = $relatedModel;
 
-                    foreach (explode('.', $name) as $part) {
+                    foreach (explode('.', (string) $name) as $part) {
                         $iterator = $iterator->$part;
                     }
 

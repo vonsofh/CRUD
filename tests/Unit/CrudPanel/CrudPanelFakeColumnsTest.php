@@ -9,9 +9,9 @@ use Backpack\CRUD\Tests\config\Models\Article;
  */
 class CrudPanelFakeColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $emptyFakeColumnsArray = ['extras'];
+    private array $emptyFakeColumnsArray = ['extras'];
 
-    private $fakeFieldsArray = [
+    private array $fakeFieldsArray = [
         [
             'name'  => 'field',
             'label' => 'Normal Field',
@@ -47,7 +47,7 @@ class CrudPanelFakeColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         ],
     ];
 
-    private $expectedFakeFieldsColumnNames = ['metas', 'tags', 'extras'];
+    private array $expectedFakeFieldsColumnNames = ['metas', 'tags', 'extras'];
 
     public function testGetFakeColumnsAsArrayFromCreateForm()
     {
@@ -78,7 +78,7 @@ class CrudPanelFakeColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         $this->assertEquals($this->emptyFakeColumnsArray, $fakeColumnsArray);
     }
 
-    public function testGetFakeColumnsAsArrayFromUnknownForm()
+    public function testGetFakeColumnsAsArrayFromUnknownForm(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -88,6 +88,6 @@ class CrudPanelFakeColumnsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         //       read trait, which returns the create fields in case of an unknown form type.
         //       also, the getFields method should probably be renamed, as it also populates the update fields values
         //       from the database
-        $this->crudPanel->getFakeColumnsAsArray('unknownForm');
+        $this->crudPanel->getFakeColumnsAsArray();
     }
 }

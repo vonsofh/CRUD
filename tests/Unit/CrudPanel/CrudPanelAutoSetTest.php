@@ -16,9 +16,9 @@ class MyColumnTypeWithOtherConnection extends ColumnType
  */
 class CrudPanelAutoSetTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $expectedUnknownFieldType = 'text';
+    private string $expectedUnknownFieldType = 'text';
 
-    private $expectedFieldTypeFromColumnType = [
+    private array $expectedFieldTypeFromColumnType = [
         'bigIntegerCol'    => 'number',
         'binaryCol'        => 'text',
         'booleanCol'       => 'boolean',
@@ -49,7 +49,7 @@ class CrudPanelAutoSetTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         'uuidCol'          => 'text',
     ];
 
-    private $expectedColumnTypesFromDb = [
+    private array $expectedColumnTypesFromDb = [
         'bigIntegerCol' => [
             'type'    => 'integer',
             'default' => '',
@@ -164,7 +164,7 @@ class CrudPanelAutoSetTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedColumnTypes = [
+    private array $expectedColumnTypes = [
         'bigIntegerCol' => [
             'name'       => 'bigIntegerCol',
             'label'      => 'BigIntegerCol',
@@ -447,7 +447,7 @@ class CrudPanelAutoSetTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         ],
     ];
 
-    private $expectedFieldsFromDb = [
+    private array $expectedFieldsFromDb = [
         'bigIntegerCol' => [
             'name'       => 'bigIntegerCol',
             'label'      => 'BigIntegerCol',
@@ -798,7 +798,7 @@ class CrudPanelAutoSetTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBC
         $this->assertEquals($this->expectedUnknownFieldType, $fieldType);
     }
 
-    public function testMakeLabel()
+    public function testMakeLabel(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 

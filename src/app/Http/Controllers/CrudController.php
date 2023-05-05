@@ -64,7 +64,7 @@ class CrudController extends Controller
     {
         preg_match_all('/(?<=^|;)setup([^;]+?)Routes(;|$)/', implode(';', get_class_methods($this)), $matches);
 
-        if (count($matches[1])) {
+        if (is_countable($matches[1]) ? count($matches[1]) : 0) {
             foreach ($matches[1] as $methodName) {
                 $this->{'setup'.$methodName.'Routes'}($segment, $routeName, $controller);
             }
@@ -80,7 +80,7 @@ class CrudController extends Controller
     {
         preg_match_all('/(?<=^|;)setup([^;]+?)Defaults(;|$)/', implode(';', get_class_methods($this)), $matches);
 
-        if (count($matches[1])) {
+        if (is_countable($matches[1]) ? count($matches[1]) : 0) {
             foreach ($matches[1] as $methodName) {
                 $this->{'setup'.$methodName.'Defaults'}();
             }

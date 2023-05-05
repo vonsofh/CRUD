@@ -82,10 +82,7 @@ trait Tabs
         return in_array($label, $tabs);
     }
 
-    /**
-     * @return bool|string
-     */
-    public function getLastTab()
+    public function getLastTab(): bool|string
     {
         $tabs = $this->getTabs();
 
@@ -112,25 +109,20 @@ trait Tabs
     {
         $all_fields = $this->getCurrentFields();
 
-        $fields_without_a_tab = collect($all_fields)->filter(function ($value, $key) {
-            return ! isset($value['tab']);
-        });
+        $fields_without_a_tab = collect($all_fields)->filter(fn($value, $key) => ! isset($value['tab']));
 
         return $fields_without_a_tab;
     }
 
     /**
      * @param $label
-     * @return array|\Illuminate\Support\Collection
      */
-    public function getTabFields($label)
+    public function getTabFields($label): array|\Illuminate\Support\Collection
     {
         if ($this->tabExists($label)) {
             $all_fields = $this->getCurrentFields();
 
-            $fields_for_current_tab = collect($all_fields)->filter(function ($value, $key) use ($label) {
-                return isset($value['tab']) && $value['tab'] == $label;
-            });
+            $fields_for_current_tab = collect($all_fields)->filter(fn($value, $key) => isset($value['tab']) && $value['tab'] == $label);
 
             return $fields_for_current_tab;
         }
@@ -147,9 +139,7 @@ trait Tabs
         $fields = $this->getCurrentFields();
 
         $fields_with_tabs = collect($fields)
-            ->filter(function ($value, $key) {
-                return isset($value['tab']);
-            })
+            ->filter(fn($value, $key) => isset($value['tab']))
             ->each(function ($value, $key) use (&$tabs) {
                 if (! in_array($value['tab'], $tabs)) {
                     $tabs[] = $value['tab'];

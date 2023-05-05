@@ -21,11 +21,8 @@ trait ConfirmsPasswords
 
     /**
      * Confirm the given user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function confirm(Request $request)
+    public function confirm(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->validate($this->rules(), $this->validationErrorMessages());
 
@@ -39,7 +36,6 @@ trait ConfirmsPasswords
     /**
      * Reset the password confirmation timeout.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return void
      */
     protected function resetPasswordConfirmationTimeout(Request $request)

@@ -12,12 +12,11 @@ use Illuminate\Auth\Passwords\PasswordBroker as OriginalPasswordBroker;
  */
 class PasswordBroker extends OriginalPasswordBroker
 {
-    public const RESET_THROTTLED = 'backpack::base.throttled';
+    final public const RESET_THROTTLED = 'backpack::base.throttled';
 
     /**
      * Send a password reset link to a user.
      *
-     * @param  array  $credentials
      * @return string
      */
     public function sendResetLink(array $credentials, Closure $callback = null)

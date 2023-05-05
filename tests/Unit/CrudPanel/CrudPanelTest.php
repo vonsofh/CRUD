@@ -47,6 +47,7 @@ class CrudPanelTest extends BaseCrudPanel
 
     public function testItThrowsExceptionIfModelIsNotUsingCrudTrait()
     {
+        $e = null;
         try {
             $this->crudPanel->setModel('\Backpack\CRUD\Tests\config\Models\ModelWithoutCrudTrait');
         } catch (\Throwable $e) {

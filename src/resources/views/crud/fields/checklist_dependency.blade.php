@@ -63,7 +63,7 @@
     }
 
     //json encode of dependency matrix
-    $dependencyJson = json_encode($dependencyArray);
+    $dependencyJson = json_encode($dependencyArray, JSON_THROW_ON_ERROR);
     ?>
 
     <div class="container">

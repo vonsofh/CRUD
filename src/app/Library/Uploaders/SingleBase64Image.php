@@ -11,7 +11,7 @@ class SingleBase64Image extends Uploader
 {
     public function uploadFiles(Model $entry, $value = null)
     {
-        $value = $value ?? CRUD::getRequest()->get($this->getName());
+        $value ??= CRUD::getRequest()->get($this->getName());
         $previousImage = $entry->getOriginal($this->getName());
 
         if (! $value && $previousImage) {

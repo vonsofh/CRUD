@@ -67,7 +67,7 @@ class ResetPasswordController extends Controller
      * @param  string|null  $token
      * @return \Illuminate\Http\Response
      */
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm(Request $request, ?string $token = null)
     {
         $this->data['title'] = trans('backpack::base.reset_password'); // set the page title
 
@@ -78,11 +78,8 @@ class ResetPasswordController extends Controller
 
     /**
      * Reset the given user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function reset(Request $request)
+    public function reset(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->validate($this->rules(), $this->validationErrorMessages());
 

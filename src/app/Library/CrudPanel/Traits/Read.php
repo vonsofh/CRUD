@@ -15,7 +15,7 @@ trait Read
      *
      * @return int|bool The id in the db or false.
      */
-    public function getCurrentEntryId()
+    public function getCurrentEntryId(): int|bool
     {
         if ($this->entry) {
             return $this->entry->getKey();
@@ -37,7 +37,7 @@ trait Read
      *
      * @return \Illuminate\Database\Eloquent\Model|bool The row in the db or false.
      */
-    public function getCurrentEntry()
+    public function getCurrentEntry(): \Illuminate\Database\Eloquent\Model|bool
     {
         $id = $this->getCurrentEntryId();
 
@@ -117,8 +117,8 @@ trait Read
         $relationships = $this->getColumnsRelationships();
 
         foreach ($relationships as $relation) {
-            if (strpos($relation, '.') !== false) {
-                $parts = explode('.', $relation);
+            if (str_contains((string) $relation, '.')) {
+                $parts = explode('.', (string) $relation);
                 $model = $this->model;
 
                 // Iterate over each relation part to find the valid relations without attributes
@@ -126,7 +126,7 @@ trait Read
                 foreach ($parts as $i => $part) {
                     try {
                         $model = $model->$part()->getRelated();
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                         $relation = join('.', array_slice($parts, 0, $i));
                     }
                 }
@@ -137,10 +137,8 @@ trait Read
 
     /**
      * Get all entries from the database.
-     *
-     * @return array|\Illuminate\Database\Eloquent\Collection
      */
-    public function getEntries()
+    public function getEntries(): array|\Illuminate\Database\Eloquent\Collection
     {
         $this->autoEagerLoadRelationshipColumns();
 
@@ -252,7 +250,7 @@ trait Read
      *
      * https://backpackforlaravel.com/docs/4.1/crud-cheat-sheet#page-length
      */
-    public function setPageLengthMenu($menu)
+    public function setPageLengthMenu(array|int $menu)
     {
         if (is_array($menu)) {
             // start checking $menu integrity
@@ -328,10 +326,9 @@ trait Read
     /**
      * Checks if the provided PageLength segment is valid.
      *
-     * @param  array|int  $value
      * @return void
      */
-    private function abortIfInvalidPageLength($value)
+    private function abortIfInvalidPageLength(array|int $value)
     {
         if ($value === 0 || (is_array($value) && in_array(0, $value))) {
             abort(500, 'You should not use 0 as a key in paginator. If you are looking for "ALL" option, use -1 instead.');

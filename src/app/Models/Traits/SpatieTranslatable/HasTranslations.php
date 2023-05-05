@@ -62,11 +62,9 @@ trait HasTranslations
     |                            ELOQUENT OVERWRITES
     |--------------------------------------------------------------------------
     */
-
     /**
      * Create translated items as json.
      *
-     * @param  array  $attributes
      * @return static
      */
     public static function create(array $attributes = [])
@@ -93,8 +91,6 @@ trait HasTranslations
     /**
      * Update translated items as json.
      *
-     * @param  array  $attributes
-     * @param  array  $options
      * @return bool
      */
     public function update(array $attributes = [], array $options = [])

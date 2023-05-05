@@ -10,8 +10,8 @@ use Config;
  */
 class CrudPanelViewsTest extends BaseCrudPanel
 {
-    private $customView = 'path/to/custom/view';
-    private $customContentClass = 'col-md-12';
+    private string $customView = 'path/to/custom/view';
+    private string $customContentClass = 'col-md-12';
 
     // CREATE
 

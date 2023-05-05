@@ -41,7 +41,7 @@ trait Fields
      * @param  string|array  $field  The definition of a field (string or array).
      * @return array The correct definition of that field.
      */
-    public function makeSureFieldHasNecessaryAttributes($field)
+    public function makeSureFieldHasNecessaryAttributes(string|array $field)
     {
         $field = $this->makeSureFieldHasName($field);
         $field = $this->makeSureFieldHasEntity($field);
@@ -103,7 +103,7 @@ trait Fields
      * @param  string|array  $field  The new field.
      * @return self
      */
-    public function addField($field)
+    public function addField(string|array $field)
     {
         $field = $this->makeSureFieldHasNecessaryAttributes($field);
 
@@ -135,9 +135,7 @@ trait Fields
      */
     public function afterField($targetFieldName)
     {
-        $this->transformFields(function ($fields) use ($targetFieldName) {
-            return $this->moveField($fields, $targetFieldName, false);
-        });
+        $this->transformFields(fn($fields) => $this->moveField($fields, $targetFieldName, false));
     }
 
     /**
@@ -147,17 +145,13 @@ trait Fields
      */
     public function beforeField($targetFieldName)
     {
-        $this->transformFields(function ($fields) use ($targetFieldName) {
-            return $this->moveField($fields, $targetFieldName, true);
-        });
+        $this->transformFields(fn($fields) => $this->moveField($fields, $targetFieldName, true));
     }
 
     /**
      * Move this field to be first in the fields list.
-     *
-     * @return bool|null
      */
-    public function makeFirstField()
+    public function makeFirstField(): ?bool
     {
         if (! $this->fields()) {
             return false;
@@ -280,12 +274,11 @@ trait Fields
      * (once by Backpack in front-end, once by Laravel Attribute Casting).
      *
      * @param  array  $input
-     * @param  mixed  $model
      * @return array
      */
-    public function decodeJsonCastedAttributes($input, $model = false)
+    public function decodeJsonCastedAttributes($input, mixed $model = false)
     {
-        $model = $model ? $model : $this->model;
+        $model = $model ?: $this->model;
         $fields = $this->getCleanStateFields();
         $casted_attributes = $model->getCastedAttributes();
 
@@ -298,8 +291,8 @@ trait Fields
 
                 if (in_array($fieldCasting, $jsonCastables) && isset($input[$field['name']]) && ! empty($input[$field['name']]) && ! is_array($input[$field['name']])) {
                     try {
-                        $input[$field['name']] = json_decode($input[$field['name']]);
-                    } catch (\Exception $e) {
+                        $input[$field['name']] = json_decode((string) $input[$field['name']], null, 512, JSON_THROW_ON_ERROR);
+                    } catch (\Exception) {
                         $input[$field['name']] = [];
                     }
                 }
@@ -325,9 +318,7 @@ trait Fields
      */
     public function orderFields($order)
     {
-        $this->transformFields(function ($fields) use ($order) {
-            return $this->applyOrderToFields($fields, $order);
-        });
+        $this->transformFields(fn($fields) => $this->applyOrderToFields($fields, $order));
     }
 
     /**
@@ -395,10 +386,9 @@ trait Fields
      * Get a namespaced version of the field type name.
      * Appends the 'view_namespace' attribute of the field to the `type', using dot notation.
      *
-     * @param  mixed  $field
      * @return string Namespaced version of the field type name. Ex: 'text', 'custom.view.path.text'
      */
-    public function getFieldTypeWithNamespace($field)
+    public function getFieldTypeWithNamespace(mixed $field)
     {
         if (is_array($field)) {
             $fieldType = $field['type'];
@@ -498,7 +488,7 @@ trait Fields
         if (is_string($setting) && class_exists($setting)) {
             $setting = new $setting();
 
-            return is_callable($setting) ? $setting($request) : abort(500, get_class($setting).' is not invokable.');
+            return is_callable($setting) ? $setting($request) : abort(500, $setting::class.' is not invokable.');
         }
 
         return $request->only($this->getAllFieldNames());
@@ -513,9 +503,7 @@ trait Fields
      */
     public function hasFieldWhere($attribute, $value)
     {
-        $match = Arr::first($this->getCleanStateFields(), function ($field, $fieldKey) use ($attribute, $value) {
-            return isset($field[$attribute]) && $field[$attribute] == $value;
-        });
+        $match = Arr::first($this->getCleanStateFields(), fn($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
 
         return (bool) $match;
     }
@@ -529,9 +517,7 @@ trait Fields
      */
     public function firstFieldWhere($attribute, $value)
     {
-        return Arr::first($this->getCleanStateFields(), function ($field, $fieldKey) use ($attribute, $value) {
-            return isset($field[$attribute]) && $field[$attribute] == $value;
-        });
+        return Arr::first($this->getCleanStateFields(), fn($field, $fieldKey) => isset($field[$attribute]) && $field[$attribute] == $value);
     }
 
     /**

@@ -25,7 +25,7 @@ class ValidUploadMultiple extends ValidFileArray
 
         // `upload_multiple` sends [[0 => null]] when user doesn't upload anything
         // assume that nothing changed on field so nothing is sent on the request.
-        if (count($value) === 1 && empty($value[0])) {
+        if ((is_countable($value) ? count($value) : 0) === 1 && empty($value[0])) {
             if ($this->entry) {
                 unset($this->data[$attribute]);
             } else {
@@ -36,7 +36,7 @@ class ValidUploadMultiple extends ValidFileArray
 
         $previousValues = $this->entry?->{$attribute} ?? [];
         if (is_string($previousValues)) {
-            $previousValues = json_decode($previousValues, true) ?? [];
+            $previousValues = json_decode($previousValues, true, 512, JSON_THROW_ON_ERROR) ?? [];
         }
 
         $value = array_merge($previousValues, $value);

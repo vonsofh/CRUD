@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 if (! backpack_pro()) {
     trait FetchOperation
     {
-        public function setupFetchOperationDefaults()
+        public function setupFetchOperationDefaults(): never
         {
             throw new BackpackProRequiredException('FetchOperation');
         }

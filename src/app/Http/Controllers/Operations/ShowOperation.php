@@ -45,9 +45,7 @@ trait ShowOperation
         $this->crud->operation(['create', 'update'], function () {
             $this->crud->addSaveAction([
                 'name' => 'save_and_preview',
-                'visible' => function ($crud) {
-                    return $crud->hasAccess('show');
-                },
+                'visible' => fn($crud) => $crud->hasAccess('show'),
                 'redirect' => function ($crud, $request, $itemId = null) {
                     $itemId = $itemId ?: $request->input('id');
                     $redirectUrl = $crud->route.'/'.$itemId.'/show';
@@ -76,7 +74,7 @@ trait ShowOperation
         $id = $this->crud->getCurrentEntryId() ?? $id;
 
         // get the info for that entry (include softDeleted items if the trait is used)
-        if ($this->crud->get('show.softDeletes') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->crud->model))) {
+        if ($this->crud->get('show.softDeletes') && in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($this->crud->model))) {
             $this->data['entry'] = $this->crud->getModel()->withTrashed()->findOrFail($id);
         } else {
             $this->data['entry'] = $this->crud->getEntryWithLocale($id);
@@ -107,7 +105,7 @@ trait ShowOperation
         }
 
         // if the model has SoftDeletes, add column for deleted_at
-        if ($this->crud->get('show.softDeletes') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->crud->model))) {
+        if ($this->crud->get('show.softDeletes') && in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($this->crud->model))) {
             $this->crud->column($this->crud->model->getDeletedAtColumn())->type('datetime');
         }
 

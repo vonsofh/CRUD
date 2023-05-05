@@ -21,10 +21,9 @@ class CrudButton
     public $stack;
     public $name;
     public $type;
-    public $content;
     public $position;
 
-    public function __construct($name, $stack = null, $type = null, $content = null, $position = null)
+    public function __construct($name, $stack = null, $type = null, public $content = null, $position = null)
     {
         // in case an array was passed as name
         // assume it's an array that includes [$name, $stack, $type, $content]
@@ -32,10 +31,9 @@ class CrudButton
             extract($name);
         }
 
-        $this->name = $name ?? 'button_'.rand(1, 999999999);
+        $this->name = $name ?? 'button_'.random_int(1, 999_999_999);
         $this->stack = $stack ?? 'top';
         $this->type = $type ?? 'view';
-        $this->content = $content;
 
         // if no position was passed, the defaults are:
         // - 'beginning' for the 'line' stack
@@ -54,7 +52,7 @@ class CrudButton
      *
      * @param  string|array  $attributes  Button name or array that contains name, stack, type and content.
      */
-    public static function name($attributes = null)
+    public static function name(string|array $attributes = null)
     {
         return new static($attributes);
     }
@@ -64,7 +62,7 @@ class CrudButton
      *
      * @param  string|array  $attributes  Button name or array that contains name, stack, type and content.
      */
-    public static function add($attributes = null)
+    public static function add(string|array $attributes = null)
     {
         return new static($attributes);
     }
@@ -83,7 +81,7 @@ class CrudButton
      * @param  string|array  $attributes  Button name or array that contains name, stack, type and content.
      * @return CrudButton
      */
-    public static function make($attributes = null)
+    public static function make(string|array $attributes = null)
     {
         $button = static::add($attributes);
         $button->stack('hidden');
@@ -275,9 +273,7 @@ class CrudButton
     private function getViewPathsWithFallbacks()
     {
         $type = $this->name;
-        $paths = array_map(function ($item) use ($type) {
-            return $item.'.'.$type;
-        }, ViewNamespaces::getFor('buttons'));
+        $paths = array_map(fn($item) => $item.'.'.$type, ViewNamespaces::getFor('buttons'));
 
         return array_merge([$this->content], $paths);
     }

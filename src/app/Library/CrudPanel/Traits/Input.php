@@ -12,16 +12,13 @@ trait Input
      * PRIVATE METHODS
      * ---------------.
      */
-
     /**
      * Returns the direct inputs parsed for model and relationship creation.
      *
      * @param  array  $inputs
-     * @param  null|array  $relationDetails
-     * @param  bool|string  $relationMethod
      * @return array
      */
-    private function splitInputIntoDirectAndRelations($inputs, $relationDetails = null, $relationMethod = false)
+    private function splitInputIntoDirectAndRelations($inputs, ?array $relationDetails = null, bool|string $relationMethod = false)
     {
         $crudFields = $relationDetails['crudFields'] ?? [];
         $model = $relationDetails['model'] ?? false;
@@ -43,7 +40,7 @@ trait Input
      * @param  mixed  $relationMethod  - the relation method
      * @return array
      */
-    private function getDirectInputsFromInput($input, $model = false, $fields = [], $relationMethod = false)
+    private function getDirectInputsFromInput($input, mixed $model = false, $fields = [], mixed $relationMethod = false)
     {
         $model = $model ? (is_string($model) ? app($model) : $model) : $this->model;
 
@@ -77,7 +74,7 @@ trait Input
      * @param  mixed  $relationMethod
      * @return array The formatted relation details.
      */
-    private function getRelationDetailsFromInput($input, $crudFields = [], $relationMethod = false)
+    private function getRelationDetailsFromInput($input, $crudFields = [], mixed $relationMethod = false)
     {
         // main entity
         if (empty($crudFields)) {
@@ -98,9 +95,7 @@ trait Input
         }
 
         //remove fields that are not in the submitted form input
-        $relationFields = array_filter($relationFields, function ($field) use ($input) {
-            return Arr::has($input, $field['name']) || isset($input[$field['name']]) || Arr::has($input, Str::afterLast($field['name'], '.'));
-        });
+        $relationFields = array_filter($relationFields, fn($field) => Arr::has($input, $field['name']) || isset($input[$field['name']]) || Arr::has($input, Str::afterLast($field['name'], '.')));
 
         $relationDetails = [];
 
@@ -138,8 +133,8 @@ trait Input
             $fieldDetails = Arr::get($relationDetails, $key, []);
 
             $fieldDetails['values'][$attributeName] = Arr::get($input, $fieldName);
-            $fieldDetails['model'] = $fieldDetails['model'] ?? $field['model'];
-            $fieldDetails['relation_type'] = $fieldDetails['relation_type'] ?? $field['relation_type'];
+            $fieldDetails['model'] ??= $field['model'];
+            $fieldDetails['relation_type'] ??= $field['relation_type'];
             $fieldDetails['crudFields'][] = $field;
             $fieldDetails['entity'] = $this->getOnlyRelationEntity($field);
 
@@ -161,10 +156,9 @@ trait Input
      * with the relation foreign_key in a later stage of the saving process.
      *
      * @param  array  $fields
-     * @param  mixed  $relationMethod
      * @return array
      */
-    private function excludeRelationFieldsExceptBelongsTo($input, $fields, $relationMethod)
+    private function excludeRelationFieldsExceptBelongsTo($input, $fields, mixed $relationMethod)
     {
         // when fields are empty we are in the main entity, we get the regular crud relation fields
         if (empty($fields)) {
@@ -191,8 +185,6 @@ trait Input
             }
         }
 
-        return Arr::where($input, function ($item, $key) use ($excludedFields) {
-            return ! in_array($key, $excludedFields);
-        });
+        return Arr::where($input, fn($item, $key) => ! in_array($key, $excludedFields));
     }
 }

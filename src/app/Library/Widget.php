@@ -11,12 +11,8 @@ use Illuminate\Support\Fluent;
  */
 class Widget extends Fluent
 {
-    protected $attributes = [];
-
-    public function __construct($attributes)
+    public function __construct(protected $attributes)
     {
-        $this->attributes = $attributes;
-
         $this->save();
     }
 
@@ -28,11 +24,11 @@ class Widget extends Fluent
      * @param  string|array  $attributes  Either the name of the widget, or an array with the attributes the new widget should hold, including the name attribute.
      * @return Widget
      */
-    public static function add($attributes = null)
+    public static function add(string|array $attributes = null)
     {
         // make sure the widget has a name
         $attributes = is_string($attributes) ? ['name' => $attributes] : $attributes;
-        $attributes['name'] = $attributes['name'] ?? 'widget_'.rand(1, 999999999);
+        $attributes['name'] ??= 'widget_'.random_int(1, 999_999_999);
 
         // if that widget name already exists in the widgets collection
         // then pick up all widget attributes from that entry
@@ -42,8 +38,8 @@ class Widget extends Fluent
         }
 
         // set defaults for other mandatory attributes
-        $attributes['section'] = $attributes['section'] ?? 'before_content';
-        $attributes['type'] = $attributes['type'] ?? 'card';
+        $attributes['section'] ??= 'before_content';
+        $attributes['type'] ??= 'card';
 
         return new static($attributes);
     }
@@ -51,7 +47,6 @@ class Widget extends Fluent
     /**
      * Return the widget attribute value or null when it doesn't exist.
      *
-     * @param  string  $attribute
      * @return mixed
      */
     public function getAttribute(string $attribute)
@@ -62,7 +57,6 @@ class Widget extends Fluent
     /**
      * Check if widget has the attribute.
      *
-     * @param  string  $attribute
      * @return bool
      */
     public function hasAttribute(string $attribute)
@@ -121,8 +115,8 @@ class Widget extends Fluent
      */
     public function makeFirst()
     {
-        $this->collection()->pull($this->name);
-        $this->collection()->prepend($this);
+        static::collection()->pull($this->name);
+        static::collection()->prepend($this);
 
         return $this;
     }
@@ -134,8 +128,8 @@ class Widget extends Fluent
      */
     public function makeLast()
     {
-        $this->collection()->pull($this->name);
-        $this->collection()->push($this);
+        static::collection()->pull($this->name);
+        static::collection()->push($this);
 
         return $this;
     }
@@ -157,9 +151,7 @@ class Widget extends Fluent
             }
         }
         $type = $this->type;
-        $paths = array_map(function ($item) use ($type) {
-            return $item.'.'.$type;
-        }, ViewNamespaces::getWithFallbackFor('widgets', 'backpack.ui.component_view_namespaces.widgets'));
+        $paths = array_map(fn($item) => $item.'.'.$type, ViewNamespaces::getWithFallbackFor('widgets', 'backpack.ui.component_view_namespaces.widgets'));
 
         foreach ($paths as $path) {
             if (view()->exists($path)) {
@@ -220,7 +212,7 @@ class Widget extends Fluent
      */
     public function remove()
     {
-        $this->collection()->pull($this->name);
+        static::collection()->pull($this->name);
 
         return $this;
     }
@@ -237,7 +229,7 @@ class Widget extends Fluent
      */
     public function onlyHere(...$args)
     {
-        return $this->remove(...$args);
+        return $this->remove();
     }
 
     // ---------------
@@ -251,12 +243,12 @@ class Widget extends Fluent
      */
     private function save()
     {
-        $itemExists = $this->collection()->contains('name', $this->attributes['name']);
+        $itemExists = static::collection()->contains('name', $this->attributes['name']);
 
         if (! $itemExists) {
-            $this->collection()->put($this->attributes['name'], $this);
+            static::collection()->put($this->attributes['name'], $this);
         } else {
-            $this->collection()[$this->name] = $this;
+            static::collection()[$this->name] = $this;
         }
 
         return $this;

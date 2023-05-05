@@ -30,7 +30,6 @@ trait MorphRelationships
     /**
      * This function created the MorphTo relation fields in the CrudPanel.
      *
-     * @param  array  $field
      * @return void
      */
     private function createMorphToRelationFields(array $field, $morphTypeFieldName, $morphIdFieldName)
@@ -59,7 +58,6 @@ trait MorphRelationships
     /**
      * Make sure morph fields have the correct structure.
      *
-     * @param  array  $field
      * @return array
      */
     private function makeSureMorphSubfieldsAreDefined(array $field)
@@ -88,7 +86,7 @@ trait MorphRelationships
      * @param  array  $options  - options for the corresponding morphable_id field (usually ajax options)
      * @return void|array
      */
-    public function addMorphOption($fieldOrName, string $key, $label = null, array $options = [])
+    public function addMorphOption(string|array $fieldOrName, string $key, ?string $label = null, array $options = [])
     {
         $morphField = is_array($fieldOrName) ? $fieldOrName : $this->fields()[$fieldOrName];
 
@@ -128,12 +126,9 @@ trait MorphRelationships
     /**
      * Return the provided morphable_type field with the options infered from key.
      *
-     * @param  array  $morphTypeField
-     * @param  string  $key
-     * @param  string|null  $label
      * @return array
      */
-    private function getMorphTypeFieldWithOptions(array $morphTypeField, string $key, $label)
+    private function getMorphTypeFieldWithOptions(array $morphTypeField, string $key, ?string $label)
     {
         $morphMap = $morphTypeField['morphMap'];
 
@@ -145,7 +140,7 @@ trait MorphRelationships
             }
 
             if (array_key_exists($key, $morphTypeField['options'] ?? [])) {
-                throw new \Exception('Duplicate entry for «'.$key.'» key. That model is already part of another morphOption. Current options: '.json_encode($morphTypeField['options']));
+                throw new \Exception('Duplicate entry for «'.$key.'» key. That model is already part of another morphOption. Current options: '.json_encode($morphTypeField['options'], JSON_THROW_ON_ERROR));
             }
 
             // use the provided label or the Model name to display this option.
@@ -158,7 +153,7 @@ trait MorphRelationships
             }
             // check if the key already exists
             if (array_key_exists($key, $morphTypeField['options'] ?? [])) {
-                throw new \Exception('Duplicate entry for «'.$key.'» key, That string is already part of another morphOption. Current options: '.json_encode($morphTypeField['options']));
+                throw new \Exception('Duplicate entry for «'.$key.'» key, That string is already part of another morphOption. Current options: '.json_encode($morphTypeField['options'], JSON_THROW_ON_ERROR));
             }
             // use the provided label or capitalize the provided key.
             $morphTypeField['options'][$key] = $label ?? ucfirst($key);
@@ -214,7 +209,6 @@ trait MorphRelationships
     /**
      * return the array with defaults for a morphOption structure.
      *
-     * @param  array  $morphOption
      * @return array
      */
     private function getMorphOptionStructured(array $morphOption)

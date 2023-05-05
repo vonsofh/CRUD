@@ -43,7 +43,7 @@ trait Stats
         }
 
         // only send stats every ~100 pageloads
-        if (rand(1, 100) != 1) {
+        if (random_int(1, 100) != 1) {
             return;
         }
 
@@ -92,7 +92,7 @@ trait Stats
     private function makeCurlRequest($method, $url, $payload)
     {
         $cmd = 'curl -X '.$method." -H 'Content-Type: application/json'";
-        $cmd .= " -d '".json_encode($payload)."' "."'".$url."'";
+        $cmd .= " -d '".json_encode($payload, JSON_THROW_ON_ERROR)."' "."'".$url."'";
         $cmd .= ' > /dev/null 2>&1 &';
 
         exec($cmd, $output, $exit);
@@ -123,7 +123,7 @@ trait Stats
                 'connect_timeout'     => 0.5,
                 'timeout'             => 0.5,
             ]);
-        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+        } catch (\GuzzleHttp\Exception\GuzzleException) {
             // do nothing
         }
     }

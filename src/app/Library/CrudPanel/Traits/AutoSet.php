@@ -20,7 +20,7 @@ trait AutoSet
                     'name'       => $field,
                     'label'      => $this->makeLabel($field),
                     'value'      => null,
-                    'default'    => isset($this->autoset['db_column_types'][$field]['default']) ? $this->autoset['db_column_types'][$field]['default'] : null,
+                    'default'    => $this->autoset['db_column_types'][$field]['default'] ?? null,
                     'type'       => $this->inferFieldTypeFromDbColumnType($field),
                     'values'     => [],
                     'attributes' => [],
@@ -56,7 +56,7 @@ trait AutoSet
 
         foreach ($this->getDbTableColumns() as $key => $column) {
             $column_type = $column->getType()->getName();
-            $dbColumnTypes[$column->getName()]['type'] = trim(preg_replace('/\(\d+\)(.*)/i', '', $column_type));
+            $dbColumnTypes[$column->getName()]['type'] = trim(preg_replace('/\(\d+\)(.*)/i', '', (string) $column_type));
             $dbColumnTypes[$column->getName()]['default'] = $column->getDefault();
         }
 
@@ -119,50 +119,18 @@ trait AutoSet
             return 'text';
         }
 
-        switch ($dbColumnTypes[$fieldName]['type']) {
-            case 'int':
-            case 'integer':
-            case 'smallint':
-            case 'mediumint':
-            case 'longint':
-                return 'number';
-
-            case 'string':
-            case 'varchar':
-            case 'set':
-                return 'text';
-
-                // case 'enum':
-            //     return 'enum';
-                // break;
-
-            case 'boolean':
-                return 'boolean';
-
-            case 'tinyint':
-                return 'active';
-
-            case 'text':
-            case 'mediumtext':
-            case 'longtext':
-                return 'textarea';
-
-            case 'date':
-                return 'date';
-
-            case 'datetime':
-            case 'timestamp':
-                return 'datetime';
-
-            case 'time':
-                return 'time';
-
-            case 'json':
-                return backpack_pro() ? 'table' : 'textarea';
-
-            default:
-                return 'text';
-        }
+        return match ($dbColumnTypes[$fieldName]['type']) {
+            'int', 'integer', 'smallint', 'mediumint', 'longint' => 'number',
+            'string', 'varchar', 'set' => 'text',
+            'boolean' => 'boolean',
+            'tinyint' => 'active',
+            'text', 'mediumtext', 'longtext' => 'textarea',
+            'date' => 'date',
+            'datetime', 'timestamp' => 'datetime',
+            'time' => 'time',
+            'json' => backpack_pro() ? 'table' : 'textarea',
+            default => 'text',
+        };
 
         return 'text';
     }

@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
  */
 class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $horizontalTabsType = 'horizontal';
-    private $verticalTabsType = 'vertical';
+    private string $horizontalTabsType = 'horizontal';
+    private string $verticalTabsType = 'vertical';
 
-    private $threeTextFieldsArray = [
+    private array $threeTextFieldsArray = [
         [
             'name'  => 'field1',
             'label' => 'Field1',
@@ -42,9 +42,9 @@ class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $expectedTabNames = ['First Tab', 'Second Tab', 'Third Tab'];
+    private array $expectedTabNames = ['First Tab', 'Second Tab', 'Third Tab'];
 
-    private $expectedFieldsInFirstTab = [
+    private array $expectedFieldsInFirstTab = [
         'field2' => [
             'name'  => 'field2',
             'label' => 'Field2',
@@ -59,7 +59,7 @@ class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $expectedFieldsInSecondTab = [
+    private array $expectedFieldsInSecondTab = [
         'field2' => [
             'name'  => 'field4',
             'label' => 'Field4',
@@ -68,7 +68,7 @@ class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $expectedFieldsInThirdTab = [
+    private array $expectedFieldsInThirdTab = [
         'field2' => [
             'name'  => 'field5',
             'label' => 'Field5',
@@ -207,7 +207,7 @@ class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         $this->assertFalse($isUnknownLastTab);
     }
 
-    public function testGetTabFields()
+    public function testGetTabFields(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -249,7 +249,7 @@ class CrudPanelTabsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         // fields from the update form.
         $this->crudPanel->getEntry($article->id);
 
-        $this->crudPanel->addFields($this->threeTextFieldsArray, 'update');
+        $this->crudPanel->addFields($this->threeTextFieldsArray);
         $tabNames = $this->crudPanel->getTabs();
 
         $this->assertEquals($this->expectedTabNames, $tabNames);

@@ -7,13 +7,11 @@ use Illuminate\Support\LazyCollection;
 
 final class DatabaseSchema
 {
-    private static $schema;
+    private static ?array $schema = null;
 
     /**
      * Return the schema for the table.
      *
-     * @param  string  $connection
-     * @param  string  $table
      * @return array
      */
     public static function getForTable(string $connection, string $table)
@@ -26,8 +24,6 @@ final class DatabaseSchema
     /**
      * Generates and store the database schema.
      *
-     * @param  string  $connection
-     * @param  string  $table
      * @return void
      */
     private static function generateDatabaseSchema(string $connection, string $table)
@@ -51,8 +47,6 @@ final class DatabaseSchema
      */
     private static function mapTables($rawTables)
     {
-        return LazyCollection::make($rawTables->getTables())->mapWithKeys(function ($table, $key) {
-            return [$table->getName() => $table];
-        })->toArray();
+        return LazyCollection::make($rawTables->getTables())->mapWithKeys(fn($table, $key) => [$table->getName() => $table])->toArray();
     }
 }

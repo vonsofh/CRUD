@@ -182,8 +182,8 @@ trait PrettyCommandOutput
      */
     public function progressBlock(string $text, string $progress = 'running', string $color = 'blue')
     {
-        $this->maxWidth = $this->maxWidth ?? 128;
-        $this->terminal = $this->terminal ?? new Terminal();
+        $this->maxWidth ??= 128;
+        $this->terminal ??= new Terminal();
         $width = min($this->terminal->getWidth(), $this->maxWidth);
         $dotLength = $width - 5 - strlen(strip_tags($text.$progress));
 
@@ -246,9 +246,7 @@ trait PrettyCommandOutput
     public function askHint(string $question, array $hints, string $default)
     {
         $hints = collect($hints)
-            ->map(function ($hint) {
-                return " <fg=gray>│ $hint</>";
-            })
+            ->map(fn($hint) => " <fg=gray>│ $hint</>")
             ->join(PHP_EOL);
 
         return $this->ask($question.PHP_EOL.$hints, $default);

@@ -34,7 +34,6 @@ class AuthenticateSession extends LaravelAuthenticateSession
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -91,7 +90,7 @@ class AuthenticateSession extends LaravelAuthenticateSession
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    protected function logout($request)
+    protected function logout($request): never
     {
         $this->guard()->logoutCurrentDevice();
 
@@ -107,7 +106,7 @@ class AuthenticateSession extends LaravelAuthenticateSession
      *
      * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard
      */
-    protected function guard()
+    protected function guard(): AuthFactory|\Illuminate\Contracts\Auth\Guard
     {
         return $this->auth;
     }

@@ -10,7 +10,7 @@ use Exception;
 
 final class RegisterUploadEvents
 {
-    private string $crudObjectType;
+    private readonly string $crudObjectType;
 
     public function __construct(
         private readonly CrudField|CrudColumn $crudObject,
@@ -43,7 +43,7 @@ final class RegisterUploadEvents
         }
 
         $attributes = $this->crudObject->getAttributes();
-        $model = $attributes['model'] ?? get_class($this->crudObject->crud()->getModel());
+        $model = $attributes['model'] ?? $this->crudObject->crud()->getModel()::class;
         $uploader = $this->getUploader($attributes, $this->uploaderConfiguration);
 
         $this->setupModelEvents($model, $uploader);
@@ -63,7 +63,7 @@ final class RegisterUploadEvents
             return;
         }
 
-        $model = $subfield['baseModel'] ?? get_class($this->crudObject->crud()->getModel());
+        $model = $subfield['baseModel'] ?? $this->crudObject->crud()->getModel()::class;
 
         if (isset($crudObject['relation_type']) && $crudObject['entity'] !== false) {
             $uploader = $uploader->relationship(true);

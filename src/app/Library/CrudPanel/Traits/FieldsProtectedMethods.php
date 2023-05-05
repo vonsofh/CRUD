@@ -15,7 +15,7 @@ trait FieldsProtectedMethods
      */
     public function makeSureFieldHasRelationType($field)
     {
-        $field['relation_type'] = $field['relation_type'] ?? $this->inferRelationTypeFromRelationship($field);
+        $field['relation_type'] ??= $this->inferRelationTypeFromRelationship($field);
 
         return $field;
     }
@@ -28,7 +28,7 @@ trait FieldsProtectedMethods
      */
     public function makeSureFieldHasModel($field)
     {
-        $field['model'] = $field['model'] ?? $this->inferFieldModelFromRelationship($field);
+        $field['model'] ??= $this->inferFieldModelFromRelationship($field);
 
         return $field;
     }
@@ -41,7 +41,7 @@ trait FieldsProtectedMethods
      */
     public function makeSureFieldHasPivot($field)
     {
-        $field['pivot'] = $field['pivot'] ?? $this->guessIfFieldHasPivotFromRelationType($field['relation_type']);
+        $field['pivot'] ??= $this->guessIfFieldHasPivotFromRelationType($field['relation_type']);
 
         return $field;
     }
@@ -55,7 +55,7 @@ trait FieldsProtectedMethods
     public function makeSureFieldHasMultiple($field)
     {
         if (isset($field['relation_type'])) {
-            $field['multiple'] = $field['multiple'] ?? $this->guessIfFieldHasMultipleFromRelationType($field['relation_type']);
+            $field['multiple'] ??= $this->guessIfFieldHasMultipleFromRelationType($field['relation_type']);
         }
 
         return $field;
@@ -69,8 +69,8 @@ trait FieldsProtectedMethods
      */
     public function overwriteFieldNameFromDotNotationToArray($field)
     {
-        if (! is_array($field['name']) && strpos($field['name'], '.') !== false) {
-            $entity_array = explode('.', $field['name']);
+        if (! is_array($field['name']) && str_contains((string) $field['name'], '.')) {
+            $entity_array = explode('.', (string) $field['name']);
             $name_string = '';
 
             foreach ($entity_array as $key => $array_entity) {
@@ -105,7 +105,7 @@ trait FieldsProtectedMethods
      * @param  string|array  $field  The field definition array (or string).
      * @return array
      */
-    protected function makeSureFieldHasName($field)
+    protected function makeSureFieldHasName(string|array $field)
     {
         if (empty($field)) {
             abort(500, 'Field name can\'t be empty');
@@ -147,7 +147,7 @@ trait FieldsProtectedMethods
         }
 
         //if the name is dot notation we are sure it's a relationship
-        if (strpos($field['name'], '.') !== false) {
+        if (str_contains((string) $field['name'], '.')) {
             $possibleMethodName = Str::of($field['name'])->before('.');
             // check model method for possibility of being a relationship
             $field['entity'] = $this->modelMethodIsRelationship($model, $possibleMethodName) ? $field['name'] : false;
@@ -185,7 +185,7 @@ trait FieldsProtectedMethods
             // if the user setup the attribute in relation string, we are not going to infer that attribute from model
             // instead we get the defined attribute by the user.
             if ($this->isAttributeInRelationString($field)) {
-                $field['attribute'] = $field['attribute'] ?? Str::afterLast($field['entity'], '.');
+                $field['attribute'] ??= Str::afterLast($field['entity'], '.');
 
                 return $field;
             }
@@ -210,7 +210,7 @@ trait FieldsProtectedMethods
     {
         if (! isset($field['label'])) {
             $name = is_array($field['name']) ? $field['name'][0] : $field['name'];
-            $name = str_replace('_id', '', $name);
+            $name = str_replace('_id', '', (string) $name);
             $field['label'] = mb_ucfirst(str_replace('_', ' ', $name));
         }
 
@@ -239,15 +239,11 @@ trait FieldsProtectedMethods
             return 'relationship';
         }
 
-        switch ($relationType) {
-            case 'BelongsTo':
-                return 'select';
-            case 'BelongsToMany':
-            case 'MorphToMany':
-                return 'select_multiple';
-            default:
-                return 'text';
-        }
+        return match ($relationType) {
+            'BelongsTo' => 'select',
+            'BelongsToMany', 'MorphToMany' => 'select_multiple',
+            default => 'text',
+        };
     }
 
     /**
@@ -278,14 +274,14 @@ trait FieldsProtectedMethods
             if (! isset($field['model'])) {
                 // we're inside a simple 'repeatable' with no model/relationship, so
                 // we assume all subfields are supposed to be text fields
-                $subfield['type'] = $subfield['type'] ?? 'text';
-                $subfield['entity'] = $subfield['entity'] ?? false;
+                $subfield['type'] ??= 'text';
+                $subfield['entity'] ??= false;
             } else {
                 // we should use 'model' as the `baseModel` for all subfields, so that when
                 // we look if `category()` relationship exists on the model, we look on
                 // the model this repeatable represents, not the main CRUD model
                 $currentEntity = $subfield['baseEntity'] ?? $field['entity'];
-                $subfield['baseModel'] = $subfield['baseModel'] ?? $field['model'];
+                $subfield['baseModel'] ??= $field['model'];
                 $subfield['baseEntity'] = isset($field['baseEntity']) ? $field['baseEntity'].'.'.$currentEntity : $currentEntity;
                 $subfield['baseFieldName'] = is_array($subfield['name']) ? implode(',', $subfield['name']) : $subfield['name'];
                 $subfield['baseFieldName'] = Str::afterLast($subfield['baseFieldName'], '.');

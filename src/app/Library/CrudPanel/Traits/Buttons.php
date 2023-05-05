@@ -68,7 +68,7 @@ trait Buttons
      * @param  bool  $replaceExisting  True if a button with the same name on the given stack should be replaced.
      * @return \Backpack\CRUD\app\Library\CrudPanel\CrudButton The new CRUD button.
      */
-    public function addButton($stack, $name, $type, $content, $position = false, $replaceExisting = true)
+    public function addButton($stack, $name, $type, $content, bool|string $position = false, $replaceExisting = true)
     {
         if ($replaceExisting) {
             $this->removeButton($name, $stack);
@@ -132,16 +132,14 @@ trait Buttons
      */
     public function removeButton($name, $stack = null)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(function ($button) use ($name, $stack) {
-            return $stack == null ? $button->name == $name : ($button->stack == $stack) && ($button->name == $name);
-        }));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $stack == null ? $button->name == $name : ($button->stack == $stack) && ($button->name == $name)));
     }
 
     /**
      * @param  array  $names  Button names
      * @param  string|null  $stack  Optional stack name.
      */
-    public function removeButtons($names, $stack = null)
+    public function removeButtons($names, ?string $stack = null)
     {
         if (! empty($names)) {
             foreach ($names as $name) {
@@ -157,16 +155,12 @@ trait Buttons
 
     public function removeAllButtonsFromStack($stack)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(function ($button) use ($stack) {
-            return $button->stack == $stack;
-        }));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $button->stack == $stack));
     }
 
     public function removeButtonFromStack($name, $stack)
     {
-        $this->setOperationSetting('buttons', $this->buttons()->reject(function ($button) use ($name, $stack) {
-            return $button->name == $name && $button->stack == $stack;
-        }));
+        $this->setOperationSetting('buttons', $this->buttons()->reject(fn($button) => $button->name == $name && $button->stack == $stack));
     }
 
     /**
@@ -177,15 +171,13 @@ trait Buttons
      * @param  string|array  $destination  The destination button name or array.
      * @param  bool  $before  If true, the button will be moved before the target button, otherwise it will be moved after it.
      */
-    public function moveButton($target, $where, $destination)
+    public function moveButton(string|array $target, string|array $where, string|array $destination)
     {
         $targetButton = $this->firstButtonWhere('name', $target);
         $destinationButton = $this->firstButtonWhere('name', $destination);
         $destinationKey = $this->getButtonKey($destination);
         $newDestinationKey = ($where == 'before' ? $destinationKey : $destinationKey + 1);
-        $newButtons = $this->buttons()->filter(function ($value, $key) use ($target) {
-            return $value->name != $target;
-        });
+        $newButtons = $this->buttons()->filter(fn($value, $key) => $value->name != $target);
 
         if (! $targetButton) {
             return;
@@ -253,7 +245,7 @@ trait Buttons
      * @param  string|array  $attributes  Button name or array that contains name, stack, type and content.
      * @return \Backpack\CRUD\app\Library\CrudPanel\CrudButton
      */
-    public function button($attributes = null)
+    public function button(string|array $attributes = null)
     {
         return new CrudButton($attributes);
     }

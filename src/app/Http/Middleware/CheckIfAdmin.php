@@ -25,7 +25,7 @@ class CheckIfAdmin
      * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @return bool
      */
-    private function checkIfUserIsAdmin($user)
+    private function checkIfUserIsAdmin(?\Illuminate\Contracts\Auth\Authenticatable $user)
     {
         // return ($user->is_admin == 1);
         return true;
@@ -35,9 +35,8 @@ class CheckIfAdmin
      * Answer to unauthorized access request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    private function respondToUnauthorizedRequest($request)
+    private function respondToUnauthorizedRequest($request): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
     {
         if ($request->ajax() || $request->wantsJson()) {
             return response(trans('backpack::base.unauthorized'), 401);
@@ -50,7 +49,6 @@ class CheckIfAdmin
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

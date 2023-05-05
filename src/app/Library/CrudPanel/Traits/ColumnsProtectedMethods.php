@@ -29,9 +29,9 @@ trait ColumnsProtectedMethods
     protected function makeSureColumnHasPriority($column)
     {
         $columns_count = $this->countColumnsWithoutActions();
-        $assumed_priority = $columns_count ? $columns_count : 0;
+        $assumed_priority = $columns_count ?: 0;
 
-        $column['priority'] = $column['priority'] ?? $assumed_priority;
+        $column['priority'] ??= $assumed_priority;
 
         return $column;
     }
@@ -151,7 +151,7 @@ trait ColumnsProtectedMethods
     protected function makeSureColumnHasKey($column)
     {
         if (! isset($column['key'])) {
-            $column['key'] = str_replace('.', '__', $column['name']);
+            $column['key'] = str_replace('.', '__', (string) $column['name']);
         }
 
         return $column;
@@ -187,7 +187,7 @@ trait ColumnsProtectedMethods
         }
 
         // if the name is dot notation it might be a relationship
-        if (strpos($column['name'], '.') !== false) {
+        if (str_contains((string) $column['name'], '.')) {
             $possibleMethodName = Str::before($column['name'], '.');
 
             // if the first part of the string exists as method in the model
@@ -199,7 +199,7 @@ trait ColumnsProtectedMethods
                     // if the user setup the attribute in relation string, we are not going to infer that attribute from model
                     // instead we get the defined attribute by the user.
                     if ($this->isAttributeInRelationString($column)) {
-                        $column['attribute'] = $column['attribute'] ?? Str::afterLast($column['entity'], '.');
+                        $column['attribute'] ??= Str::afterLast($column['entity'], '.');
                     }
                 }
 
@@ -234,7 +234,6 @@ trait ColumnsProtectedMethods
     /**
      * Infer the attribute for the column when needed.
      *
-     * @param  array  $column
      * @return void
      */
     protected function makeSureColumnHasAttribute(array $column)
@@ -270,7 +269,7 @@ trait ColumnsProtectedMethods
     protected function makeSureColumnHasRelationType($column)
     {
         if (isset($column['entity']) && $column['entity'] !== false) {
-            $column['relation_type'] = $column['relation_type'] ?? $this->inferRelationTypeFromRelationship($column);
+            $column['relation_type'] ??= $this->inferRelationTypeFromRelationship($column);
         }
 
         return $column;
@@ -282,7 +281,7 @@ trait ColumnsProtectedMethods
      * @param  string|array  $targetColumn  The target column name or array.
      * @param  bool  $before  If true, the column will be moved before the target column, otherwise it will be moved after it.
      */
-    protected function moveColumn($targetColumn, $before = true)
+    protected function moveColumn(string|array $targetColumn, $before = true)
     {
         // TODO: this and the moveField method from the Fields trait should be refactored into a single method and moved
         //       into a common class

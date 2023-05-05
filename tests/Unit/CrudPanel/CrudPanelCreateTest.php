@@ -24,12 +24,12 @@ use Illuminate\Support\Arr;
  */
 class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $nonRelationshipField = [
+    private array $nonRelationshipField = [
         'name'  => 'field1',
         'label' => 'Field1',
     ];
 
-    private $userInputFieldsNoRelationships = [
+    private array $userInputFieldsNoRelationships = [
         [
             'name' => 'id',
             'type' => 'hidden',
@@ -44,7 +44,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $articleInputFieldsOneToMany = [
+    private array $articleInputFieldsOneToMany = [
         [
             'name' => 'id',
             'type' => 'hidden',
@@ -61,7 +61,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $userInputFieldsManyToMany = [
+    private array $userInputFieldsManyToMany = [
         [
             'name' => 'id',
             'type' => 'hidden',
@@ -83,7 +83,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $userInputFieldsDotNotation = [
+    private array $userInputFieldsDotNotation = [
         [
             'name' => 'id',
             'type' => 'hidden',
@@ -109,7 +109,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $userInputHasOneRelation = [
+    private array $userInputHasOneRelation = [
         [
             'name' => 'accountDetails.nickname',
         ],
@@ -118,7 +118,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $articleInputBelongsToRelationName = [
+    private array $articleInputBelongsToRelationName = [
         [
             'name' => 'user',
         ],
@@ -262,12 +262,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         $this->assertEntryEquals($inputData, $entry);
     }
 
-    public function testGetRelationFields()
+    public function testGetRelationFields(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsManyToMany, 'create');
+        $this->crudPanel->addFields($this->userInputFieldsManyToMany);
 
         // TODO: fix method and documentation. when 'both' is passed as the $form value, the getRelationFields searches
         //       for relationship fields in the update fields.
@@ -298,7 +298,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         $this->assertEquals($this->crudPanel->get('update.fields')['roles'], Arr::last($relationFields));
     }
 
-    public function testGetRelationFieldsUnknownForm()
+    public function testGetRelationFieldsUnknownForm(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -391,8 +391,8 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testMorphToManySelectableRelationship()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
-        $this->crudPanel->addField(['name' => 'bills'], 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
+        $this->crudPanel->addField(['name' => 'bills']);
 
         $faker = Factory::create();
         $inputData = [
@@ -423,12 +423,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testMorphToManyCreatableRelationship()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField(['name' => 'recommends', 'subfields' => [
             [
                 'name' => 'text',
             ],
-        ]], 'both');
+        ]]);
 
         $faker = Factory::create();
         $inputData = [
@@ -769,10 +769,10 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testMorphOneRelationship()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name' => 'comment.text',
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -800,7 +800,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testMorphManyCreatableRelationship()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'      => 'stars',
             'subfields' => [
@@ -808,7 +808,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
                     'name' => 'title',
                 ],
             ],
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -853,7 +853,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManyCreatableRelationship()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'      => 'universes',
             'subfields' => [
@@ -861,7 +861,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
                     'name' => 'title',
                 ],
             ],
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -934,19 +934,19 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
         $this->crudPanel->update($entry->id, $inputData);
 
-        $this->assertEquals(0, count($entry->fresh()->universes));
+        $this->assertEquals(0, is_countable($entry->fresh()->universes) ? count($entry->fresh()->universes) : 0);
         $this->assertEquals(0, Universe::all()->count());
     }
 
     public function testHasManySelectableRelationshipWithoutForceDelete()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'planets',
             'force_delete' => false,
             'fallback_id'  => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -976,12 +976,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManySelectableRelationshipRemoveAllRelations()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'planets',
             'force_delete' => false,
             'fallback_id'  => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1010,7 +1010,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManyWithRelationScoped()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'          => 'incomes',
             'subfields'     => [
@@ -1028,7 +1028,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
                     'type' => 'number',
                 ],
             ],
-        ], 'both');
+        ]);
         $this->crudPanel->addField([
             'name'          => 'expenses',
             'subfields'     => [
@@ -1046,7 +1046,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
                     'type' => 'number',
                 ],
             ],
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1130,12 +1130,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManySelectableRelationshipWithFallbackId()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'planets',
             'fallback_id'  => 0,
             'force_delete' => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1164,12 +1164,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManySelectableRelationshipWithForceDelete()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'planets',
             'force_delete' => true,
             'fallback_id'  => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1197,12 +1197,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManySelectableRelationshipNonNullableForeignKeyAndDefaultInDatabase()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'comets',
             'force_delete' => false,
             'fallback_id'  => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1231,12 +1231,12 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testHasManySelectableRelationshipNonNullable()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'         => 'planetsNonNullable',
             'force_delete' => false,
             'fallback_id'  => false,
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [
@@ -1264,7 +1264,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     public function testCreateHasManyRelationWithArrayedNameSubfields()
     {
         $this->crudPanel->setModel(User::class);
-        $this->crudPanel->addFields($this->userInputFieldsNoRelationships, 'both');
+        $this->crudPanel->addFields($this->userInputFieldsNoRelationships);
         $this->crudPanel->addField([
             'name'      => 'universes',
             'subfields' => [
@@ -1276,7 +1276,7 @@ class CrudPanelCreateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
                     'type' => 'date_range',
                 ],
             ],
-        ], 'both');
+        ]);
 
         $faker = Factory::create();
         $inputData = [

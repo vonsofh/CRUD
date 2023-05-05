@@ -81,10 +81,8 @@ trait UpdateOperation
 
     /**
      * Update the specified resource in the database.
-     *
-     * @return array|\Illuminate\Http\RedirectResponse
      */
-    public function update()
+    public function update(): array|\Illuminate\Http\RedirectResponse
     {
         $this->crud->hasAccessOrFail('update');
 

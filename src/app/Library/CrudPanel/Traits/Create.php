@@ -80,15 +80,13 @@ trait Create
      * PRIVATE METHODS
      * ---------------.
      */
-
     /**
      * Create relations for the provided model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
      * @param  array  $formattedRelations  The form data.
-     * @return bool|null
      */
-    private function createRelationsForItem($item, $formattedRelations)
+    private function createRelationsForItem($item, $formattedRelations): ?bool
     {
         // no relations to create
         if (empty($formattedRelations)) {
@@ -120,11 +118,11 @@ trait Create
                 case 'BelongsToMany':
                 case 'MorphToMany':
                     $values = $relationDetails['values'][$relationMethod] ?? [];
-                    $values = is_string($values) ? json_decode($values, true) : $values;
+                    $values = is_string($values) ? json_decode($values, true, 512, JSON_THROW_ON_ERROR) : $values;
 
                     // disabling ConvertEmptyStringsToNull middleware may return null from json_decode() if an empty string is used.
                     // we need to make sure no null value can go foward so we reassure that values is not null after json_decode()
-                    $values = $values ?? [];
+                    $values ??= [];
 
                     $relationValues = [];
 
@@ -170,7 +168,7 @@ trait Create
      *                                  ]
      * @return Model|null
      */
-    private function createUpdateOrDeleteOneToOneRelation($relation, $relationMethod, $relationDetails)
+    private function createUpdateOrDeleteOneToOneRelation(\Illuminate\Database\Eloquent\Relations\HasOne|\Illuminate\Database\Eloquent\Relations\MorphOne $relation, $relationMethod, $relationDetails)
     {
         // Let's see which scenario we're treating, depending on the contents of $relationDetails:
         //      - (A) ['number' => 1315, 'name' => 'Something'] (if passed using a text/number/etc field)
@@ -218,6 +216,7 @@ trait Create
      */
     private function attachManyRelation($item, $relation, $relationDetails, $relationValues)
     {
+        $toUpdate = [];
         $modelInstance = $relation->getRelated();
         $relationForeignKey = $relation->getForeignKeyName();
         $relationLocalKey = $relation->getLocalKeyName();

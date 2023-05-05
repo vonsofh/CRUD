@@ -49,7 +49,7 @@ trait Filters
      * @param  bool|\Closure  $filterLogic  Query modification (filtering) logic when filter is active.
      * @param  bool|\Closure  $fallbackLogic  Query modification (filtering) logic when filter is not active.
      */
-    public function addFilter($options, $values = false, $filterLogic = false, $fallbackLogic = false)
+    public function addFilter($options, bool|string|array|\Closure $values = false, bool|\Closure $filterLogic = false, bool|\Closure $fallbackLogic = false)
     {
         $filter = $this->addFilterToCollection($options, $values, $filterLogic, $fallbackLogic);
 
@@ -66,7 +66,7 @@ trait Filters
      * @param  bool|\Closure  $filterLogic  Query modification (filtering) logic when filter is active.
      * @param  bool|\Closure  $fallbackLogic  Query modification (filtering) logic when filter is not active.
      */
-    protected function addFilterToCollection($options, $values = false, $filterLogic = false, $fallbackLogic = false)
+    protected function addFilterToCollection($options, bool|string|array|\Closure $values = false, bool|\Closure $filterLogic = false, bool|\Closure $fallbackLogic = false)
     {
         // enable the filters functionality
         $this->enableFilters();
@@ -100,11 +100,8 @@ trait Filters
 
     /**
      * Apply the filter.
-     *
-     * @param  CrudFilter  $filter
-     * @param  ParameterBag|array|null  $input
      */
-    public function applyFilter(CrudFilter $filter, $input = null)
+    public function applyFilter(CrudFilter $filter, \Symfony\Component\HttpFoundation\ParameterBag|array|null $input = null)
     {
         $filter->apply($input);
     }
@@ -126,19 +123,15 @@ trait Filters
         }
     }
 
-    /**
-     * @return array|\Illuminate\Support\Collection
-     */
-    public function filters()
+    public function filters(): array|\Illuminate\Support\Collection
     {
         return $this->getOperationSetting('filters') ?? collect();
     }
 
     /**
      * @param  string  $name
-     * @return null|CrudFilter
      */
-    public function getFilter($name)
+    public function getFilter($name): ?\Backpack\CRUD\app\Library\CrudPanel\CrudFilter
     {
         if ($this->filtersEnabled()) {
             return $this->filters()->firstWhere('name', $name);
@@ -195,9 +188,7 @@ trait Filters
 
     public function removeFilter($name)
     {
-        $strippedCollection = $this->filters()->reject(function ($filter) use ($name) {
-            return $filter->name == $name;
-        });
+        $strippedCollection = $this->filters()->reject(fn($filter) => $filter->name == $name);
 
         $this->setOperationSetting('filters', $strippedCollection);
     }
@@ -212,7 +203,7 @@ trait Filters
      *
      * @param  string|array  $destination  The target filter name or array.
      */
-    public function afterFilter($destination)
+    public function afterFilter(string|array $destination)
     {
         $target = $this->filters()->last()->name;
 
@@ -224,7 +215,7 @@ trait Filters
      *
      * @param  string|array  $destination  The target filter name or array.
      */
-    public function beforeFilter($destination)
+    public function beforeFilter(string|array $destination)
     {
         $target = $this->filters()->last()->name;
 
@@ -233,10 +224,8 @@ trait Filters
 
     /**
      * Move this filter to be first in the columns list.
-     *
-     * @return bool|null
      */
-    public function makeFirstFilter()
+    public function makeFirstFilter(): ?bool
     {
         if (! $this->filters()) {
             return false;
@@ -262,15 +251,13 @@ trait Filters
      * @param  string|array  $destination  The destination filter name or array.
      * @param  bool  $before  If true, the filter will be moved before the target filter, otherwise it will be moved after it.
      */
-    public function moveFilter($target, $where, $destination)
+    public function moveFilter(string|array $target, $where, string|array $destination)
     {
         $targetFilter = $this->firstFilterWhere('name', $target);
         $destinationFilter = $this->firstFilterWhere('name', $destination);
         $destinationKey = $this->getFilterKey($destination);
         $newDestinationKey = ($where == 'before' ? $destinationKey : $destinationKey + 1);
-        $newFilters = $this->filters()->filter(function ($value, $key) use ($target) {
-            return $value->name != $target;
-        });
+        $newFilters = $this->filters()->filter(fn($value, $key) => $value->name != $target);
 
         if (! $targetFilter) {
             return;

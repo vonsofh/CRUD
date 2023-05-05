@@ -27,7 +27,7 @@ trait HasFakeFields
             $column_contents = $this->{$column};
 
             if ($this->shouldDecodeFake($column)) {
-                $column_contents = json_decode($column_contents);
+                $column_contents = json_decode((string) $column_contents, null, 512, JSON_THROW_ON_ERROR);
             }
 
             if (is_array($column_contents) || is_object($column_contents) || $column_contents instanceof Traversable) {
@@ -46,7 +46,7 @@ trait HasFakeFields
      */
     public function withFakes($columns = [])
     {
-        $model = '\\'.get_class($this);
+        $model = '\\'.$this::class;
 
         $columnCount = ((is_array($columns) || $columns instanceof Countable) ? count($columns) : 0);
 

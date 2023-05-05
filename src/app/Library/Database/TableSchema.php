@@ -20,16 +20,13 @@ class TableSchema
     public function getColumnsNames()
     {
         return array_values(
-            array_map(function ($item) {
-                return $item->getName();
-            }, $this->getColumns())
+            array_map(fn($item) => $item->getName(), $this->getColumns())
         );
     }
 
     /**
      * Return the column type in database.
      *
-     * @param  string  $columnName
      * @return string
      */
     public function getColumnType(string $columnName)

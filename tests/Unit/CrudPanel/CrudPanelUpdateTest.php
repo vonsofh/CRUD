@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CrudPanelUpdateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $userInputFields = [
+    private array $userInputFields = [
         [
             'name' => 'id',
             'type' => 'hidden',
@@ -30,7 +30,7 @@ class CrudPanelUpdateTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $expectedUpdatedFields = [
+    private array $expectedUpdatedFields = [
         'id' => [
             'name'   => 'id',
             'type'   => 'hidden',

@@ -51,7 +51,7 @@ trait HandleRepeatableUploads
             return $this->uploadRelationshipFiles($entry, $value);
         }
 
-        $entry->{$this->getRepeatableContainerName()} = json_encode($this->processRepeatableUploads($entry, $value));
+        $entry->{$this->getRepeatableContainerName()} = json_encode($this->processRepeatableUploads($entry, $value), JSON_THROW_ON_ERROR);
 
         return $entry;
     }
@@ -164,7 +164,7 @@ trait HandleRepeatableUploads
 
     private function getPreviousRepeatableValues(Model $entry, UploaderInterface $uploader): array
     {
-        $previousValues = json_decode($entry->getOriginal($uploader->getRepeatableContainerName()), true);
+        $previousValues = json_decode($entry->getOriginal($uploader->getRepeatableContainerName()), true, 512, JSON_THROW_ON_ERROR);
 
         if (! empty($previousValues)) {
             $previousValues = array_column($previousValues, $uploader->getName());

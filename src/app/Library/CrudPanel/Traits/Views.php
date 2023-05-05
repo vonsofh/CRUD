@@ -291,7 +291,7 @@ trait Views
      * @param  bool|string  $viewNamespace  Optional override, to use this namespace instead of the viewstack.
      * @return string
      */
-    public function getFirstFieldView($viewPath, $viewNamespace = false)
+    public function getFirstFieldView($viewPath, bool|string $viewNamespace = false)
     {
         // if a definite namespace was given, use that one
         if ($viewNamespace) {
@@ -299,9 +299,7 @@ trait Views
         }
         // otherwise, loop through all the possible view namespaces
         // until you find a view that exists
-        $paths = array_map(function ($item) use ($viewPath) {
-            return $item.'.'.$viewPath;
-        }, ViewNamespaces::getFor('fields'));
+        $paths = array_map(fn($item) => $item.'.'.$viewPath, ViewNamespaces::getFor('fields'));
 
         foreach ($paths as $path) {
             if (view()->exists($path)) {

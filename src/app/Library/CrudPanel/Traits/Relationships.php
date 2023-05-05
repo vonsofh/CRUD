@@ -20,7 +20,7 @@ trait Relationships
         $model = isset($field['baseModel']) ? app($field['baseModel']) : $this->model;
 
         if (method_exists($model, $possible_method)) {
-            $parts = explode('.', $entity);
+            $parts = explode('.', (string) $entity);
             // here we are going to iterate through all relation parts to check
             foreach ($parts as $i => $part) {
                 $relation = $model->$part();
@@ -30,7 +30,7 @@ trait Relationships
             return $relation;
         }
 
-        abort(500, 'Looks like field <code>'.$field['name'].'</code> is not properly defined. The <code>'.$field['entity'].'()</code> relationship doesn\'t seem to exist on the <code>'.get_class($model).'</code> model.');
+        abort(500, 'Looks like field <code>'.$field['name'].'</code> is not properly defined. The <code>'.$field['entity'].'()</code> relationship doesn\'t seem to exist on the <code>'.$model::class.'</code> model.');
     }
 
     /**
@@ -43,7 +43,7 @@ trait Relationships
     {
         $relation = $this->getRelationInstance($field);
 
-        return get_class($relation->getRelated());
+        return $relation->getRelated()::class;
     }
 
     /**
@@ -56,7 +56,7 @@ trait Relationships
     {
         $relation = $this->getRelationInstance($field);
 
-        return Arr::last(explode('\\', get_class($relation)));
+        return Arr::last(explode('\\', (string) $relation::class));
     }
 
     public function getOnlyRelationEntity($field)
@@ -80,7 +80,7 @@ trait Relationships
      * @param  bool  $nested  Should nested fields be included
      * @return array The fields with corresponding relation types.
      */
-    public function getFieldsWithRelationType($relation_types, $nested = false): array
+    public function getFieldsWithRelationType(string|array $relation_types, $nested = false): array
     {
         $relation_types = (array) $relation_types;
 
@@ -107,8 +107,8 @@ trait Relationships
     {
         foreach ($fields as &$field) {
             //we only want to parse fields that has a relation type and their name contains [ ] used in html.
-            if (isset($field['relation_type']) && preg_match('/[\[\]]/', $field['name']) !== 0) {
-                $chunks = explode('[', $field['name']);
+            if (isset($field['relation_type']) && preg_match('/[\[\]]/', (string) $field['name']) !== 0) {
+                $chunks = explode('[', (string) $field['name']);
 
                 foreach ($chunks as &$chunk) {
                     if (strpos($chunk, ']')) {
@@ -128,7 +128,7 @@ trait Relationships
      * @param  string|array  $relations  - the relations to exclude
      * @param  array  $fields
      */
-    private function getRelationFieldsWithoutRelationType($relations, $fields = [])
+    private function getRelationFieldsWithoutRelationType(string|array $relations, $fields = [])
     {
         if (! is_array($relations)) {
             $relations = [$relations];
@@ -174,9 +174,7 @@ trait Relationships
                     $fields = array_merge($field['subfields'], $fields);
                 }
             }
-            $fields = array_filter($fields, function ($field) {
-                return isset($field['relation_type']) && $field['relation_type'] === 'BelongsTo';
-            });
+            $fields = array_filter($fields, fn($field) => isset($field['relation_type']) && $field['relation_type'] === 'BelongsTo');
         }
 
         foreach ($fields as $field) {
@@ -200,18 +198,10 @@ trait Relationships
      */
     public function guessIfFieldHasMultipleFromRelationType($relation_type)
     {
-        switch ($relation_type) {
-            case 'BelongsToMany':
-            case 'HasMany':
-            case 'HasManyThrough':
-            case 'HasOneOrMany':
-            case 'MorphMany':
-            case 'MorphOneOrMany':
-            case 'MorphToMany':
-                return true;
-            default:
-                return false;
-        }
+        return match ($relation_type) {
+            'BelongsToMany', 'HasMany', 'HasManyThrough', 'HasOneOrMany', 'MorphMany', 'MorphOneOrMany', 'MorphToMany' => true,
+            default => false,
+        };
     }
 
     /**
@@ -222,14 +212,10 @@ trait Relationships
      */
     public function guessIfFieldHasPivotFromRelationType($relation_type)
     {
-        switch ($relation_type) {
-            case 'BelongsToMany':
-            case 'HasManyThrough':
-            case 'MorphToMany':
-                return true;
-            default:
-                return false;
-        }
+        return match ($relation_type) {
+            'BelongsToMany', 'HasManyThrough', 'MorphToMany' => true,
+            default => false,
+        };
     }
 
     /**
@@ -241,9 +227,7 @@ trait Relationships
     {
         $all_relation_fields = $this->getRelationFields();
 
-        return Arr::where($all_relation_fields, function ($value, $key) {
-            return isset($value['pivot']) && ! $value['pivot'];
-        });
+        return Arr::where($all_relation_fields, fn($value, $key) => isset($value['pivot']) && ! $value['pivot']);
     }
 
     /**
@@ -255,9 +239,7 @@ trait Relationships
     {
         $all_relation_fields = $this->getRelationFields();
 
-        return Arr::where($all_relation_fields, function ($value, $key) {
-            return isset($value['pivot']) && $value['pivot'];
-        });
+        return Arr::where($all_relation_fields, fn($value, $key) => isset($value['pivot']) && $value['pivot']);
     }
 
     /**
@@ -286,6 +268,7 @@ trait Relationships
      */
     private static function getPivotFieldStructure($field)
     {
+        $pivotSelectorField = [];
         $pivotSelectorField['name'] = $field['name'];
         $pivotSelectorField['type'] = 'relationship';
         $pivotSelectorField['is_pivot_select'] = true;
@@ -324,9 +307,8 @@ trait Relationships
      *
      * @param $model
      * @param $method
-     * @return bool|string
      */
-    private function modelMethodIsRelationship($model, $method)
+    private function modelMethodIsRelationship($model, $method): bool|string
     {
         $methodReflection = new \ReflectionMethod($model, $method);
 
@@ -366,11 +348,11 @@ trait Relationships
      */
     private function isAttributeInRelationString($field)
     {
-        if (! str_contains($field['entity'], '.')) {
+        if (! str_contains((string) $field['entity'], '.')) {
             return false;
         }
 
-        $parts = explode('.', $field['entity']);
+        $parts = explode('.', (string) $field['entity']);
 
         $model = $field['baseModel'] ?? $this->model;
 
@@ -381,7 +363,7 @@ trait Relationships
         foreach ($parts as $i => $part) {
             try {
                 $model = $model->$part()->getRelated();
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // return true if the last part of a relation string is not a method on the model
                 // so it's probably the attribute that we should show
                 return true;

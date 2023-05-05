@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 if (! backpack_pro()) {
     trait BulkDeleteOperation
     {
-        public function setupBulkDeleteOperationDefaults()
+        public function setupBulkDeleteOperationDefaults(): never
         {
             throw new BackpackProRequiredException('BulkDeleteOperation');
         }

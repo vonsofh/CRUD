@@ -7,9 +7,9 @@ namespace Backpack\CRUD\Tests\Unit\CrudPanel;
  */
 class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $singleSaveAction;
+    private array $singleSaveAction;
 
-    private $multipleSaveActions;
+    private array $multipleSaveActions;
 
     /**
      * Setup the test environment.
@@ -25,32 +25,20 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         $this->singleSaveAction = [
             'name' => 'save_action_one',
             'button_text' => 'custom',
-            'redirect' => function ($crud, $request, $itemId) {
-                return $crud->route;
-            },
-            'visible' => function ($crud) {
-                return true;
-            },
+            'redirect' => fn($crud, $request, $itemId) => $crud->route,
+            'visible' => fn($crud) => true,
         ];
 
         $this->multipleSaveActions = [
             [
                 'name' => 'save_action_one',
-                'redirect' => function ($crud, $request, $itemId) {
-                    return $crud->route;
-                },
-                'visible' => function ($crud) {
-                    return true;
-                },
+                'redirect' => fn($crud, $request, $itemId) => $crud->route,
+                'visible' => fn($crud) => true,
             ],
             [
                 'name' => 'save_action_two',
-                'redirect' => function ($crud, $request, $itemId) {
-                    return $crud->route;
-                },
-                'visible' => function ($crud) {
-                    return true;
-                },
+                'redirect' => fn($crud, $request, $itemId) => $crud->route,
+                'visible' => fn($crud) => true,
             ],
         ];
     }
@@ -58,7 +46,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
     public function testAddDefaultSaveActions()
     {
         $this->crudPanel->setupDefaultSaveActions();
-        $this->assertEquals(3, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(3, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
     }
 
     public function testAddOneSaveAction()
@@ -66,7 +54,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->addSaveAction($this->singleSaveAction);
 
-        $this->assertEquals(4, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(4, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_and_back', 'save_and_edit', 'save_and_new', 'save_action_one'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 
@@ -75,7 +63,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->addSaveActions($this->multipleSaveActions);
 
-        $this->assertEquals(5, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(5, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_and_back', 'save_and_edit', 'save_and_new', 'save_action_one', 'save_action_two'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 
@@ -83,7 +71,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
     {
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->removeSaveAction('save_and_new');
-        $this->assertEquals(2, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(2, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_and_back', 'save_and_edit'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 
@@ -91,7 +79,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
     {
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->removeSaveActions(['save_and_new', 'save_and_edit']);
-        $this->assertEquals(1, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(1, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_and_back'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 
@@ -99,7 +87,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
     {
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->setSaveActions($this->singleSaveAction);
-        $this->assertEquals(1, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(1, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_action_one'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 
@@ -107,7 +95,7 @@ class CrudPanelSaveActionsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Bas
     {
         $this->crudPanel->setupDefaultSaveActions();
         $this->crudPanel->replaceSaveActions($this->multipleSaveActions);
-        $this->assertEquals(2, count($this->crudPanel->getOperationSetting('save_actions')));
+        $this->assertEquals(2, is_countable($this->crudPanel->getOperationSetting('save_actions')) ? count($this->crudPanel->getOperationSetting('save_actions')) : 0);
         $this->assertEquals(['save_action_one', 'save_action_two'], array_keys($this->crudPanel->getOperationSetting('save_actions')));
     }
 

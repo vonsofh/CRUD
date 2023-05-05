@@ -16,13 +16,13 @@ use Illuminate\Http\Request;
  */
 class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $oneTextFieldArray = [
+    private array $oneTextFieldArray = [
         'name'  => 'field1',
         'label' => 'Field1',
         'type'  => 'text',
     ];
 
-    private $expectedOneTextFieldArray = [
+    private array $expectedOneTextFieldArray = [
         'field1' => [
             'name'   => 'field1',
             'label'  => 'Field1',
@@ -31,12 +31,12 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $unknownFieldTypeArray = [
+    private array $unknownFieldTypeArray = [
         'name' => 'field1',
         'type' => 'unknownType',
     ];
 
-    private $invalidTwoFieldsArray = [
+    private array $invalidTwoFieldsArray = [
         [
             'keyOne' => 'field1',
             'keyTwo' => 'Field1',
@@ -46,7 +46,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $twoTextFieldsArray = [
+    private array $twoTextFieldsArray = [
         [
             'name'  => 'field1',
             'label' => 'Field1',
@@ -58,7 +58,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $expectedTwoTextFieldsArray = [
+    private array $expectedTwoTextFieldsArray = [
         'field1' => [
             'name'   => 'field1',
             'label'  => 'Field1',
@@ -73,7 +73,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $threeTextFieldsArray = [
+    private array $threeTextFieldsArray = [
         [
             'name'  => 'field1',
             'label' => 'Field1',
@@ -88,7 +88,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $expectedThreeTextFieldsArray = [
+    private array $expectedThreeTextFieldsArray = [
         'field1' => [
             'name'   => 'field1',
             'label'  => 'Field1',
@@ -109,7 +109,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $multipleFieldTypesArray = [
+    private array $multipleFieldTypesArray = [
         [
             'name'  => 'field1',
             'label' => 'Field1',
@@ -160,7 +160,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         ],
     ];
 
-    private $expectedMultipleFieldTypesArray = [
+    private array $expectedMultipleFieldTypesArray = [
         'field1' => [
             'name'   => 'field1',
             'label'  => 'Field1',
@@ -286,7 +286,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         $this->crudPanel->addFields($this->invalidTwoFieldsArray);
     }
 
-    public function testAddFieldWithInvalidType()
+    public function testAddFieldWithInvalidType(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -297,7 +297,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
     public function testAddFieldsForCreateForm()
     {
-        $this->crudPanel->addFields($this->threeTextFieldsArray, 'create');
+        $this->crudPanel->addFields($this->threeTextFieldsArray);
 
         $this->assertEquals(3, count($this->crudPanel->fields()));
         $this->assertEquals($this->expectedThreeTextFieldsArray, $this->crudPanel->fields());
@@ -305,7 +305,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
     public function testAddFieldsForUpdateForm()
     {
-        $this->crudPanel->addFields($this->threeTextFieldsArray, 'update');
+        $this->crudPanel->addFields($this->threeTextFieldsArray);
 
         $this->assertEquals(3, count($this->crudPanel->fields()));
         $this->assertEquals($this->expectedThreeTextFieldsArray, $this->crudPanel->fields());
@@ -424,7 +424,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
         $this->assertEquals(['field2', 'field3'], array_keys($this->crudPanel->fields()));
     }
 
-    public function testRemoveFieldsByNameInvalidArray()
+    public function testRemoveFieldsByNameInvalidArray(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -481,7 +481,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     {
         $this->crudPanel->addFields($this->threeTextFieldsArray);
 
-        $this->crudPanel->orderFields(['field2', 'field1', 'field3'], 'create');
+        $this->crudPanel->orderFields(['field2', 'field1', 'field3']);
 
         $this->assertEquals(['field2', 'field1', 'field3'], array_keys($this->crudPanel->fields()));
         $this->assertEquals($this->expectedThreeTextFieldsArray, $this->crudPanel->fields());
@@ -491,7 +491,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     {
         $this->crudPanel->addFields($this->threeTextFieldsArray);
 
-        $this->crudPanel->orderFields(['field2', 'field1', 'field3'], 'update');
+        $this->crudPanel->orderFields(['field2', 'field1', 'field3']);
 
         $this->assertEquals($this->expectedThreeTextFieldsArray, $this->crudPanel->fields());
         $this->assertEquals(['field2', 'field1', 'field3'], array_keys($this->crudPanel->fields()));
@@ -546,7 +546,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
     public function testCheckIfUnknownFieldIsFirstOfItsType()
     {
-        $isUnknownFieldFirst = $this->crudPanel->checkIfFieldIsFirstOfItsType($this->unknownFieldTypeArray, $this->expectedMultipleFieldTypesArray);
+        $isUnknownFieldFirst = $this->crudPanel->checkIfFieldIsFirstOfItsType($this->unknownFieldTypeArray);
 
         $this->assertFalse($isUnknownFieldFirst);
     }
@@ -555,10 +555,10 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     {
         $this->expectException(\ErrorException::class);
 
-        $this->crudPanel->checkIfFieldIsFirstOfItsType($this->invalidTwoFieldsArray[0], $this->expectedMultipleFieldTypesArray);
+        $this->crudPanel->checkIfFieldIsFirstOfItsType($this->invalidTwoFieldsArray[0]);
     }
 
-    public function testDecodeJsonCastedAttributes()
+    public function testDecodeJsonCastedAttributes(): never
     {
         $this->markTestIncomplete();
 
@@ -609,9 +609,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
     {
         $this->crudPanel->setOperationSetting(
             'strippedRequest',
-            static function (Request $request) {
-                return $request->toArray();
-            },
+            static fn(Request $request) => $request->toArray(),
             'update'
         );
         $this->crudPanel->setOperation('update');
@@ -649,6 +647,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
     public function testItAbortsOnUnexpectedEntity()
     {
+        $e = null;
         try {
             $this->crudPanel->getRelationInstance(['name' => 'doesNotExist', 'entity' => 'doesNotExist']);
         } catch (\Throwable $e) {
@@ -756,7 +755,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
             'entity'             => 'bang',
             'relation_type'      => 'BelongsTo',
             'attribute'          => 'name',
-            'model'              => 'Backpack\CRUD\Tests\Config\Models\Bang',
+            'model'              => \Backpack\CRUD\Tests\Config\Models\Bang::class,
             'multiple'           => false,
             'pivot'              => false,
             'label'              => 'my_label',
@@ -879,6 +878,7 @@ class CrudPanelFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCr
 
     public function testItAbortsWithEmptyNamesFluently()
     {
+        $e = null;
         try {
             CrudField::name('');
         } catch (\Throwable $e) {

@@ -124,10 +124,8 @@ class CrudPanel
 
     /**
      * Get the corresponding Eloquent Model for the CrudController, as defined with the setModel() function.
-     *
-     * @return string|\Illuminate\Database\Eloquent\Model
      */
-    public function getModel()
+    public function getModel(): string|\Illuminate\Database\Eloquent\Model
     {
         return $this->model;
     }
@@ -304,9 +302,7 @@ class CrudPanel
      */
     public function getFirstOfItsTypeInArray($type, $array)
     {
-        return Arr::first($array, function ($item) use ($type) {
-            return $item['type'] == $type;
-        });
+        return Arr::first($array, fn($item) => $item['type'] == $type);
     }
 
     /**
@@ -368,12 +364,12 @@ class CrudPanel
                 $result = $obj->$method();
 
                 return $result->getRelated();
-            } catch (Exception $e) {
+            } catch (Exception) {
                 return $obj;
             }
         }, $model);
 
-        return get_class($result);
+        return $result::class;
     }
 
     /**
@@ -446,7 +442,7 @@ class CrudPanel
         }
 
         if (! is_array($value)) {
-            $decodedAttribute = json_decode($value, true);
+            $decodedAttribute = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
         } else {
             $decodedAttribute = $value;
         }
@@ -472,7 +468,7 @@ class CrudPanel
      */
     private function getRelatedEntries($model, $relationString)
     {
-        $relationArray = explode('.', $this->getOnlyRelationEntity(['entity' => $relationString]));
+        $relationArray = explode('.', (string) $this->getOnlyRelationEntity(['entity' => $relationString]));
         $firstRelationName = Arr::first($relationArray);
         $relation = $model->{$firstRelationName};
 
@@ -495,7 +491,7 @@ class CrudPanel
                     $results = array_merge_recursive($results, $this->getRelatedEntries($currentResult, implode('.', $relationArray)));
                 }
             } else {
-                $relatedClass = get_class($model->{$firstRelationName}()->getRelated());
+                $relatedClass = $model->{$firstRelationName}()->getRelated()::class;
                 $results[$relatedClass] = $currentResults;
             }
         }

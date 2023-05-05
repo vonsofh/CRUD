@@ -47,9 +47,7 @@ trait SaveActions
      */
     public function getSaveActionByOrder($order)
     {
-        return array_filter($this->getOperationSetting('save_actions') ?? [], function ($arr) use ($order) {
-            return $arr['order'] == $order;
-        });
+        return array_filter($this->getOperationSetting('save_actions') ?? [], fn($arr) => $arr['order'] == $order);
     }
 
     /**
@@ -73,7 +71,6 @@ trait SaveActions
     /**
      * Allow developers to register save action into CRUD.
      *
-     * @param  array  $saveAction
      * @return void
      */
     public function addSaveAction(array $saveAction)
@@ -81,11 +78,9 @@ trait SaveActions
         $orderCounter = $this->getOperationSetting('save_actions') !== null ? (count($this->getOperationSetting('save_actions')) + 1) : 1;
         //check for some mandatory fields
         $saveAction['name'] ?? abort(500, 'Please define save action name.');
-        $saveAction['redirect'] = $saveAction['redirect'] ?? function ($crud, $request, $itemId) {
-            return $request->has('_http_referrer') ? $request->get('_http_referrer') : $crud->route;
-        };
-        $saveAction['visible'] = $saveAction['visible'] ?? true;
-        $saveAction['button_text'] = $saveAction['button_text'] ?? $saveAction['name'];
+        $saveAction['redirect'] ??= fn($crud, $request, $itemId) => $request->has('_http_referrer') ? $request->get('_http_referrer') : $crud->route;
+        $saveAction['visible'] ??= true;
+        $saveAction['button_text'] ??= $saveAction['name'];
         $saveAction['order'] = isset($saveAction['order']) ? $this->orderSaveAction($saveAction['name'], $saveAction['order']) : $orderCounter;
 
         $actions = $this->getOperationSetting('save_actions') ?? [];
@@ -100,8 +95,6 @@ trait SaveActions
     /**
      * Replaces setting order or forces some default.
      *
-     * @param  string  $saveAction
-     * @param  int  $wantedOrder
      * @return int
      */
     public function orderSaveAction(string $saveAction, int $wantedOrder)
@@ -156,7 +149,6 @@ trait SaveActions
     /**
      * Allow the developer to remove multiple save actions from settings.
      *
-     * @param  array  $saveActions
      * @return void
      */
     public function removeSaveActions(array $saveActions)
@@ -169,7 +161,6 @@ trait SaveActions
     /**
      * Allow the developer to remove a save action from settings.
      *
-     * @param  string  $saveAction
      * @return void
      */
     public function removeSaveAction(string $saveAction)
@@ -195,7 +186,6 @@ trait SaveActions
     /**
      * Allows the developer to set save actions order. It could be ['action1','action2'] or ['action1' => 1, 'action2' => 2].
      *
-     * @param  array  $saveActions
      * @return void
      */
     public function orderSaveActions(array $saveActions)
@@ -218,9 +208,7 @@ trait SaveActions
     {
         $actions = $this->getOperationSetting('save_actions') ?? [];
 
-        uasort($actions, function ($a, $b) {
-            return $a['order'] <=> $b['order'];
-        });
+        uasort($actions, fn($a, $b) => $a['order'] <=> $b['order']);
 
         return $actions;
     }
@@ -240,9 +228,7 @@ trait SaveActions
             }
         }
 
-        return array_filter($actions, function ($action) {
-            return $action['visible'] == true;
-        }, ARRAY_FILTER_USE_BOTH);
+        return array_filter($actions, fn($action) => $action['visible'] == true, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -297,10 +283,9 @@ trait SaveActions
     /**
      * Change the session variable that remembers what to do after the "Save" action.
      *
-     * @param  string|null  $forceSaveAction
      * @return void
      */
-    public function setSaveAction($forceSaveAction = null)
+    public function setSaveAction(?string $forceSaveAction = null)
     {
         $saveAction = $forceSaveAction ?:
             \Request::input('_save_action', $this->getFallBackSaveAction());
@@ -321,10 +306,10 @@ trait SaveActions
      * Redirect to the correct URL, depending on which save action has been selected.
      *
      * @param  string  $itemId
-     * @return array|\Illuminate\Http\RedirectResponse
      */
-    public function performSaveAction($itemId = null)
+    public function performSaveAction($itemId = null): array|\Illuminate\Http\RedirectResponse
     {
+        $redirectUrl = null;
         $request = \Request::instance();
         $saveAction = $request->input('_save_action', $this->getFallBackSaveAction());
         $itemId = $itemId ?: $request->input('id');
@@ -370,19 +355,13 @@ trait SaveActions
         $defaultSaveActions = [
             [
                 'name' => 'save_and_back',
-                'visible' => function ($crud) {
-                    return $crud->hasAccess('list');
-                },
-                'redirect' => function ($crud, $request, $itemId = null) {
-                    return $request->request->has('_http_referrer') ? $request->request->get('_http_referrer') : $crud->route;
-                },
+                'visible' => fn($crud) => $crud->hasAccess('list'),
+                'redirect' => fn($crud, $request, $itemId = null) => $request->request->has('_http_referrer') ? $request->request->get('_http_referrer') : $crud->route,
                 'button_text' => trans('backpack::crud.save_action_save_and_back'),
             ],
             [
                 'name' => 'save_and_edit',
-                'visible' => function ($crud) {
-                    return $crud->hasAccess('update');
-                },
+                'visible' => fn($crud) => $crud->hasAccess('update'),
                 'redirect' => function ($crud, $request, $itemId = null) {
                     $itemId = $itemId ?: $request->request->get('id');
                     $redirectUrl = $crud->route.'/'.$itemId.'/edit';
@@ -395,19 +374,13 @@ trait SaveActions
 
                     return $redirectUrl;
                 },
-                'referrer_url' => function ($crud, $request, $itemId) {
-                    return url($crud->route.'/'.$itemId.'/edit');
-                },
+                'referrer_url' => fn($crud, $request, $itemId) => url($crud->route.'/'.$itemId.'/edit'),
                 'button_text' => trans('backpack::crud.save_action_save_and_edit'),
             ],
             [
                 'name' => 'save_and_new',
-                'visible' => function ($crud) {
-                    return $crud->hasAccess('create');
-                },
-                'redirect' => function ($crud, $request, $itemId = null) {
-                    return $this->route.'/create';
-                },
+                'visible' => fn($crud) => $crud->hasAccess('create'),
+                'redirect' => fn($crud, $request, $itemId = null) => $this->route.'/create',
                 'button_text' => trans('backpack::crud.save_action_save_and_new'),
             ],
         ];

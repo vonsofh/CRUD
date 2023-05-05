@@ -65,7 +65,6 @@ class LoginController extends Controller
     /**
      * The user has logged out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
     protected function loggedOut(Request $request)

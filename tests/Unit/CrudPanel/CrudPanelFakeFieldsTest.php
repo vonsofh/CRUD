@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CrudPanelFakeFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $fakeFieldsArray = [
+    private array $fakeFieldsArray = [
         [
             'name'  => 'field',
             'label' => 'Normal Field',
@@ -76,13 +76,13 @@ class CrudPanelFakeFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
         ],
     ];
 
-    private $noFakeFieldsInputData = [
+    private array $noFakeFieldsInputData = [
         'value1' => 'Value 1',
         'value2' => 'Value 2',
         'value3' => 'Value 3',
     ];
 
-    private $fakeFieldsInputData = [
+    private array $fakeFieldsInputData = [
         'value1'                => 'Value 1',
         'value2'                => 'Value 2',
         'value3'                => 'Value 3',
@@ -96,7 +96,7 @@ class CrudPanelFakeFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
         'cast_extra_details'    => ['detail1', 'detail2', 'detail3'],
     ];
 
-    private $expectedInputDataWithCompactedFakeFields = [
+    private array $expectedInputDataWithCompactedFakeFields = [
         'value1'      => 'Value 1',
         'value2'      => 'Value 2',
         'value3'      => 'Value 3',
@@ -173,7 +173,7 @@ class CrudPanelFakeFieldsTest extends \Backpack\CRUD\Tests\config\CrudPanel\Base
         $this->assertEquals($this->noFakeFieldsInputData, $compactedFakeFields);
     }
 
-    public function testCompactFakeFieldsFromUnknownForm()
+    public function testCompactFakeFieldsFromUnknownForm(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 

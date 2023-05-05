@@ -15,7 +15,7 @@ class ResetPasswordNotification extends ResetPassword
      */
     public function toMail($notifiable, $email = null)
     {
-        $email = $email ?? $notifiable->getEmailForPasswordReset();
+        $email ??= $notifiable->getEmailForPasswordReset();
 
         return (new MailMessage())
             ->subject(trans('backpack::base.password_reset.subject'))
@@ -24,7 +24,7 @@ class ResetPasswordNotification extends ResetPassword
                 trans('backpack::base.password_reset.line_1'),
                 trans('backpack::base.password_reset.line_2'),
             ])
-            ->action(trans('backpack::base.password_reset.button'), route('backpack.auth.password.reset.token', $this->token).'?email='.urlencode($email))
+            ->action(trans('backpack::base.password_reset.button'), route('backpack.auth.password.reset.token', $this->token).'?email='.urlencode((string) $email))
             ->line(trans('backpack::base.password_reset.notice'));
     }
 }

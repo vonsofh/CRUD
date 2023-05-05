@@ -136,10 +136,8 @@ trait Search
         $table = $this->model->getTable();
         $key = $this->model->getKeyName();
 
-        $hasOrderByPrimaryKey = collect($orderBy)->some(function ($item) use ($key, $table) {
-            return (isset($item['column']) && $item['column'] === $key)
-                || (isset($item['sql']) && str_contains($item['sql'], "$table.$key"));
-        });
+        $hasOrderByPrimaryKey = collect($orderBy)->some(fn($item) => (isset($item['column']) && $item['column'] === $key)
+            || (isset($item['sql']) && str_contains((string) $item['sql'], "$table.$key")));
 
         if (! $hasOrderByPrimaryKey) {
             $this->orderByWithPrefix($key, 'DESC');
@@ -255,7 +253,7 @@ trait Search
      * @param  bool|int  $rowNumber  The number shown to the user as row number (index);
      * @return array Array of HTML cell contents.
      */
-    public function getRowViews($entry, $rowNumber = false)
+    public function getRowViews($entry, bool|int $rowNumber = false)
     {
         $row_items = [];
 
@@ -299,7 +297,7 @@ trait Search
      * @param  bool|int  $rowNumber  The number shown to the user as row number (index);
      * @return string
      */
-    public function getCellView($column, $entry, $rowNumber = false)
+    public function getCellView($column, $entry, bool|int $rowNumber = false)
     {
         return $this->renderCellView($this->getCellViewName($column), $column, $entry, $rowNumber);
     }
@@ -320,9 +318,7 @@ trait Search
         if (isset($column['type'])) {
             // create a list of paths to column blade views
             // including the configured view_namespaces
-            $columnPaths = array_map(function ($item) use ($column) {
-                return $item.'.'.$column['type'];
-            }, ViewNamespaces::getFor('columns'));
+            $columnPaths = array_map(fn($item) => $item.'.'.$column['type'], ViewNamespaces::getFor('columns'));
 
             // but always fall back to the stock 'text' column
             // if a view doesn't exist
@@ -363,7 +359,7 @@ trait Search
      * @param  bool|int  $rowNumber  The number shown to the user as row number (index)
      * @return string
      */
-    private function renderCellView($view, $column, $entry, $rowNumber = false)
+    private function renderCellView($view, $column, $entry, bool|int $rowNumber = false)
     {
         if (! view()->exists($view)) {
             $view = 'crud::columns.text'; // fallback to text column
@@ -383,10 +379,9 @@ trait Search
      * @param  array  $entries  Eloquent results.
      * @param  int  $totalRows
      * @param  int  $filteredRows
-     * @param  bool|int  $startIndex
      * @return array
      */
-    public function getEntriesAsJsonForDatatables($entries, $totalRows, $filteredRows, $startIndex = false)
+    public function getEntriesAsJsonForDatatables($entries, $totalRows, $filteredRows, bool|int $startIndex = false)
     {
         $rows = [];
 

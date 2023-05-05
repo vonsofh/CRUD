@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\DB;
  */
 class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrudPanel
 {
-    private $relationshipColumn = [
+    private array $relationshipColumn = [
         'name'      => 'user_id',
         'type'      => 'select',
         'entity'    => 'user',
         'attribute' => 'name',
     ];
 
-    private $relationshipMultipleColumn = [
+    private array $relationshipMultipleColumn = [
         'name'      => 'roles',
         'type'      => 'select',
         'entity'    => 'roles',
@@ -30,12 +30,12 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         'model'     => Role::class,
     ];
 
-    private $nonRelationshipColumn = [
+    private array $nonRelationshipColumn = [
         'name'  => 'field1',
         'label' => 'Field1',
     ];
 
-    private $articleFieldsArray = [
+    private array $articleFieldsArray = [
         [
             'name'  => 'content',
             'label' => 'The Content',
@@ -53,7 +53,7 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $expectedCreateFormArticleFieldsArray = [
+    private array $expectedCreateFormArticleFieldsArray = [
         'content' => [
             'name'   => 'content',
             'label'  => 'The Content',
@@ -80,7 +80,7 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $expectedUpdateFormArticleFieldsArray = [
+    private array $expectedUpdateFormArticleFieldsArray = [
         'content' => [
             'name'   => 'content',
             'label'  => 'The Content',
@@ -116,21 +116,21 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         ],
     ];
 
-    private $uploadField = [
+    private array $uploadField = [
         'name'   => 'image',
         'label'  => 'Image',
         'type'   => 'upload',
         'upload' => true,
     ];
 
-    private $multipleUploadField = [
+    private array $multipleUploadField = [
         'name'   => 'photos',
         'label'  => 'Photos',
         'type'   => 'upload_multiple',
         'upload' => true,
     ];
 
-    private $defaultPaginator = [[10, 20, 30], ['t1', 't2', 't3']];
+    private array $defaultPaginator = [[10, 20, 30], ['t1', 't2', 't3']];
 
     public function testGetEntry()
     {
@@ -142,7 +142,7 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         $this->assertEquals($user, $entry);
     }
 
-    public function testGetEntryWithFakes()
+    public function testGetEntryWithFakes(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -214,7 +214,7 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         $this->assertEquals(User::find(1), $entries->first());
     }
 
-    public function testGetEntriesWithFakes()
+    public function testGetEntriesWithFakes(): never
     {
         $this->markTestIncomplete('Not correctly implemented');
 
@@ -234,7 +234,7 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
         $this->crudPanel->addFields($this->articleFieldsArray);
 
         // TODO: update method documentation. the $form parameter does not default to 'both'.
-        $fields = $this->crudPanel->getFields('create');
+        $fields = $this->crudPanel->getFields();
 
         $this->assertEquals($this->expectedCreateFormArticleFieldsArray, $fields);
     }
@@ -254,20 +254,20 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
 
     public function testHasUploadFieldsCreateForm()
     {
-        $this->crudPanel->addField($this->uploadField, 'create');
+        $this->crudPanel->addField($this->uploadField);
 
         // TODO: update method documentation. the $form parameter does not default to 'both'.
-        $hasUploadFields = $this->crudPanel->hasUploadFields('create');
+        $hasUploadFields = $this->crudPanel->hasUploadFields();
 
         $this->assertTrue($hasUploadFields);
     }
 
     public function testHasMultipleUploadFieldsCreateForm()
     {
-        $this->crudPanel->addField($this->multipleUploadField, 'create');
+        $this->crudPanel->addField($this->multipleUploadField);
 
         // TODO: update method documentation. the $form parameter does not default to 'both'.
-        $hasMultipleUploadFields = $this->crudPanel->hasUploadFields('create');
+        $hasMultipleUploadFields = $this->crudPanel->hasUploadFields();
 
         $this->assertTrue($hasMultipleUploadFields);
     }
@@ -275,10 +275,10 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
     public function testHasUploadFieldsUpdateForm()
     {
         $this->crudPanel->setModel(Article::class);
-        $this->crudPanel->addField($this->uploadField, 'update');
+        $this->crudPanel->addField($this->uploadField);
 
         // TODO: update method documentation. the $form parameter does not default to 'both'.
-        $hasUploadFields = $this->crudPanel->hasUploadFields('update', 1);
+        $hasUploadFields = $this->crudPanel->hasUploadFields();
 
         $this->assertTrue($hasUploadFields);
     }
@@ -458,6 +458,10 @@ class CrudPanelReadTest extends \Backpack\CRUD\Tests\config\CrudPanel\BaseDBCrud
      */
     public function testCrudPanelPaginatorWithZeroAsOption()
     {
+        $a = null;
+        $b = null;
+        $c = null;
+        $d = null;
         $this->crudPanel->setModel(User::class);
         $this->crudPanel->setOperation('list');
 

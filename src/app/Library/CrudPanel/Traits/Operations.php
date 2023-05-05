@@ -60,7 +60,7 @@ trait Operations
      * @param  bool|\Closure  $closure  Code that calls CrudPanel methods.
      * @return void
      */
-    public function operation($operations, $closure = false)
+    public function operation($operations, bool|\Closure $closure = false)
     {
         return $this->configureOperation($operations, $closure);
     }
@@ -74,7 +74,7 @@ trait Operations
      * @param  bool|\Closure  $closure  Code that calls CrudPanel methods.
      * @return void
      */
-    public function configureOperation($operations, $closure = false)
+    public function configureOperation($operations, bool|\Closure $closure = false)
     {
         $operations = (array) $operations;
 
@@ -94,7 +94,7 @@ trait Operations
      * @param  string|array  $operations  [description]
      * @return void
      */
-    public function applyConfigurationFromSettings($operations)
+    public function applyConfigurationFromSettings(string|array $operations)
     {
         $operations = (array) $operations;
 

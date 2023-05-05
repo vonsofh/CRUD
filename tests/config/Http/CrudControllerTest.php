@@ -23,9 +23,7 @@ class CrudControllerTest extends BaseTestClass
     {
         parent::getEnvironmentSetUp($app);
 
-        $app->singleton('crud', function ($app) {
-            return new CrudPanel($app);
-        });
+        $app->singleton('crud', fn($app) => new CrudPanel($app));
 
         $this->crudPanel = app('crud');
     }

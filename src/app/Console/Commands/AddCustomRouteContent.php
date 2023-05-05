@@ -94,13 +94,10 @@ class AddCustomRouteContent extends Command
 
         // otherwise, in case the last line HAS been modified
         // return the last line that has an ending in it
-        $possible_end_lines = array_filter($file_lines, function ($k) {
-            return strpos($k, '});') === 0;
-        });
+        $possible_end_lines = array_filter($file_lines, fn($k) => str_starts_with((string) $k, '});'));
 
         if ($possible_end_lines) {
-            end($possible_end_lines);
-            $end_line_number = key($possible_end_lines);
+            $end_line_number = array_key_last($possible_end_lines);
 
             return $end_line_number;
         }
@@ -113,11 +110,9 @@ class AddCustomRouteContent extends Command
      * @param  array  $haystack  The file where the search is being performed.
      * @return bool|int The last line number where the string was found. Or false.
      */
-    private function getLastLineNumberThatContains($needle, $haystack)
+    private function getLastLineNumberThatContains($needle, $haystack): bool|int
     {
-        $matchingLines = array_filter($haystack, function ($k) use ($needle) {
-            return strpos($k, $needle) !== false;
-        });
+        $matchingLines = array_filter($haystack, fn($k) => str_contains((string) $k, $needle));
 
         if ($matchingLines) {
             return array_key_last($matchingLines);

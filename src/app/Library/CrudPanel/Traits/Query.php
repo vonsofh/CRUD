@@ -31,7 +31,7 @@ trait Query
      * @param  callable|string  $function
      * @return mixed
      */
-    public function addClause($function)
+    public function addClause(callable|string $function)
     {
         if ($function instanceof \Closure) {
             $function($this->query);
@@ -46,10 +46,9 @@ trait Query
      * This function is an alias of `addClause` but also adds the query as a constrain
      * in the `totalQuery` property.
      *
-     * @param  \Closure|string  $function
      * @return self
      */
-    public function addBaseClause($function)
+    public function addBaseClause(\Closure|string $function)
     {
         if ($function instanceof \Closure) {
             $function($this->query);
@@ -66,10 +65,9 @@ trait Query
     /**
      * Use eager loading to reduce the number of queries on the table view.
      *
-     * @param  array|string  $entities
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function with($entities)
+    public function with(array|string $entities)
     {
         return $this->query->with($entities);
     }
@@ -209,10 +207,8 @@ trait Query
 
     /**
      * Return the filtered query count or skip the counting when the `totalQuery` is the same as the filtered one.
-     *
-     * @return int|null
      */
-    public function getFilteredQueryCount()
+    public function getFilteredQueryCount(): ?int
     {
         // check if the filtered query is different from total query, in case they are the same, skip the count
         $filteredQuery = $this->query->toBase()->cloneWithout(['orders', 'limit', 'offset']);
@@ -223,7 +219,6 @@ trait Query
     /**
      * Do a separate query to get the total number of entries, in an optimized way.
      *
-     * @param  Builder  $query
      * @return int
      */
     private function getCountFromQuery(Builder $query)
@@ -272,7 +267,7 @@ trait Query
             $subQuery->setBindings($binding, $type);
         }
 
-        $outerQuery = $outerQuery->fromSub($subQuery, str_replace('.', '_', $modelTable).'_aggregator');
+        $outerQuery = $outerQuery->fromSub($subQuery, str_replace('.', '_', (string) $modelTable).'_aggregator');
 
         return $outerQuery->cursor()->first()->total_rows;
     }
