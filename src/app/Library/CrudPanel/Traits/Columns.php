@@ -108,7 +108,7 @@ trait Columns
     /**
      * Move this column to be first in the columns list.
      */
-    public function makeFirstColumn(): ?bool
+    public function makeFirstColumn(): bool
     {
         if (! $this->columns()) {
             return false;
@@ -116,6 +116,7 @@ trait Columns
 
         $firstColumn = array_keys(array_slice($this->columns(), 0, 1))[0];
         $this->beforeColumn($firstColumn);
+        return true;
     }
 
     /**

@@ -136,7 +136,7 @@ trait Validation
     /**
      * Merge the form request validation with the fields validation.
      */
-    public function mergeRequestAndFieldRules(FormRequest $request, ?array $rules = null, ?array $messages = null): array
+    public function mergeRequestAndFieldRules(string $request, ?array $rules = null, ?array $messages = null): array
     {
         $rules ??= $this->getOperationSetting('validationRules') ?? [];
         $messages ??= $this->getOperationSetting('validationMessages') ?? [];

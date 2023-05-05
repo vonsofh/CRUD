@@ -36,7 +36,11 @@ class ValidUploadMultiple extends ValidFileArray
 
         $previousValues = $this->entry?->{$attribute} ?? [];
         if (is_string($previousValues)) {
-            $previousValues = json_decode($previousValues, true, 512, JSON_THROW_ON_ERROR) ?? [];
+            try {
+                $previousValues = json_decode($previousValues, true, 512, JSON_THROW_ON_ERROR) ?? [];
+            } catch (\JsonException $e) {
+                $previousValues = [];
+            }
         }
 
         $value = array_merge($previousValues, $value);

@@ -65,7 +65,7 @@ trait Filters
      * @param  bool|\Closure  $filterLogic  Query modification (filtering) logic when filter is active.
      * @param  bool|\Closure  $fallbackLogic  Query modification (filtering) logic when filter is not active.
      */
-    protected function addFilterToCollection($options, bool|string|array|\Closure $values = false, bool|\Closure $filterLogic = false, bool|\Closure $fallbackLogic = false)
+    protected function addFilterToCollection($options, null|bool|string|array|\Closure $values = false, null|bool|\Closure $filterLogic = false, null|bool|\Closure $fallbackLogic = false)
     {
         // enable the filters functionality
         $this->enableFilters();

@@ -151,7 +151,7 @@ trait Fields
     /**
      * Move this field to be first in the fields list.
      */
-    public function makeFirstField(): ?bool
+    public function makeFirstField(): bool
     {
         if (! $this->fields()) {
             return false;
@@ -159,14 +159,13 @@ trait Fields
 
         $firstField = array_keys(array_slice($this->getCleanStateFields(), 0, 1))[0];
         $this->beforeField($firstField);
+        return true;
     }
 
     /**
      * Remove a certain field from the create/update/both forms by its name.
-     *
-     * @param  string  $name  Field name (as defined with the addField() procedure)
      */
-    public function removeField($name)
+    public function removeField(string $name)
     {
         $this->transformFields(function ($fields) use ($name) {
             Arr::forget($fields, $name);
@@ -177,10 +176,8 @@ trait Fields
 
     /**
      * Remove many fields from the create/update/both forms by their name.
-     *
-     * @param  array  $array_of_names  A simple array of the names of the fields to be removed.
      */
-    public function removeFields($array_of_names)
+    public function removeFields(array $array_of_names)
     {
         if (! empty($array_of_names)) {
             foreach ($array_of_names as $name) {
@@ -204,11 +201,8 @@ trait Fields
 
     /**
      * Remove an attribute from one field's definition array.
-     *
-     * @param  string  $field  The name of the field.
-     * @param  string  $attribute  The name of the attribute being removed.
      */
-    public function removeFieldAttribute($field, $attribute)
+    public function removeFieldAttribute(string $field, string $attribute)
     {
         $fields = $this->getCleanStateFields();
 
@@ -219,11 +213,8 @@ trait Fields
 
     /**
      * Update value of a given key for a current field.
-     *
-     * @param  string  $fieldName  The field name
-     * @param  array  $modifications  An array of changes to be made.
      */
-    public function modifyField($fieldName, $modifications)
+    public function modifyField(string $fieldName, array $modifications)
     {
         $fieldsArray = $this->getCleanStateFields();
         $field = $this->firstFieldWhere('name', $fieldName);
@@ -240,11 +231,8 @@ trait Fields
 
     /**
      * Set label for a specific field.
-     *
-     * @param  string  $field
-     * @param  string  $label
      */
-    public function setFieldLabel($field, $label)
+    public function setFieldLabel(string $field, string $label)
     {
         $this->modifyField($field, ['label' => $label]);
     }
@@ -252,31 +240,21 @@ trait Fields
     /**
      * Check if field is the first of its type in the given fields array.
      * It's used in each field_type.blade.php to determine wether to push the css and js content or not (we only need to push the js and css for a field the first time it's loaded in the form, not any subsequent times).
-     *
-     * @param  array  $field  The current field being tested if it's the first of its type.
-     * @return bool true/false
      */
-    public function checkIfFieldIsFirstOfItsType($field)
+    public function checkIfFieldIsFirstOfItsType(array $field): bool
     {
         $fields_array = $this->getCleanStateFields();
         $first_field = $this->getFirstOfItsTypeInArray($field['type'], $fields_array);
 
-        if ($first_field && $field['name'] == $first_field['name']) {
-            return true;
-        }
-
-        return false;
+        return $first_field && $field['name'] == $first_field['name'] ? true : false;
     }
 
     /**
      * Decode attributes that are casted as array/object/json in the model.
      * So that they are not json_encoded twice before they are stored in the db
      * (once by Backpack in front-end, once by Laravel Attribute Casting).
-     *
-     * @param  array  $input
-     * @return array
      */
-    public function decodeJsonCastedAttributes($input, mixed $model = false)
+    public function decodeJsonCastedAttributes(array $input, mixed $model = false): array
     {
         $model = $model ?: $this->model;
         $fields = $this->getCleanStateFields();
@@ -302,10 +280,7 @@ trait Fields
         return $input;
     }
 
-    /**
-     * @return array
-     */
-    public function getCurrentFields()
+    public function getCurrentFields(): array
     {
         return $this->fields();
     }
@@ -313,20 +288,16 @@ trait Fields
     /**
      * Order the CRUD fields. If certain fields are missing from the given order array, they will be
      * pushed to the new fields array in the original order.
-     *
-     * @param  array  $order  An array of field names in the desired order.
      */
-    public function orderFields($order)
+    public function orderFields(array $order)
     {
         $this->transformFields(fn ($fields) => $this->applyOrderToFields($fields, $order));
     }
 
     /**
      * Get the fields for the create or update forms.
-     *
-     * @return array all the fields that need to be shown and their information
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields();
     }
@@ -334,12 +305,8 @@ trait Fields
     /**
      * Check if the create/update form has upload fields.
      * Upload fields are the ones that have "upload" => true defined on them.
-     *
-     * @param  string  $form  create/update/both - defaults to 'both'
-     * @param  bool|int  $id  id of the entity - defaults to false
-     * @return bool
      */
-    public function hasUploadFields()
+    public function hasUploadFields(): bool
     {
         $fields = $this->getCleanStateFields();
         $upload_fields = Arr::where($fields, function ($value, $key) {
@@ -364,20 +331,16 @@ trait Fields
 
     /**
      * Get all the field types whose resources (JS and CSS) have already been loaded on page.
-     *
-     * @return array Array with the names of the field types.
      */
-    public function getLoadedFieldTypes()
+    public function getLoadedFieldTypes(): array
     {
         return $this->getOperationSetting('loadedFieldTypes') ?? [];
     }
 
     /**
      * Set an array of field type names as already loaded for the current operation.
-     *
-     * @param  array  $fieldTypes
      */
-    public function setLoadedFieldTypes($fieldTypes)
+    public function setLoadedFieldTypes(array $fieldTypes)
     {
         $this->setOperationSetting('loadedFieldTypes', $fieldTypes);
     }
@@ -385,10 +348,9 @@ trait Fields
     /**
      * Get a namespaced version of the field type name.
      * Appends the 'view_namespace' attribute of the field to the `type', using dot notation.
-     *
-     * @return string Namespaced version of the field type name. Ex: 'text', 'custom.view.path.text'
+     * Eg: 'text', 'custom.view.path.text'
      */
-    public function getFieldTypeWithNamespace(mixed $field)
+    public function getFieldTypeWithNamespace(mixed $field): string
     {
         if (is_array($field)) {
             $fieldType = $field['type'];
@@ -426,43 +388,32 @@ trait Fields
     /**
      * Alias of the addLoadedFieldType() method.
      * Adds a new field type to the loadedFieldTypes array.
-     *
-     * @param  string  $field  Field array
-     * @return bool Successful operation true/false.
      */
-    public function markFieldTypeAsLoaded($field)
+    public function markFieldTypeAsLoaded(string $field): bool
     {
         return $this->addLoadedFieldType($field);
     }
 
     /**
      * Check if a field type's reasources (CSS and JS) have already been loaded.
-     *
-     * @param  string  $field  Field array
-     * @return bool Whether the field type has been marked as loaded.
      */
-    public function fieldTypeLoaded($field)
+    public function fieldTypeLoaded(string $field): bool
     {
         return in_array($this->getFieldTypeWithNamespace($field), $this->getLoadedFieldTypes());
     }
 
     /**
      * Check if a field type's reasources (CSS and JS) have NOT been loaded.
-     *
-     * @param  string  $field  Field array
-     * @return bool Whether the field type has NOT been marked as loaded.
      */
-    public function fieldTypeNotLoaded($field)
+    public function fieldTypeNotLoaded(string $field): bool
     {
         return ! in_array($this->getFieldTypeWithNamespace($field), $this->getLoadedFieldTypes());
     }
 
     /**
      * Get a list of all field names for the current operation.
-     *
-     * @return array
      */
-    public function getAllFieldNames()
+    public function getAllFieldNames(): array
     {
         return Arr::flatten(Arr::pluck($this->getCleanStateFields(), 'name'));
     }

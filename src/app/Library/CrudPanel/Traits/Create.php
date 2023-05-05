@@ -82,11 +82,8 @@ trait Create
      */
     /**
      * Create relations for the provided model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $item  The current CRUD model.
-     * @param  array  $formattedRelations  The form data.
      */
-    private function createRelationsForItem($item, $formattedRelations): ?bool
+    private function createRelationsForItem(\Illuminate\Database\Eloquent\Model $item, array $formattedRelations): bool
     {
         // no relations to create
         if (empty($formattedRelations)) {
@@ -144,6 +141,7 @@ trait Create
                     break;
             }
         }
+        return true;
     }
 
     /**
