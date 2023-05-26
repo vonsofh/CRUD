@@ -61,6 +61,8 @@ trait HeadingsAndTitles
         if ($this->has($action.'.heading')) {
             return $this->get($action.'.heading');
         }
+
+        return '';
     }
 
     /**

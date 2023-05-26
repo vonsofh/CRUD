@@ -40,8 +40,8 @@ trait UpdateOperation
 
             if ($this->crud->getModel()->translationEnabled()) {
                 $this->crud->addField([
-                    'name' => '_locale',
-                    'type' => 'hidden',
+                    'name'  => '_locale',
+                    'type'  => 'hidden',
                     'value' => request()->input('_locale') ?? app()->getLocale(),
                 ]);
             }
