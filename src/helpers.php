@@ -6,11 +6,8 @@ if (! function_exists('backpack_url')) {
     /**
      * Appends the configured backpack prefix and returns
      * the URL using the standard Laravel helpers.
-     *
-     * @param  $path
-     * @return string
      */
-    function backpack_url($path = null, $parameters = [], $secure = null)
+    function backpack_url(?string $path = null, $parameters = [], ?bool $secure = null): Illuminate\Contracts\Routing\UrlGenerator|string
     {
         $path = ! $path || (substr($path, 0, 1) == '/') ? $path : '/'.$path;
 
@@ -71,6 +68,7 @@ if (! function_exists('backpack_form_input')) {
 
             if ($isMultiple && substr_count($row['name'], '[') === 1) {
                 $result[substr($row['name'], 0, -2)][] = $row['value'];
+
                 continue;
             }
 
@@ -98,6 +96,7 @@ if (! function_exists('backpack_form_input')) {
             if (isset($repeatableRowKey)) {
                 if ($isMultiple) {
                     $result[$parentInputName][$repeatableRowKey][$inputName][] = $row['value'];
+
                     continue;
                 }
 
@@ -108,6 +107,7 @@ if (! function_exists('backpack_form_input')) {
 
             if ($isMultiple) {
                 $result[$parentInputName][$inputName][] = $row['value'];
+
                 continue;
             }
             $result[$parentInputName][$inputName] = $row['value'];
@@ -263,7 +263,7 @@ if (! function_exists('backpack_theme_config')) {
     {
         $namespacedKey = config('backpack.ui.view_namespace').$key;
         $namespacedKey = str_replace('::', '.', $namespacedKey);
-
+        
         // if the config exists in the theme config file, use it
         if (config()->has($namespacedKey)) {
             return config($namespacedKey);
