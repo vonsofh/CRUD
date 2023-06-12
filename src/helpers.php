@@ -263,7 +263,7 @@ if (! function_exists('backpack_theme_config')) {
     {
         $namespacedKey = config('backpack.ui.view_namespace').$key;
         $namespacedKey = str_replace('::', '.', $namespacedKey);
-        
+
         // if the config exists in the theme config file, use it
         if (config()->has($namespacedKey)) {
             return config($namespacedKey);
