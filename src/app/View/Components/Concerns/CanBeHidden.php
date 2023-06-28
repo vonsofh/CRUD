@@ -2,12 +2,12 @@
 
 namespace Backpack\CRUD\app\View\Components\Concerns;
 
-trait CanBeHidden {
-
+trait CanBeHidden
+{
     /**
      * Should this component output its HTML?
      *
-     * @return boolean
+     * @return bool
      */
     public function isHidden(): bool
     {
@@ -21,10 +21,10 @@ trait CanBeHidden {
     /**
      * Should this component ouput its HTML?
      *
-     * @return boolean
+     * @return bool
      */
     public function isVisible(): bool
     {
-        return !$this->isHidden();
+        return ! $this->isHidden();
     }
 }
