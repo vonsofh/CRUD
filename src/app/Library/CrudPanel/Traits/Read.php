@@ -4,6 +4,7 @@ namespace Backpack\CRUD\app\Library\CrudPanel\Traits;
 
 use Backpack\CRUD\app\Exceptions\BackpackProRequiredException;
 use Exception;
+use Illuminate\Support\Str;
 
 /**
  * Properties and methods used by the List operation.
@@ -57,7 +58,8 @@ trait Read
     public function getEntry($id)
     {
         if (! $this->entry) {
-            $this->entry = $this->getModelWithCrudPanelQuery()->findOrFail($id);
+            $this->eagerLoadRelationships('fields');
+            $this->entry = $this->query->findOrFail($id);
             $this->entry = $this->entry->withFakes();
         }
 
@@ -134,6 +136,45 @@ trait Read
             $this->with($relation);
         }
     }
+
+    public function eagerLoadRelationships(string $definitions)
+    {
+        $definitions = $this->{$definitions}();
+        $relationStrings = [];
+
+        foreach ($definitions as $definitionName => $definition) {
+            $relationString = $definition['entity'] ?? '';
+
+            if (strpos($relationString, '.') !== false) {
+                $relationAttribute = $definition['attribute'] ?? null;
+
+                if ($relationAttribute) {
+                    $relationString = Str::endsWith($relationString, $relationAttribute) ? Str::beforeLast($relationString, '.') : $relationString;
+                } else {
+                    $parts = explode('.', $relationString);
+                    $model = $this->model;
+
+                    foreach ($parts as $i => $part) {
+                        try {
+                            $model = $model->$part()->getRelated();
+                        } catch (Exception $e) {
+                            break;
+                        }
+                    }
+
+                    $relationString = implode('.', array_slice($parts, 0, $i));
+                }
+            }
+
+            if ($relationString) {
+                $relationStrings[] = $relationString;
+            }
+        }
+       
+        $this->with(array_unique($relationStrings));
+    }
+
+
 
     /**
      * Get all entries from the database.
