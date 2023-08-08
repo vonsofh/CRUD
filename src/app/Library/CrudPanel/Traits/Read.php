@@ -170,11 +170,9 @@ trait Read
                 $relationStrings[] = $relationString;
             }
         }
-       
+
         $this->with(array_unique($relationStrings));
     }
-
-
 
     /**
      * Get all entries from the database.
