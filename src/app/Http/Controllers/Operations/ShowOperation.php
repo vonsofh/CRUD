@@ -81,17 +81,19 @@ trait ShowOperation
         // get the info for that entry (include softDeleted items if the trait is used)
         if (! $this->crud->get('show.softDeletes') || ! in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->crud->model))) {
             $this->data['entry'] = $this->crud->getEntryWithLocale($id);
+
             return view($this->crud->getShowView(), $this->data);
         }
-        
-        if($this->crud->get('show.usePanelQuery')) {
+
+        if ($this->crud->get('show.usePanelQuery')) {
             $this->data['entry'] = $this->crud->query->withTrashed()->findOrFail($id);
             $this->data['entry'] = $this->crud->setLocaleOnModel($this->data['entry']);
+
             return view($this->crud->getShowView(), $this->data);
         }
-           
+
         $this->data['entry'] = $this->crud->getModel()->withTrashed()->findOrFail($id);
-       
+
         // load the view from /resources/views/vendor/backpack/crud/ if it exists, otherwise load the one in the package
         return view($this->crud->getShowView(), $this->data);
     }
