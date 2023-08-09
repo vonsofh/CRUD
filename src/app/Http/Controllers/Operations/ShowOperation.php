@@ -89,7 +89,7 @@ trait ShowOperation
         // this allow developers to setup constrains on the query that can be applied in multiple operations.
         if ($this->crud->get('show.usePanelQuery')) {
             $this->data['entry'] = $this->crud->query->withTrashed()->findOrFail($id);
-            // we will miss the "magic __call() to findOrFail" in the model when it's translatable, 
+            // we will miss the "magic __call() to findOrFail" in the model when it's translatable,
             // so we need to manually set the locale when needed.
             $this->data['entry'] = $this->crud->setLocaleOnModel($this->data['entry']);
 
