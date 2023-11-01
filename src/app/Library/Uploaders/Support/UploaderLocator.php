@@ -1,6 +1,7 @@
 <?php
 
 namespace Backpack\CRUD\app\Library\Uploaders\Support;
+
 use Backpack\CRUD\app\Library\Uploaders\Support\Interfaces\UploaderInterface;
 use Exception;
 
@@ -11,7 +12,7 @@ final class UploaderLocator
         if (isset($uploaderConfiguration['uploader']) && class_exists($uploaderConfiguration['uploader'])) {
             return $uploaderConfiguration['uploader']::for($crudObject, $uploaderConfiguration);
         }
-        
+
         if (app('UploadersRepository')->hasUploadFor($crudObject['type'], $macro)) {
             return app('UploadersRepository')->getUploadFor($crudObject['type'], $macro)::for($crudObject, $uploaderConfiguration);
         }

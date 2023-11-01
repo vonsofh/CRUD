@@ -6,7 +6,6 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudColumn;
 use Backpack\CRUD\app\Library\CrudPanel\CrudField;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Uploaders\Support\Interfaces\UploaderInterface;
-use Backpack\CRUD\app\Library\Uploaders\Support\UploaderLocator;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -52,7 +51,7 @@ final class RegisterUploadEvents
         if (isset($attributes['relation_type']) && $attributes['entity'] !== false) {
             $uploader = $uploader->relationship(true);
         }
-       
+
         $this->setupModelEvents($model, $uploader);
         $this->setupUploadConfigsInCrudObject($uploader);
     }
