@@ -6,6 +6,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudColumn;
 use Backpack\CRUD\app\Library\CrudPanel\CrudField;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Uploaders\Support\Interfaces\UploaderInterface;
+use Backpack\CRUD\app\Library\Uploaders\Support\UploaderLocator;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -45,19 +46,21 @@ final class RegisterUploadEvents
 
         $attributes = $this->crudObject->getAttributes();
         $model = $attributes['model'] ?? get_class($this->crudObject->crud()->getModel());
-        $uploader = $this->getUploader($attributes, $this->uploaderConfiguration);
+        /** @var UploaderInterface */
+        $uploader = UploaderLocator::for($attributes, $this->uploaderConfiguration, $this->crudObjectType, $this->macro);
 
         if (isset($attributes['relation_type']) && $attributes['entity'] !== false) {
             $uploader = $uploader->relationship(true);
         }
-
+       
         $this->setupModelEvents($model, $uploader);
         $this->setupUploadConfigsInCrudObject($uploader);
     }
 
     private function registerSubfieldEvent(array $subfield, bool $registerModelEvents = true): void
     {
-        $uploader = $this->getUploader($subfield, $this->uploaderConfiguration);
+        /** @var UploaderInterface */
+        $uploader = UploaderLocator::for($subfield, $this->uploaderConfiguration, $this->crudObjectType, $this->macro);
         $crudObject = $this->crudObject->getAttributes();
         $uploader = $uploader->repeats($crudObject['name']);
 
