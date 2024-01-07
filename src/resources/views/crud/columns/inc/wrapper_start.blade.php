@@ -11,7 +11,7 @@
 
 <{{ $column['wrapper']['element'] ?? 'a' }}
 @foreach(Arr::except($column['wrapper'], 'element') as $element => $value)
-    @if($value !== false)
+    @if($value !== false && $element === 'href')
     {{$element}}="{{$value}}"
     @endif
 @endforeach
