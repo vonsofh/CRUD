@@ -7,6 +7,7 @@ use Backpack\CRUD\app\Library\Uploaders\Support\Traits\HandleFileNaming;
 use Backpack\CRUD\app\Library\Uploaders\Support\Traits\HandleRepeatableUploads;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -303,5 +304,26 @@ abstract class Uploader implements UploaderInterface
         }
 
         return $previousValue;
+    }
+
+    /*******************************
+     * Helper methods
+     *******************************/
+
+    /**
+     * Given two multidimensional arrays/collections, merge them recursively.
+     */
+    public static function mergeFilesAndValuesRecursive(array|Collection $array1, array|Collection $array2): array|Collection
+    {
+        $merged = $array1;
+        foreach ($array2 as $key => &$value) {
+            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+                $merged[$key] = self::mergeFilesAndValuesRecursive($merged[$key], $value);
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
+        return $merged;
     }
 }

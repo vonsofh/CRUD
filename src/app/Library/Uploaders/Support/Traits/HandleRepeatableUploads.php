@@ -49,13 +49,18 @@ trait HandleRepeatableUploads
             return $this->processRelationshipRepeatableUploaders($entry);
         }
 
-        $values = collect(CRUD::getRequest()->get($this->getRepeatableContainerName()));
-        $files = collect(CRUD::getRequest()->file($this->getRepeatableContainerName()));
-        $value = $this->mergeValuesRecursive($values, $files);
+        $value = self::collecFilesAndValuesFromRequest($this->getRepeatableContainerName());
 
         $entry->{$this->getRepeatableContainerName()} = json_encode($this->processRepeatableUploads($entry, $value));
 
         return $entry;
+    }
+
+    public static function collecFilesAndValuesFromRequest(string $attribute): array|Collection
+    {
+        $values = collect(CRUD::getRequest()->get($attribute));
+        $files = collect(CRUD::getRequest()->file($attribute));
+        return self::mergeFilesAndValuesRecursive($values, $files);
     }
 
     private function processRelationshipRepeatableUploaders(Model $entry)
@@ -237,24 +242,6 @@ trait HandleRepeatableUploads
     /*******************************
      * Helper methods
      *******************************/
-
-    /**
-     * Given two multidimensional arrays/collections, merge them recursively.
-     */
-    protected function mergeValuesRecursive(array|Collection $array1, array|Collection $array2): array|Collection
-    {
-        $merged = $array1;
-        foreach ($array2 as $key => &$value) {
-            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = $this->mergeValuesRecursive($merged[$key], $value);
-            } else {
-                $merged[$key] = $value;
-            }
-        }
-
-        return $merged;
-    }
-
     /**
      * Repeatable items send `_order_` parameter in the request.
      * This holds the order of the items in the repeatable container.

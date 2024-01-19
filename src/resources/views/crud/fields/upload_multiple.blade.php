@@ -17,6 +17,13 @@
 		} else {
 			$values = $field['value'];
 		}
+
+		// when repeatableRow is set, the field is inside a repeatable container.
+		if(isset($repeatableRow) && $repeatableRow !== null) {
+			array_map(function($item) {
+				return $item['name'];
+			}, $values);
+		}
 	@endphp
 	@if (count($values))
     <div class="well well-sm existing-file">

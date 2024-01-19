@@ -2,6 +2,12 @@
     $field['wrapper'] = $field['wrapper'] ?? $field['wrapperAttributes'] ?? [];
     $field['wrapper']['data-init-function'] = $field['wrapper']['data-init-function'] ?? 'bpFieldInitUploadElement';
     $field['wrapper']['data-field-name'] = $field['wrapper']['data-field-name'] ?? $field['name'];
+    
+    // when repeatableRow is set, the field is inside a repeatable container. 
+    // for that reason, the order of the files is established by an hidden input
+    if(isset($repeatableRow) && $repeatableRow !== null) {
+      $field['value'] = $field['value'] ?? old('_order_'.$field['parentFieldName'].'.'.$repeatableRow.'.'.$field['baseFieldName']);
+    }
 @endphp
 
 {{-- text input --}}
