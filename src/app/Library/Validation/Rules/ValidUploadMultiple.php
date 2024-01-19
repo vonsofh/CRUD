@@ -5,8 +5,8 @@ namespace Backpack\CRUD\app\Library\Validation\Rules;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade;
 use Backpack\CRUD\app\Library\Uploaders\Uploader;
 use Closure;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ValidUploadMultiple extends ValidFileArray
 {
@@ -22,8 +22,9 @@ class ValidUploadMultiple extends ValidFileArray
     {
         $entry = CrudPanelFacade::getCurrentEntry() ?: null;
 
-        if(Str::contains($attribute, '.')) {
+        if (Str::contains($attribute, '.')) {
             $this->validateUploadInSubfield($attribute, $value, $fail, $entry);
+
             return;
         }
 
@@ -73,7 +74,7 @@ class ValidUploadMultiple extends ValidFileArray
     {
         $mainField = Str::before($attribute, '.');
         $subfield = Str::afterLast($attribute, '.');
-        $row = (int)Str::before(Str::after($attribute, '.'), '.');
+        $row = (int) Str::before(Str::after($attribute, '.'), '.');
 
         $values[$mainField] = Uploader::mergeFilesAndValuesRecursive($this->data[$mainField], $this->data['_order_'.$mainField] ?? []);
 
@@ -83,7 +84,7 @@ class ValidUploadMultiple extends ValidFileArray
 
         $this->createValidator($subfield, $this->getFieldRules(), $values[$mainField][$row][$subfield] ?? null, $fail);
 
-        if(!empty($value) && !empty($this->getFileRules())) {
+        if (! empty($value) && ! empty($this->getFileRules())) {
             $this->createValidator($subfield, $this->getFileRules(), $values[$mainField][$row][$subfield] ?? null, $fail);
         }
     }

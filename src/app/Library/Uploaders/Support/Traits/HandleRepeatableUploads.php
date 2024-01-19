@@ -60,6 +60,7 @@ trait HandleRepeatableUploads
     {
         $values = collect(CRUD::getRequest()->get($attribute));
         $files = collect(CRUD::getRequest()->file($attribute));
+
         return self::mergeFilesAndValuesRecursive($values, $files);
     }
 
@@ -239,6 +240,7 @@ trait HandleRepeatableUploads
             }
         }
     }
+
     /*******************************
      * Helper methods
      *******************************/

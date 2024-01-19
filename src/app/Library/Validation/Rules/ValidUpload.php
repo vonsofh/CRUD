@@ -27,11 +27,12 @@ class ValidUpload extends BackpackCustomRule
     {
         $entry = CrudPanelFacade::getCurrentEntry();
 
-        if(Str::contains($attribute, '.')) {
+        if (Str::contains($attribute, '.')) {
             $this->validateUploadInSubfield($attribute, $value, $fail, $entry);
+
             return;
         }
-       
+
         if (! array_key_exists($attribute, $this->data) && $entry) {
             return;
         }
@@ -52,7 +53,7 @@ class ValidUpload extends BackpackCustomRule
     {
         $mainField = Str::before($attribute, '.');
         $subfield = Str::afterLast($attribute, '.');
-        $row = (int)Str::before(Str::after($attribute, '.'), '.');
+        $row = (int) Str::before(Str::after($attribute, '.'), '.');
 
         $values[$mainField] = Uploader::mergeFilesAndValuesRecursive($this->data[$mainField], $this->data['_order_'.$mainField] ?? []);
 
@@ -61,8 +62,8 @@ class ValidUpload extends BackpackCustomRule
         }
 
         $this->createValidator($subfield, $this->getFieldRules(), $values[$mainField][$row][$subfield] ?? null, $fail);
-        
-        if(!empty($value) && !empty($this->getFileRules())) {
+
+        if (! empty($value) && ! empty($this->getFileRules())) {
             $this->createValidator($subfield, $this->getFileRules(), $values[$mainField][$row][$subfield] ?? null, $fail);
         }
     }
