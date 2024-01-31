@@ -21,7 +21,7 @@ class ValidUploadMultiple extends ValidFileArray
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $entry = CrudPanelFacade::getCurrentEntry() ?: null;
-        
+
         if (! $value = self::ensureValidValue($value)) {
             $fail('Unable to determine the value type.');
 
