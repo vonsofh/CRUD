@@ -8,7 +8,6 @@ use Backpack\CRUD\app\Library\Validation\Rules\Support\HasFiles;
 use Closure;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class ValidUpload extends BackpackCustomRule
@@ -26,8 +25,8 @@ class ValidUpload extends BackpackCustomRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $entry = CrudPanelFacade::getCurrentEntry();
-
-        if (Str::contains($attribute, '.')) {
+        // check if string contains two dots
+        if (Str::contains($attribute, '.') && Str::substrCount($attribute, '.') > 1) {
             $this->validateUploadInSubfield($attribute, $value, $fail, $entry);
 
             return;
@@ -65,19 +64,6 @@ class ValidUpload extends BackpackCustomRule
 
         if (! empty($value) && ! empty($this->getFileRules())) {
             $this->createValidator($subfield, $this->getFileRules(), $values[$mainField][$row][$subfield] ?? null, $fail);
-        }
-    }
-
-    protected function createValidator(string $attribute, array $rules, mixed $value, Closure $fail): void
-    {
-        $validator = Validator::make([$attribute => $value], [
-            $attribute => $rules,
-        ], $this->validator->customMessages, $this->validator->customAttributes);
-
-        if ($validator->fails()) {
-            foreach ($validator->errors()->messages()[$attribute] as $message) {
-                $fail($message)->translate();
-            }
         }
     }
 }

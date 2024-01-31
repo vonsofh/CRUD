@@ -111,4 +111,17 @@ abstract class BackpackCustomRule implements ValidationRule, DataAwareRule, Vali
             }
         }
     }
+
+    public function createValidator(string $attribute, array $rules, mixed $value, Closure $fail): void
+    {
+        $validator = Validator::make([$attribute => $value], [
+            $attribute => $rules,
+        ], $this->validator->customMessages, $this->validator->customAttributes);
+
+        if ($validator->fails()) {
+            foreach ($validator->errors()->messages()[$attribute] as $message) {
+                $fail($message)->translate();
+            }
+        }
+    }
 }

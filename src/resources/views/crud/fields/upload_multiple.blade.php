@@ -12,17 +12,31 @@
 	{{-- Show the file name and a "Clear" button on EDIT form. --}}
 	@if (isset($field['value']))
 	@php
+
+		if(!empty($field['value']) && ($field['value'][0] ?? null) === null)
+		{
+			$field['value'] = [];
+		}
+
 		if (is_string($field['value'])) {
 			$values = json_decode($field['value'], true) ?? [];
 		} else {
 			$values = $field['value'];
 		}
-
+		
 		// when repeatableRow is set, the field is inside a repeatable container.
 		if(isset($repeatableRow) && $repeatableRow !== null) {
-			array_map(function($item) {
-				return $item['name'];
-			}, $values);
+			if(isset($values[$repeatableRow])) {
+				if(is_string($values[$repeatableRow])) {
+					$decodedValues = json_decode($values[$repeatableRow], true) ?? [];
+					if(is_array($decodedValues) && array_key_exists('name', $decodedValues)) {
+						$values = $decodedValues;
+					}
+				}
+				if(is_array($values) && (isset($values[0]) && is_array($values[0]) && array_key_exists('name', $values[0] ?? []))) {
+					$values = [];
+				}
+			}
 		}
 	@endphp
 	@if (count($values))
