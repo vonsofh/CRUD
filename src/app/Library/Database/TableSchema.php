@@ -4,12 +4,11 @@ namespace Backpack\CRUD\app\Library\Database;
 
 class TableSchema
 {
-    /** @var Doctrine\DBAL\Schema\Table */
-    public $schema;
+    public array $schema;
 
     public function __construct(string $connection, string $table)
     {
-        $this->schema = DatabaseSchema::getForTable($connection, $table);
+        $this->schema = app('DatabaseSchema')->getForTable($connection, $table);
     }
 
     /**
@@ -19,11 +18,12 @@ class TableSchema
      */
     public function getColumnsNames()
     {
-        return array_values(
-            array_map(function ($item) {
-                return $item->getName();
-            }, $this->getColumns())
-        );
+        return array_keys($this->schema);
+    }
+
+    public function getColumns()
+    {
+        return $this->schema;
     }
 
     /**
@@ -38,9 +38,7 @@ class TableSchema
             return 'varchar';
         }
 
-        $column = $this->schema->getColumn($columnName);
-
-        return $column->getType()->getName();
+        return $this->schema[$columnName]['type'];
     }
 
     /**
@@ -55,7 +53,7 @@ class TableSchema
             return false;
         }
 
-        return $this->schema->hasColumn($columnName);
+        return array_key_exists($columnName, $this->schema);
     }
 
     /**
@@ -70,9 +68,7 @@ class TableSchema
             return true;
         }
 
-        $column = $this->schema->getColumn($columnName);
-
-        return $column->getNotnull() ? false : true;
+        return $this->schema[$columnName]['nullable'] ?? true;
     }
 
     /**
@@ -87,9 +83,7 @@ class TableSchema
             return false;
         }
 
-        $column = $this->schema->getColumn($columnName);
-
-        return $column->getDefault() !== null ? true : false;
+        return $this->schema[$columnName]['default'] !== null;
     }
 
     /**
@@ -104,23 +98,7 @@ class TableSchema
             return false;
         }
 
-        $column = $this->schema->getColumn($columnName);
-
-        return $column->getDefault();
-    }
-
-    /**
-     * Get the table schema columns.
-     *
-     * @return array
-     */
-    public function getColumns()
-    {
-        if (! $this->schemaExists()) {
-            return [];
-        }
-
-        return $this->schema->getColumns();
+        return $this->schema[$columnName]['default'];
     }
 
     /**
@@ -135,7 +113,7 @@ class TableSchema
             return false;
         }
 
-        return $this->schema->hasColumn($columnName);
+        return array_key_exists($columnName, $this->schema);
     }
 
     /**

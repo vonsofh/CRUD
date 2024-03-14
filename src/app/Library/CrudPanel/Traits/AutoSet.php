@@ -53,28 +53,16 @@ trait AutoSet
         if (! $this->driverIsSql()) {
             return $dbColumnTypes;
         }
-
+       // dd($this->getDbTableColumns());
         foreach ($this->getDbTableColumns() as $key => $column) {
-            $column_type = $column->getType()->getName();
-            $dbColumnTypes[$column->getName()]['type'] = trim(preg_replace('/\(\d+\)(.*)/i', '', $column_type));
-            $dbColumnTypes[$column->getName()]['default'] = $column->getDefault();
+            $column_type = $column['type_name'];
+            $dbColumnTypes[$column['name']]['type'] = trim(preg_replace('/\(\d+\)(.*)/i', '', $column_type));
+            $dbColumnTypes[$column['name']]['default'] = $column['default'];
         }
-
+        dump($dbColumnTypes);
         $this->autoset['db_column_types'] = $dbColumnTypes;
 
         return $dbColumnTypes;
-    }
-
-    /**
-     * Set extra types mapping on model.
-     *
-     * DEPRECATION NOTICE: This method is no longer used and will be removed in future versions of Backpack
-     *
-     * @deprecated
-     */
-    public function setDoctrineTypesMapping()
-    {
-        $this->getModel()->getConnectionWithExtraTypeMappings();
     }
 
     /**
@@ -114,7 +102,7 @@ trait AutoSet
         }
 
         $dbColumnTypes = $this->getDbColumnTypes();
-
+        
         if (! isset($dbColumnTypes[$fieldName])) {
             return 'text';
         }

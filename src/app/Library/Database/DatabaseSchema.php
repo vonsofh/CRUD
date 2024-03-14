@@ -7,7 +7,7 @@ use Illuminate\Support\LazyCollection;
 
 final class DatabaseSchema
 {
-    private static $schema;
+    private array $schema;
 
     /**
      * Return the schema for the table.
@@ -16,11 +16,11 @@ final class DatabaseSchema
      * @param  string  $table
      * @return array
      */
-    public static function getForTable(string $connection, string $table)
+    public function getForTable(string $connection, string $table)
     {
-        self::generateDatabaseSchema($connection, $table);
+        $this->generateDatabaseSchema($connection, $table);
 
-        return self::$schema[$connection][$table] ?? [];
+        return $this->schema[$connection][$table] ?? [];
     }
 
     /**
@@ -30,15 +30,14 @@ final class DatabaseSchema
      * @param  string  $table
      * @return void
      */
-    private static function generateDatabaseSchema(string $connection, string $table)
+    private function generateDatabaseSchema(string $connection, string $table)
     {
-        if (! isset(self::$schema[$connection])) {
-            $rawTables = DB::connection($connection)->getDoctrineSchemaManager()->createSchema();
-            self::$schema[$connection] = self::mapTables($rawTables);
+        if (! isset($this->schema[$connection])) {
+            $this->schema[$connection] = self::mapTables($connection);
         } else {
             // check for a specific table in case it was created after schema had been generated.
-            if (! isset(self::$schema[$connection][$table])) {
-                self::$schema[$connection][$table] = DB::connection($connection)->getDoctrineSchemaManager()->listTableDetails($table);
+            if (! isset($this->schema[$connection][$table])) {
+                $this->schema[$connection][$table] = self::mapTable($connection, $table);
             }
         }
     }
@@ -46,13 +45,63 @@ final class DatabaseSchema
     /**
      * Map the tables from raw db values into an usable array.
      *
-     * @param  Doctrine\DBAL\Schema\Schema  $rawTables
+    
      * @return array
      */
-    private static function mapTables($rawTables)
+    private static function mapTables(string $connection)
     {
-        return LazyCollection::make($rawTables->getTables())->mapWithKeys(function ($table, $key) {
-            return [$table->getName() => $table];
+        return LazyCollection::make(self::getSchemaManager($connection)->getTables())->mapWithKeys(function ($table, $key) use ($connection) {
+            return [$table['name'] => self::mapTable($connection, $table['name'])];
         })->toArray();
+    }
+
+    private static function mapTable($connection, $table)
+    {
+        $indexedColumns = self::getIndexColumnNames($connection, $table);
+       
+        return LazyCollection::make(self::getSchemaManager($connection)->getColumns($table))->mapWithKeys(function ($column, $key) use ($indexedColumns) {
+            $column['index'] = array_key_exists($column['name'], $indexedColumns) ? true : false;
+            return [$column['name'] => $column];
+        })->toArray();
+    }
+
+    private static function getIndexColumnNames($connection, $table)
+    {
+        $indexedColumns = \Illuminate\Support\Arr::flatten(
+            array_column(
+                self::getSchemaManager($connection)->getIndexes($table), 'columns')
+            );
+        
+        return array_unique($indexedColumns);
+    }
+
+    public function getColumns()
+    {
+        return $this->schema;
+    }
+
+    public function getColumnType(string $connection, string $table, string $columnName)
+    {
+        return $this->schema[$connection][$table][$columnName]['type'] ?? 'text';
+    }
+
+    public function columnHasDefault(string $connection, string $table, string $columnName)
+    {
+        return isset($this->schema[$connection][$table][$columnName]['default']);
+    }
+
+    public function columnIsNullable(string $connection, string $table, string $columnName)
+    {
+        return $this->schema[$connection][$table][$columnName]['nullable'] ?? true;
+    }
+
+    public function getColumnDefault(string $connection, string $table, string $columnName)
+    {
+        return $this->schema[$connection][$table][$columnName]['default'] ?? false;
+    }
+
+    private static function getSchemaManager(string $connection)
+    {
+        return DB::connection($connection)->getSchemaBuilder();
     }
 }

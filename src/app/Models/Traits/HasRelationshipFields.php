@@ -14,33 +14,6 @@ use Illuminate\Support\Facades\DB;
 trait HasRelationshipFields
 {
     /**
-     * Register aditional types in doctrine schema manager for the current connection.
-     *
-     * @return DB
-     */
-    public function getConnectionWithExtraTypeMappings()
-    {
-        $connection = DB::connection($this->getConnectionName());
-
-        $types = [
-            'enum' => 'string',
-            'jsonb' => 'json',
-        ];
-
-        // only register the extra types in sql databases
-        if (self::isSqlConnection()) {
-            $platform = $connection->getDoctrineSchemaManager()->getDatabasePlatform();
-            foreach ($types as $type_key => $type_value) {
-                if (! $platform->hasDoctrineTypeMappingFor($type_key)) {
-                    $platform->registerDoctrineTypeMapping($type_key, $type_value);
-                }
-            }
-        }
-
-        return $connection;
-    }
-
-    /**
      * Get the model's table name, with the prefix added from the configuration file.
      *
      * @return string Table name with prefix
@@ -119,7 +92,7 @@ trait HasRelationshipFields
     private static function getConnectionAndTable()
     {
         $instance = new static();
-        $conn = $instance->getConnectionWithExtraTypeMappings();
+        $conn = $instance->getConnection();
         $table = $instance->getTableWithPrefix();
 
         return [$conn, $table];
