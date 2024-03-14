@@ -45,7 +45,7 @@ final class DatabaseSchema
     /**
      * Map the tables from raw db values into an usable array.
      *
-    
+     *
      * @return array
      */
     private static function mapTables(string $connection)
@@ -58,9 +58,10 @@ final class DatabaseSchema
     private static function mapTable($connection, $table)
     {
         $indexedColumns = self::getIndexColumnNames($connection, $table);
-       
+
         return LazyCollection::make(self::getSchemaManager($connection)->getColumns($table))->mapWithKeys(function ($column, $key) use ($indexedColumns) {
             $column['index'] = array_key_exists($column['name'], $indexedColumns) ? true : false;
+
             return [$column['name'] => $column];
         })->toArray();
     }
@@ -70,8 +71,8 @@ final class DatabaseSchema
         $indexedColumns = \Illuminate\Support\Arr::flatten(
             array_column(
                 self::getSchemaManager($connection)->getIndexes($table), 'columns')
-            );
-        
+        );
+
         return array_unique($indexedColumns);
     }
 

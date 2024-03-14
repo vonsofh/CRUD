@@ -33,7 +33,7 @@ trait HasIdentifiableAttribute
     private function guessIdentifiableColumnName()
     {
         $schema = app('DatabaseSchema')->getForTable($this->getConnection()->getName(), $this->getTableWithPrefix());
-        
+
         $columns = $schema;
         $columnsNames = array_keys($columns);
 

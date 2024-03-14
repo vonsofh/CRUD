@@ -53,7 +53,7 @@ trait AutoSet
         if (! $this->driverIsSql()) {
             return $dbColumnTypes;
         }
-       // dd($this->getDbTableColumns());
+        // dd($this->getDbTableColumns());
         foreach ($this->getDbTableColumns() as $key => $column) {
             $column_type = $column['type_name'];
             $dbColumnTypes[$column['name']]['type'] = trim(preg_replace('/\(\d+\)(.*)/i', '', $column_type));
@@ -102,7 +102,7 @@ trait AutoSet
         }
 
         $dbColumnTypes = $this->getDbColumnTypes();
-        
+
         if (! isset($dbColumnTypes[$fieldName])) {
             return 'text';
         }
